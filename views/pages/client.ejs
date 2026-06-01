@@ -1,0 +1,284 @@
+<div id="clientobject-section">
+  <div class="mb-9">
+    <h2 class="mb-4"><%- title %></h2>
+    <div class="mb-1">
+      <div class="btn-group me-1">
+
+        <div class="dropdown">
+          <a class="btn btn-subtle-secondary" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true"
+            aria-expanded="false"><i class="fa-solid fa-ellipsis-vertical"></i></a>
+          <div class="dropdown-menu">
+            <!-- <a class="dropdown-item" onclick="clientobject.tbl.deleteBySelected()">Delete Selected</a>
+            <div class="dropdown-divider"></div> -->
+            <a class="dropdown-item" onclick="clientobject.assignToClient()">Assign Member To Client</a>
+            <!-- <a class="dropdown-item" onclick="clientobject.assignToMember()">Assign Client To Member</a> -->
+            <a class="dropdown-item" onclick="clientobject.approveRegistration()">Approve Client Registration</a>
+            <a class="dropdown-item" onclick="clientobject.rejectRegistration()">Reject Client Registration</a>
+
+          </div>
+        </div>
+
+      </div>
+
+      <div class="btn-group me-1">
+        <a onclick="clientobject.tbl.create()" class="btn btn-subtle-primary">Create New</a>
+        <a onclick="clientobject.tbl.deleteBySelected()" class="btn btn-subtle-secondary">Delete Selected</a>
+      </div>
+    </div>
+
+
+    <div class="row-fluid">
+      <div class="card">
+        <div class="card-body">
+          <div class="search-box mb-3 mx-auto">
+            <div class="position-relative"><input class="form-control search-input search form-control-sm" type="search"
+                placeholder="Search" aria-label="Search" />
+              <span class="fas fa-search search-box-icon"></span>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-sm fs-9 mb-5">
+              <tbody class="list">
+                <!-- Table datas will be added here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    var clientobject = {};
+    clientobject.model = JSON.parse('<%- JSON.stringify(model) %>');
+    clientobject.container = document.getElementById("clientobject-section");//khu vực chứa danh sách
+    clientobject.urldata = {
+      lists: '/client/list',
+      item: '/client/item',
+      create: '/client/create?callback=' + encodeURIComponent('clientobject.createcallback'),
+      edit: '/client/edit?callback=' + encodeURIComponent('clientobject.editcallback'),
+      delete: '/client/delete',
+
+      assignToClient: '/clientmember/create',
+      approveRegistration: '/client/approve',
+      rejectRegistration: '/client/reject'
+    };
+    clientobject.createcallback = function (response) {
+      if (response[0]) {
+        if (response[0].status == 0) {
+          alert(response[0].message);
+          return;
+        }
+        senapp.sidebar.menuclickbydatalink('/client');
+      }
+    };
+    clientobject.editcallback = function (response) {
+      if (response[0]) {
+        if (response[0].status == 0) {
+          alert(response[0].message);
+          return;
+        }
+        senapp.sidebar.menuclickbydatalink('/client');
+      }
+    };
+    // Khởi tạo bảng
+    clientobject.tbl = new senapp.utils.table({
+      meta: clientobject.model.meta,
+      urldata: clientobject.urldata,
+      container: clientobject.container,
+      tableelement: clientobject.container.querySelector('table'),
+      modal: true,
+      selectcolumn: true,
+      filterrow: false, // không hiển thị filter row
+      //filtercompact: false // hiển thị filter row ở dạng compact
+      metacolumns: [
+        { field: 'Ext01', description: '<i class="fa-solid fa-users" title="Members"></i>', colorder: 1, visible: true, show: true },
+      ],
+      customcolumns: ['Ext01'],
+    });
+
+    //mở rộng
+    clientobject.assignToClientcallback = async function (response) {
+      // Callback function for lookup
+      console.log('Response from assignToClient:', response);
+      if (response && response.length > 0) {
+        // Process the selected modules
+        console.log('Selected members:', response);
+        senapp.window.loading.show();
+        const tableobject = clientobject.tbl;
+        const selectedKeys = tableobject.getKeySelected();
+        try {
+          // Tạo mảng Promise bất đồng bộ
+          const promises = selectedKeys.flatMap(id =>
+            response.map(async m => {
+              const newclientmember = { Id: senapp.data.sessionAutoId(), ClientId: id, UserId: parseInt(m) };
+              //console.log('Adding client member:', newclientmember);
+              // viết hàm post vào clientobject.urldata.assignToClient bằng fetch
+              const res = await fetch(clientobject.urldata.assignToClient, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newclientmember)
+              });
+              if (!res.ok) { throw new Error(`HTTP error! status: ${res.status}`); }
+              const response = await res.json(); // hoặc .text() nếu API không trả JSON
+              if (response.status == 0) {
+                senapp.window.toast({ message: response.message, type: 'danger' });
+              } else {
+                senapp.window.toast({ message: response.message, type: 'success' });
+              }
+            })
+          );
+          await Promise.all(promises);
+          senapp.window.loading.hide();
+          console.log("Tất cả đã xong!");
+        } catch (err) {
+          senapp.window.alert({ message: `⚠️ ${await senapp.utils.text.t('An error occurred while processing:')}`, type: 'danger' });
+          console.error("Có lỗi :", err);
+        }
+      }
+      else {
+        senapp.window.alert({ message: `⚠️ ${await senapp.utils.text.t('No modules selected.')}`, type: 'warning' });
+      }
+    };
+    clientobject.assignToClient = async function () {
+      const selectedKeys = clientobject.tbl.getKeySelected();
+      if (selectedKeys.length === 0) {
+        senapp.window.alert({ message: `⚠️ ${await senapp.utils.text.t('Please select at least one row to assign.')}`, type: 'danger' });
+        return;
+      }
+
+      const lookupfilter = {
+        url: '/member/lookup', fields: { id: '`${item.UserId}`', value: '`${item.UserId}`', label: '`${item.Email}`' },
+        //filter: { logic: "and", conditions: [{ field: "Description", op: "includes", value: '' }] }
+        filter: { logic: "and", conditions: [{ field: "searchTerm", op: "includes", value: '' }] }
+      };
+      senapp.window.lookup({ options: { title: 'Select Members', multiple: true, callback: 'clientobject.assignToClientcallback', lookup: lookupfilter } });
+    };
+
+    clientobject.tbl.genCellDataCustom = function ({ data, metacolumn }) {
+      if (!metacolumn || !metacolumn.field) {
+        return null; // Trả về null nếu không có metacolumn hoặc field
+      }
+      // Hàm này sẽ được sử dụng để tạo dữ liệu cho các cột tùy chỉnh
+      const tableobject = this;
+      const td = document.createElement('td');
+      td.setAttribute('data-field', metacolumn.field);
+      //nếu field.visible là false hoặc field.show là false thì không hiển thị cột này  gán class d-none
+      if (!metacolumn.show) { td.classList.add('d-none'); }
+      switch (metacolumn.field) {
+        case 'Ext01':
+          td.innerHTML = `<a href="javascript:;" onclick="clientobject.loadLine(this)" title="View Members"><i class="fa fa-ellipsis"></i></a>`;
+          break;
+        default:
+          //nếu không phải là cột tùy chỉnh thì trả về giá trị của trường đó
+          td.innerHTML = data[metacolumn.field] || '';
+          break;
+      }
+      return td;
+    }
+
+    clientobject.loadLine = function (element) {
+      const tableobject = clientobject.tbl;
+      const id = parseInt(element.closest('tr').getAttribute('data-id'));
+      const data = tableobject.datas.find(item => item[tableobject.keyfield] === id);
+
+      const urlline = `/clientmember?viewname=clientmemberbyclient&id=${id}`;
+      senapp.window.offcanvas({
+        title: `User List of ${data["CompanyName"] || ''}`,
+        url: urlline
+      });
+    };
+
+
+    //duyệt chấp nhận đăng ký doanh nghiệp
+    clientobject.approveRegistration = async function () {
+      senapp.window.loading.show();
+      const tableobject = clientobject.tbl;
+      const selectedKeys = tableobject.getKeySelected();
+      try {
+        // Tạo mảng Promise bất đồng bộ
+        console.log('Selected client IDs for approval:', selectedKeys);
+        const promises = selectedKeys.map(async id => {
+          const updateClient = { ClientId: id };
+          // console.log('Approving client registration for:', updateClient);
+
+          const res = await fetch(clientobject.urldata.approveRegistration, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updateClient)
+          });
+
+          if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+
+          const response = await res.json(); // hoặc .text() nếu API không trả JSON
+          if (response.status == 0) {
+            senapp.window.toast({ message: response.message, type: 'danger' });
+          } else {
+            //tìm data trong bảng và cập nhật lại trạng thái
+            const data = tableobject.datas.find(item => item[tableobject.keyfield] === id);
+            // console.log('Updating table row data for approved client:', data);
+            if (data) {
+              data.IsActive = 'Yes';
+              tableobject.refreshCellDisplayByData({ data: data, fields: ['IsActive'] });
+            }
+            senapp.window.toast({ message: response.message, type: 'success' });
+          }
+        });
+
+        await Promise.all(promises);
+        senapp.window.loading.hide();
+        console.log("Tất cả đã xong!");
+      } catch (err) {
+        senapp.window.alert({ message: `⚠️ ${await senapp.utils.text.t('An error occurred while processing:')}`, type: 'danger' });
+        console.error("Có lỗi :", err);
+      }
+    };
+    //duyệt từ chối đăng ký doanh nghiệp
+    clientobject.rejectRegistration = async function () {
+      senapp.window.loading.show();
+      const tableobject = clientobject.tbl;
+      const selectedKeys = tableobject.getKeySelected();
+      try {
+        // Tạo mảng Promise bất đồng bộ
+        console.log('Selected Client IDs for approval:', selectedKeys);
+        const promises = selectedKeys.map(async id => {
+          const updateClient = { ClientId: id };
+          console.log('Rejecting client registration for:', updateClient);
+
+          const res = await fetch(clientobject.urldata.rejectRegistration, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updateClient)
+          });
+
+          if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+
+          const response = await res.json(); // hoặc .text() nếu API không trả JSON
+          if (response.status == 0) {
+            senapp.window.toast({ message: response.message, type: 'danger' });
+          } else {
+            //tìm data trong bảng và cập nhật lại trạng thái
+            const data = tableobject.datas.find(item => item[tableobject.keyfield] === id);
+            // console.log('Updating table row data for rejected client:', data);
+            if (data) {
+              data.IsActive = 'No';
+              tableobject.refreshCellDisplayByData({ data: data, fields: ['IsActive'] });
+            }
+            senapp.window.toast({ message: response.message, type: 'success' });
+          }
+        });
+
+        await Promise.all(promises);
+        senapp.window.loading.hide();
+        console.log("Tất cả đã xong!");
+      } catch (err) {
+        senapp.window.alert({ message: `⚠️ ${await senapp.utils.text.t('An error occurred while processing:')}`, type: 'danger' });
+        console.error("Có lỗi :", err);
+      }
+    };
+
+
+    $(function () { clientobject.tbl.initTable(); });
+
+
+  </script>
+</div>

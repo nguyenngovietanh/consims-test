@@ -1,0 +1,269 @@
+<div id="senobjectmasterupdate-section" class="" style="margin: 0 auto;">
+  <form id="senobjectmasterupdate-form">
+    <div class="card">
+      <div class="card-header"><h4 class="mb-0"><%= title %></h4></div>
+      <div class="card-body">
+        <!-- Thông báo tổng -->
+        <div class="message-all callout d-none" role="alert"></div>
+
+        <div class="row g-3 align-items-center mb-1">
+          <div class="col-md-6">
+            <label for="senobjectmasterupdate-GId" field-name="GId" class="control-label">GId:</label>
+            <input type="text" id="senobjectmasterupdate-GId" name="GId" class="form-control">
+          </div>
+          <div class="col-md-6">
+            <label for="senobjectmasterupdate-Id" field-name="Id" class="control-label">Id:</label>
+            <input type="number" id="senobjectmasterupdate-Id" name="Id" class="form-control">
+          </div>
+        </div>
+        <div class="row g-3 align-items-center mb-1">
+          <div class="col-md-6">
+            <label for="senobjectmasterupdate-Bigint" field-name="Bigint" class="control-label">Bigint:</label>
+            <input type="number" id="senobjectmasterupdate-Bigint" name="Bigint" class="form-control">
+          </div>
+          <div class="col-md-6">
+            <label for="senobjectmasterupdate-Numeric" field-name="Numeric" class="control-label">Numeric:</label>
+            <input type="number" step="any" id="senobjectmasterupdate-Numeric" name="Numeric" class="form-control">
+          </div>
+        </div>
+        <div class="row g-3 align-items-center mb-1">
+          <div class="col-md-6">
+            <label for="senobjectmasterupdate-String" field-name="String" class="control-label">String:</label>
+            <input type="text" id="senobjectmasterupdate-String" name="String" class="form-control">
+          </div>
+
+          <div class="col-md-6">
+            <label for="senobjectmasterupdate-Options" field-name="Options" class="control-label">Options:</label>
+            <select id="senobjectmasterupdate-Options" name="Options" class="form-control">
+              <!-- <option value="">Select an option</option> -->
+            </select>
+          </div>
+        </div>
+
+        <div class="row g-3 align-items-center mb-1">
+          <div class="col-md-6">
+            <label for="senobjectmasterupdate-Lookup" field-name="Lookup" class="control-label">Lookup:</label>
+            <select id="senobjectmasterupdate-Lookup" name="Lookup" class="form-control"></select>
+          </div>
+          <div class="col-md-6">
+            <label for="senobjectmasterupdate-LookupMulti" field-name="LookupMulti"
+              class="control-label">LookupMulti:</label>
+            <select id="senobjectmasterupdate-LookupMulti" name="LookupMulti" class="form-control" multiple></select>
+          </div>
+
+        </div>
+
+        <div class="row g-3 align-items-center mb-1">
+
+          <div class="col-md-6">
+            <label for="senobjectmasterupdate-DateTime" field-name="DateTime" class="control-label">DateTime:</label>
+            <input type="datetime-local" id="senobjectmasterupdate-DateTime" name="DateTime" class="form-control">
+          </div>
+          <div class="col-md-6">
+            <label for="senobjectmasterupdate-Date" field-name="Date" class="control-label">Date:</label>
+            <input type="date" id="senobjectmasterupdate-Date" name="Date" class="form-control">
+          </div>
+        </div>
+        <div class="row g-3 align-items-center mb-1">
+          <div class="col-md-6">
+            <!-- <label for="senobjectmasterupdate-Boolean" field-name="Boolean" class="control-label">Boolean:</label>
+            <select id="senobjectmasterupdate-Boolean" name="Boolean" class="form-control">
+              <option value="true">True</option>
+              <option value="false">False</option>
+            </select> -->
+
+            <div class="form-check">
+              <input class="form-check-input" id="senobjectmasterupdate-Boolean" name="Boolean" type="checkbox" value=""
+                checked="" />
+              <label for="senobjectmasterupdate-Boolean" field-name="Boolean" class="control-label">Boolean:</label>
+            </div>
+
+          </div>
+        </div>
+        <div class="row g-3 align-items-center mb-1">
+          <div class="col-md-12">
+            <label for="senobjectmasterupdate-Text" field-name="Text" class="control-label">Text:</label>
+            <textarea id="senobjectmasterupdate-Text" name="Text" class="form-control" rows="4"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-body" id="senobjectmasterupdate-line-section">
+        <div class="table-responsive">
+          <table class="table table-sm fs-9 mb-5">
+            <tbody class="list"> </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <button type="submit" class="btn btn-subtle-primary">Save & Close</button>
+        <button type="button" class="btn btn-subtle-secondary"
+          onclick="senobjectmasterupdateobject.form.cancel()">Cancel</button>
+      </div>
+    </div>
+  </form>
+
+  <script>
+    var senobjectmasterupdateobject = {};
+    senobjectmasterupdateobject.model = JSON.parse(('<%- JSON.stringify(model) %>').replace(/\r?\n|\r/g, "\\n"));
+    senobjectmasterupdateobject.container = document.getElementById("senobjectmasterupdate-section");//khu vực chứa form nghiệp vụ
+
+    // Khởi tạo bảng
+    senobjectmasterupdateobject.form = new senapp.utils.form({
+      meta: senobjectmasterupdateobject.model.meta,
+      data: senobjectmasterupdateobject.model.data,
+      urldata: senobjectmasterupdateobject.model.url,
+      container: senobjectmasterupdateobject.container,
+      mode: (senobjectmasterupdateobject.model.url.path == '/senobject/edit') ? 'edit' : 'create',
+    });
+
+    senobjectmasterupdateobject.form.onInputChange = async function ({ input, fieldmeta }) {
+      // console.log(`Input changed: ${fieldmeta}, ${input.value}`);
+      senapp.utils.input2data({ fieldmeta: fieldmeta, data: this.data, input: input });
+
+      switch (fieldmeta.field) {
+        case 'Bigint':
+          if (this.data.Bigint !== 0) {
+            senapp.window.toast({ message: `Bigint must be ${this.data.Bigint}`, type: 'info' });
+            this.data.Numeric = this.data.Bigint;
+            //map các trường nội dung vào input
+            senapp.utils.data2inputs({ meta: this.meta, data: this.data, container: this.container });
+          }
+          break;
+      }
+      // console.log(this.data);
+    };
+
+    //#region line
+
+    senobjectmasterupdateobject.lineobject = { model: {} };
+
+    senobjectmasterupdateobject.lineobject.urldata = {
+      //lists: '/senobjectline/list',
+      listnews: '/senobjectline/list',
+      item: '/senobjectline/item',
+      create: '/senobjectline/create',
+      edit: '/senobjectline/edit',
+      delete: '/senobjectline/delete',
+      update: '/senobjectline/edit',
+      meta: '/senobjectline/meta'
+    };
+
+    senobjectmasterupdateobject.lineobject.tbllines = [];
+
+    senobjectmasterupdateobject.lineobject.loadLine = async function () {
+      const formobject = senobjectmasterupdateobject.form;
+      const urldata = JSON.parse(JSON.stringify(senobjectmasterupdateobject.lineobject.urldata));
+      let datanew = JSON.parse(JSON.stringify(senobjectmasterupdateobject.lineobject.model.datanew));
+      datanew.ParentId = formobject.data[senobjectmasterupdateobject.form.keyfield];
+      //urldata.lists += `?ParentId=${datanew.ParentId}`;
+      urldata.listnews += `?pagesize=0&ParentId=${datanew.ParentId}`;
+      let tblline = new senapp.utils.table({
+        datanew: datanew,
+        meta: senobjectmasterupdateobject.lineobject.model.meta,
+        urldata: urldata,
+        container: formobject.container.querySelector('#senobjectmasterupdate-line-section'),//khu vực chứa danh sách
+        filterrow: false,
+        allowsorting: false, //cho phép sắp xếp hay không
+        addrow: true, // cho phép thêm mới
+        editrow: true, // cho phép sửa
+        deleterow: true, // cho phép xóa
+        addnewfirst: false, //thêm mới vào đầu danh sách
+        actionbuttons: { savenews: false }, //hiển thị các nút hành động
+        loadmoreonvisible: true, // tự động tải thêm dữ liệu khi cuộn đến cuối danh sách   
+      });
+
+      await tblline.initTable();
+      senobjectmasterupdateobject.lineobject.tbllines[datanew.ParentId] = tblline;
+    };
+
+    //#endregion line
+
+
+    //#region form saveBefore
+    senobjectmasterupdateobject.form.saveBefore = async function () {
+      const formobject = this;
+      let valid = true;
+      senapp.window.loading.show(this.container); // Hiển thị loading
+      // Gửi dữ liệu đến server để cập nhật data
+      //map dữ liệu từ form vào model
+      senapp.utils.input2datas({ meta: this.meta, data: this.data, container: this.container });
+      const url = new URL(formobject.urldata.path, window.location.origin);
+      url.searchParams.append('mode', 'validate'); //chỉ kiểm tra hợp lệ không thêm mới
+      //gọi api validate
+      const response = await senapp.data.synServer({ url: url, data: this.data, meta: this.meta });
+      senapp.window.loading.hide(); // Ẩn loading
+      if (response.status == 0) {
+        this.mapErrors(response);
+        valid = false;
+      }
+      //kiểm tra dữ liệu bảng con
+      for (const key in senobjectmasterupdateobject.lineobject.tbllines) {
+        const tblline = senobjectmasterupdateobject.lineobject.tbllines[key];
+        //quét tblline.datanews để validate từng dòng
+        for (let i = 0; i < tblline.datanews.length; i++) {
+          const item = tblline.datanews[i];
+          const response = await tblline.validateServer({ data: item });
+          if (response && response.status == 0) { valid = false; }
+        }
+        //kiểm tra xóa các dòng đã xóa trên giao diện mà là dữ liệu đã lưu trên server
+        //lọc các dòng đã xóa có keyfield>0
+        const deletedRows = tblline.datadeleteds.filter(item => item[tblline.keyfield] > 0);
+        //cho vòng lặp kiểm tra từng dòng đã xóa
+        for (let i = 0; i < deletedRows.length; i++) {
+          const item = deletedRows[i];
+          const response = await tblline.validateServer({ data: item, type: 'delete' });
+          if (response && response.status == 0) { valid = false; }
+        }
+      }
+
+
+      return valid;
+    };
+    //#endregion form saveBefore
+    //#region form saveAfter
+    senobjectmasterupdateobject.form.saveAfter = async function (response) {
+      const formobject = this;
+      //lưu dữ liệu bảng con
+      let valid = true;
+      for (const key in senobjectmasterupdateobject.lineobject.tbllines) {
+        const tblline = senobjectmasterupdateobject.lineobject.tbllines[key];
+        //cập nhật lại ParentId
+        tblline.datanew.ParentId = response.data[formobject.keyfield];
+        for (let i = 0; i < tblline.datanews.length; i++) {
+          const item = tblline.datanews[i];
+          item.ParentId = response.data[formobject.keyfield];
+        }
+
+        //xóa các dòng đã xóa trên giao diện mà là dữ liệu đã lưu trên server
+        await tblline.synDeleteDatas();
+        const resline = await tblline.saveNews();
+        console.log(resline);
+
+        // if (resline.status == 0) {
+        //   valid = false;
+        //   senapp.window.toast({ message: 'Save line data error', type: 'danger' });
+        // }
+
+      }
+
+
+
+      if (!valid) {
+        return false;
+      }
+      return true;
+    };
+    //#endregion form saveAfter
+
+    $(async function () {
+      await senobjectmasterupdateobject.form.initForm();
+      senobjectmasterupdateobject.lineobject.model = await senapp.data.getMeta({ url: senobjectmasterupdateobject.lineobject.urldata.meta });
+      await senobjectmasterupdateobject.lineobject.loadLine();
+    });
+
+  </script>
+
+
+</div>

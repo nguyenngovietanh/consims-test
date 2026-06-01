@@ -1,0 +1,97 @@
+<div id="paymentorderipcdraft-section">
+  <div class="mb-9">
+    <div class="row-fluid">
+      <div class="card">
+        <div class="card-header">
+          <h4 class="mb-0">IPC Draft Detail</h4>
+        </div>
+
+        <div class="card-body">
+          <div class="mb-1">
+            <div class="text-end">
+              <div class="btn-group me-1">
+                <a onclick="paymentorderipcdraftobject.createIPCfromDraft()" class="btn btn-subtle-primary">Create IPC
+                  from Draft</a>
+                <a onclick="paymentorderipcdraftobject.removeDraftIPC(this)"
+                  class="btn btn-subtle-secondary btn-sm ms-1">Remove Draft IPC</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-sm fs-9 mb-5" id="paymentorderipcdraft-table">
+              <tbody class="list"> </tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var paymentorderipcdraftobject = {};
+    paymentorderipcdraftobject.model = JSON.parse('<%- JSON.stringify(model) %>');
+    paymentorderipcdraftobject.container = document.getElementById("paymentorderipcdraft-section");//khu vực chứa danh sách
+    paymentorderipcdraftobject.urldata = {
+      lists: `/paymentorderipc/ipcdraftdata?contractid=${paymentorderipcdraftobject.model.url.query.contractid}&workgroup=${encodeURIComponent(paymentorderipcdraftobject.model.url.query.workgroup)}&fromdate=${encodeURIComponent(paymentorderipcdraftobject.model.url.query.fromdate)}&todate=${encodeURIComponent(paymentorderipcdraftobject.model.url.query.todate)}`,
+      // item: '/paymentorderipc/rejectapplytax/item',
+      // create: '/paymentorderipc/rejectapplytax/create?callback=' + encodeURIComponent('paymentorderipcdraftobject.createcallback'),//+'&id=1',
+      // edit: '/paymentorderipc/rejectapplytax/edit?callback=' + encodeURIComponent('paymentorderipcdraftobject.editcallback'),
+      // delete: '/paymentorderipc/rejectapplytax/delete'
+      // update: `/paymentorderipc/updateipclinetax?paymentid=${paymentorderipcdraftobject.model.url.query.paymentid}`
+    };
+
+    // Khởi tạo bảng
+    paymentorderipcdraftobject.tbl = new senapp.utils.table({
+      meta: paymentorderipcdraftobject.model.meta,
+      urldata: paymentorderipcdraftobject.urldata,
+      container: paymentorderipcdraftobject.container,
+      tableelement: paymentorderipcdraftobject.container.querySelector('#paymentorderipcdraft-table'),
+      modal: true,
+      selectcolumn: false, // có hiển thị cột chọn hay không      
+      filterrow: false, // hiển thị filter row
+      loadmoreonvisible: true, // tự động tải thêm dữ liệu khi cuộn đến cuối danh sách      
+      // editrow: true, // cho phép sửa
+      metacolumns: [
+        { field: 'SysAction', visible: false, colorder: -9 },
+      ],
+      // customcolumns: ['TaxRate'], // Danh sách các cột tùy chỉnh khi render cell
+      // allowformatheader: true, //cho phép định dạng header thông qua customcolumns
+    });
+
+
+    paymentorderipcdraftobject.createIPCfromDraftcallback = async function (response) {
+      //callback sau khi tạo IPC từ draft thành công
+      // data là dữ liệu trả về từ API sau khi tạo IPC thành công, có thể dùng để cập nhật lại bảng nếu cần
+      await paymentorderipcdraftobject.tbl.refreshDataDisplay(); //tải lại bảng để cập nhật dữ liệu mới
+
+      //nếu response[0] tồn tại thì hiển thị thông báo lỗi
+      if (response[0]) {
+        if (response[0].status == 0) {
+          alert(response[0].message);
+          return;
+        }
+        contractobject.paymentorderobject.mapDraftIPC();
+        // contractobject.ipcobject.tbl.onAddRowData({ data: response[0].data });
+        //senapp.sidebar.menuclickbydatalink('/senobject');
+      }
+    };
+
+    paymentorderipcdraftobject.createIPCfromDraft = async function () {
+      const tableobject = paymentorderipcdraftobject.tbl;
+      const contractid = paymentorderipcdraftobject.model.url.query.contractid;
+      const url = `/paymentorderipc/create?callback=${encodeURIComponent('paymentorderipcdraftobject.createIPCfromDraftcallback')}&contractid=${encodeURIComponent(contractid)}`;
+      senapp.window.modal({ url: url });
+    };
+
+    paymentorderipcdraftobject.removeDraftIPC = async function (el) {
+      await contractobject.paymentorderobject.removeDraftIPC(el);
+      await paymentorderipcdraftobject.tbl.refreshDataDisplay();
+    };
+
+    $(async function () {
+      await paymentorderipcdraftobject.tbl.initTable();
+    });
+  </script>
+</div>

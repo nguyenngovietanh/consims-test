@@ -1,0 +1,103 @@
+<div id="modulememberbymodule-section">
+  <div class="mb-9">
+    <!-- <h2 class="mb-4"><%- title %></h2> -->
+    <div class="mb-1">
+      <div class="">
+        <!-- <a onclick="modulememberbymoduleobject.tbl.create()" class="btn btn-subtle-primary">Create New</a> -->
+        <a onclick="modulememberbymoduleobject.tbl.deleteBySelected()" class="btn btn-subtle-secondary">Delete
+          Selected</a>
+      </div>
+    </div>
+    <div class="row-fluid">
+      <div class="card">
+        <div class="card-body">
+          <div class="search-box mb-3 mx-auto d-none">
+            <div class="position-relative">
+              <input class="form-control search-input search form-control-sm" type="search" placeholder="Search"
+                aria-label="Search" />
+              <span class="fas fa-search search-box-icon"></span>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-sm fs-9 mb-5">
+              <tbody class="list">
+                <!-- Table datas will be added here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var modulememberbymoduleobject = {};
+    modulememberbymoduleobject.model = JSON.parse('<%- JSON.stringify(model) %>');
+    modulememberbymoduleobject.container = document.getElementById("modulememberbymodule-section");//khu vực chứa danh sách
+    modulememberbymoduleobject.urldata = {
+      lists: `/modulemember/memberbymodule?id=${modulememberbymoduleobject.model.url.query.id}`,
+      item: '/modulemember/item',
+      create: '/modulemember/create?callback=' + encodeURIComponent('modulememberbymoduleobject.createcallback'),
+      edit: '/modulemember/edit?callback=' + encodeURIComponent('modulememberbymoduleobject.editcallback'),
+      delete: '/modulemember/delete'
+    };
+
+    console.log(modulememberbymoduleobject.model);
+
+
+    modulememberbymoduleobject.createcallback = function (response) {
+      //nếu response[0] tồn tại thì hiển thị thông báo lỗi
+      if (response[0]) {
+        if (response[0].status == 0) {
+          alert(response[0].message);
+          return;
+        }
+        //modulememberbymoduleobject.tbl.onAddRowData({ data: response[0].data.data });
+        senapp.sidebar.menuclickbydatalink('/modulememberbymodule');
+      }
+    };
+
+    modulememberbymoduleobject.editcallback = function (response) {
+      //nếu response[0] tồn tại thì hiển thị thông báo lỗi
+      if (response[0]) {
+        if (response[0].status == 0) {
+          alert(response[0].message);
+          return;
+        }
+        //modulememberbymoduleobject.tbl.onChangeRowData({ data: response[0].data.data });
+        senapp.sidebar.menuclickbydatalink('/modulememberbymodule');
+      }
+    };
+    //ẩn hết các trường chỉ để lại trường cần thiết
+    modulememberbymoduleobject.model.meta.forEach(element => {
+      const excludedFields = ['Email']; // Danh sách các trường không cần thiết
+      if (!excludedFields.includes(element.field)) { element.visible = false; }
+    });
+
+    // Khởi tạo bảng
+    modulememberbymoduleobject.tbl = new senapp.utils.table({
+      meta: modulememberbymoduleobject.model.meta,
+      urldata: modulememberbymoduleobject.urldata,
+      container: modulememberbymoduleobject.container,
+      tableelement: modulememberbymoduleobject.container.querySelector('table'),
+      modal: true,
+      selectcolumn: true,
+      filterrow: false, // không hiển thị filter row
+      //filtercompact: false // hiển thị filter row ở dạng compact
+      loadmoreonvisible: true, // tự động tải thêm dữ liệu khi cuộn đến cuối danh sách
+      //loadmoreshowtoast: true,
+      metacolumns: [
+        { field: 'SysAction', visible: false },
+      ],
+    });
+
+    modulememberbymoduleobject.tbl.deleteparaext = function (data) {
+      //dùng cho override
+      return `?UserId=${encodeURIComponent(data.UserId)}&ModuleId=${encodeURIComponent(data.ModuleId)}`;
+    }
+
+    $(function () { modulememberbymoduleobject.tbl.initTable(); });
+
+  </script>
+
+</div>

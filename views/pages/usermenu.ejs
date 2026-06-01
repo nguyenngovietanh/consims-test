@@ -1,0 +1,118 @@
+<div class="mb-9">
+  <h2 class="mb-4">Menu permissions</h2>
+  <div class="mb-0">
+    <div class="row">
+      <div class="col-12">
+        <a class="btn btn-primary mb-1" href="javascript:;" onclick="usermenu.applymenu(this)">Apply</a>
+      </div>
+      <div class="col-12">
+        <div class="mb-0">
+          <select class="form-select" id="organizerMultiple2" data-choices="data-choices" multiple="multiple" size="1" required="required" data-options='{"removeItemButton":true,"placeholder":true}'>
+          </select>
+          <div class="invalid-feedback">Please select one or multiple</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row-fluid">
+    <nav class="navbar navbar-vertical navbar-expand-lg px-3"
+      style="position: inherit;    border: 0px;    width: 100%;height: auto;">
+      <div class="collapse navbar-collapse" id="navbarVerticalCollapse-menu">
+        <!-- scrollbar removed-->
+        <div class="navbar-vertical-content" style="height: auto;">
+          <ul class="navbar-nav flex-column" id="navbarVerticalNav-menu">
+            <li class="nav-item mb-2">
+              <div class="d-flex align-items-center">
+                <input class="form-check-input me-2" id="flexCheckCheckedall" type="checkbox" value="">
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </div>
+</div>
+
+
+<script>
+
+  var usermenu = {};
+  usermenu.model = JSON.parse('<%- JSON.stringify(model) %>');
+  senapp.menu.forEach(function (item, i) {
+    const navItemMenu = `<li class="nav-item mb-2">
+        <div class="d-flex align-items-center">
+          <input class="form-check-input me-2" id="flexCheckChecked${i}" type="checkbox" value="">
+          <label class="form-check-label" for="flexCheckChecked${i}"><span class="me-1"><span data-feather="${item.icon}"></span></span><span class="nav-link-text">${item.menuname}</span></label>
+        </div>
+      </li>`
+
+    $("#navbarVerticalNav-menu").append(navItemMenu);
+  });
+  $("#flexCheckCheckedall").on("change", function () {
+    const checked = this.checked;
+    $("#navbarVerticalNav-menu input[type='checkbox']").prop("checked", checked);
+  });
+
+  usermenu.elements = document.querySelectorAll('[data-choices]');
+  // usermenu.elements.forEach(function (el) { new Choices(el); });
+
+    usermenu.users= [
+    { username: "alice.nguyen@example.com", password: "123", name: "Alice Nguyễn", department: "Kế toán" },
+    { username: "bob.tran@example.com", password: "456", name: "Bob Trần", department: "Kỹ thuật" },
+    { username: "charlie.pham@example.com", password: "789", name: "Charlie Phạm", department: "Nhân sự" },
+    { username: "david.le@example.com", password: "abc", name: "David Lê", department: "Kinh doanh" },
+    { username: "eva.vu@example.com", password: "def", name: "Eva Vũ", department: "Marketing" },
+    { username: "frank.ho@example.com", password: "ghi", name: "Frank Hồ", department: "Kỹ thuật" },
+    { username: "grace.dang@example.com", password: "jkl", name: "Grace Đặng", department: "Kế toán" },
+    { username: "hannah.bui@example.com", password: "mno", name: "Hannah Bùi", department: "Nhân sự" },
+    { username: "ian.nguyen@example.com", password: "pqr", name: "Ian Nguyễn", department: "Kinh doanh" },
+    { username: "julia.tran@example.com", password: "stu", name: "Julia Trần", department: "Marketing" },
+    { username: "kevin.pham@example.com", password: "vwx", name: "Kevin Phạm", department: "Kỹ thuật" },
+    { username: "lisa.le@example.com", password: "yz1", name: "Lisa Lê", department: "Kế toán" }
+  ];
+
+    usermenu.elements.forEach(function (el) {
+      el.innerHTML = '<option value="">Select user...</option>' +
+        usermenu.users.map(function (user) {
+          return `<option value="${user.username}">${user.username}</option>`;
+        }).join('');
+      new Choices(el, {
+        removeItemButton: true,
+        placeholder: true
+      });
+    });
+
+
+  feather.replace({ width: '16px', height: '16px' });  
+
+  usermenu.applymenu = function (btn) {
+    const selectedUsers = Array.from(document.getElementById('organizerMultiple2').selectedOptions)
+      .filter(opt => opt.value)
+      .map(opt => opt.value);
+
+    const selectedMenus = Array.from(document.querySelectorAll('#navbarVerticalNav-menu input[type="checkbox"]:checked'))
+      .map(cb => cb.id);
+
+    fetch('/usermenu', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        users: selectedUsers,
+        menus: selectedMenus
+      })
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === 1) {
+          alert(data.message || 'Menu permissions applied successfully.');
+        } else {
+          alert(data.message || 'Failed to apply menu permissions.');
+        }
+      })
+      .catch(() => {
+        alert('Error occurred while applying menu permissions.');
+      });
+  };
+
+
+</script>

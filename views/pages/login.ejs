@@ -1,0 +1,104 @@
+<div id="login-section" class="" style="margin: 0 auto;">
+  <form method="POST" action="/login">
+    <div class="row flex-center <%= isajax ? false : 'min-vh-100' %> py-5">
+      <div class="col-sm-10 col-md-8 col-lg-5 col-xl-5 col-xxl-3"><a
+          class="d-flex flex-center text-decoration-none mb-4" href="/">
+          <div class="d-flex align-items-center fw-bolder fs-3 d-inline-block"><img src="/assets/img/icons/logo.png"
+              alt="phoenix" width="58" />
+          </div>
+        </a>
+        <div class="text-center mb-3">
+          <h3 class="text-body-highlight"><span class="sen-label">Sign In</span></h3>
+          <p class="text-body-tertiary"><span class="sen-label">Get access to your account</span></p>
+        </div>
+        <!-- <button class="btn btn-phoenix-secondary w-100 mb-3"><span class="fab fa-google text-danger me-2 fs-9"></span>Sign in with google</button>
+            <button class="btn btn-phoenix-secondary w-100"><span class="fab fa-facebook text-primary me-2 fs-9"></span>Sign in with facebook</button>
+            <div class="position-relative">
+              <hr class="bg-body-secondary mt-5 mb-4" />
+              <div class="divider-content-center">or use email</div>
+            </div> -->
+        <div class="mb-3 text-start">
+          <label class="form-label" for="email">Email address</label>
+          <div class="form-icon-container">
+            <input class="form-control form-icon-input" id="username" name="username" type="text"
+              value="<%= model?.user?.username || '' %>" placeholder="name@example.com" /><span
+              class="fas fa-user text-body fs-9 form-icon"></span>
+          </div>
+        </div>
+        <div class="mb-3 text-start">
+          <label class="form-label" for="password">Password</label>
+          <div class="form-icon-container" data-password="data-password">
+            <input class="form-control form-icon-input pe-6" id="password" name="password" type="password"
+              value="<%= model?.user?.password || '' %>" placeholder="Password"
+              data-password-input="data-password-input" /><span class="fas fa-key text-body fs-9 form-icon"></span>
+            <button class="btn px-3 py-0 h-100 position-absolute top-0 end-0 fs-7 text-body-tertiary"
+              data-password-toggle="data-password-toggle" type="button"><span class="uil uil-eye show"></span><span
+                class="uil uil-eye-slash hide"></span></button>
+          </div>
+        </div>
+        <div class="row flex-between-center mb-3">
+          <div class="col-auto d-none">
+            <div class="form-check mb-0">
+              <input class="form-check-input" id="basic-checkbox" type="checkbox" checked="checked" />
+              <label class="form-check-label mb-0" for="basic-checkbox">Remember me</label>
+            </div>
+          </div>
+          <div class="col-auto"><a class="fs-9 fw-semibold" href="/forgotpassword"><span class="sen-label">Forgot
+                Password?</span></a></div>
+        </div>
+        <% if (model.error) { %>
+          <p class="text-danger">
+            <%= model.error %>
+          </p>
+          <% } %>
+            <button class="btn btn-primary w-100 mb-3" type="submit"><span class="sen-label">Sign In</span></button>
+            <div class="text-center"><a class="fs-9 fw-bold" href="/register"><span class="sen-label">Create an
+                  account</span></a></div>
+
+            <div class="mt-3 text-center">
+              <a href="/change-language?language=vi"
+                class="me-2 <%= env?.lang === 'vi' ? 'fw-bold text-primary' : '' %>">Tiếng Việt</a>
+              <a href="/change-language?language=en"
+                class="<%= env?.lang === 'en' ? 'fw-bold text-primary' : '' %>">English</a>
+            </div>
+
+            <!-- <div class="mb-3 text-center">
+            <select class="form-select" id="language" name="language">
+              <option value="vi" <%= model?.language === 'vi' ? 'selected' : '' %>>Tiếng Việt</option>
+              <option value="en" <%= model?.language === 'en' ? 'selected' : '' %>>English</option>
+            </select>
+          </div> -->
+      </div>
+    </div>
+  </form>
+  <script>
+    var loginobject = {};
+    loginobject.container = document.getElementById("login-section");//khu vực chứa form đăng nhập
+    loginobject.model = JSON.parse('<%- JSON.stringify(model) %>');
+    //set focus on username input
+    if (loginobject.model.user && loginobject.model.user.username) {
+      document.getElementById("password").focus();
+    } else {
+      document.getElementById("username").focus();
+    }
+
+    // //hàm chuyển ngôn ngữ các class sen-label
+    // loginobject.initLocaleLabels = function ({container}) {
+    //   //lấy form-label hoặc sen-label trong container lấy cả 2 class này
+    //   var labels = container.querySelectorAll(".form-label, .sen-label");
+    //   for (var i = 0; i < labels.length; i++) {
+    //     var label = labels[i];
+    //     var text = label.innerText;
+    //     var translatedText = senapp.utils.text.t(text);
+    //     label.innerText = translatedText;
+    //   }
+    // };
+
+
+    // //nếu  html render hết thì mới chạy đoạn script này
+    // document.addEventListener("DOMContentLoaded", function () { senapp.utils.text.initLocaleLabels({ container: loginobject.container }); });
+
+
+    //console.log(loginobject.model);
+  </script>
+</div>

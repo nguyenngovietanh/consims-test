@@ -1,0 +1,840 @@
+<div id="contractlineperformreview-section" class="" style="margin: 0 auto;">
+  <form id="contractlineperformreview-form">
+    <div class="card">
+      <div class="card-header">
+        <h4 class="mb-2">
+          <%= title %>
+        </h4>
+        <div class="text-body-tertiary mt-0 fw-bold">[<%= model.data.datas[0].ItemName %>]</div>
+        <div class="text-body-tertiary mt-0 fw-bold">[<%= model.data.datas[0].SubmissionName %>]</div>
+      </div>
+
+      <div class="card-body">
+        <!-- Thông báo tổng -->
+        <div class="message-all callout d-none" role="alert"></div>
+        <div class="row g-3 align-items-center mb-1">
+          <div class="col-md-12">
+            <div class="row mb-2">
+              <div class="col-md-3">
+                <label for="contractlineperformreview-OverallApprovalStatus" field-name="OverallApprovalStatus"
+                  class="control-label">Overall Approval Status:</label>
+                <div id="contractlineperformreview-OverallApprovalStatus" name="OverallApprovalStatus"
+                  class="form-control bg-light sen-display">
+                  <div style="height:20px;"></div>
+                </div>
+                <!-- <input type="text" id="contractlineperformreview-OverallApprovalStatus" name="OverallApprovalStatus"
+                  class="form-control"> -->
+              </div>
+              <div class="col-md-3">
+                <label for="contractlineperformreview-RoleValidation" field-name="RoleValidation"
+                  class="control-label">Role
+                  Validation:</label>
+                <div id="contractlineperformreview-RoleValidation" name="RoleValidation"
+                  class="form-control bg-light sen-display">
+                  <div style="height:20px;"></div>
+                </div>
+                <!-- <input type="text" id="contractlineperformreview-RoleValidation" name="RoleValidation"
+                  class="form-control"> -->
+              </div>
+
+              <div class="col-md-3">
+                <!-- //danh sách role raci -->
+                <label for="contractlineperformreview-Role" field-name="Role" class="control-label">Role:</label>
+                <select id="contractlineperformreview-Role" name="Role" class="form-select">
+                  <option value="">All</option>
+                </select>
+              </div>
+              <div class="col-md-3">
+                <!-- //danh sách status -->
+                <label for="contractlineperformreview-Status" field-name="Status" class="control-label">Status:</label>
+                <select id="contractlineperformreview-Status" name="Status" class="form-select">
+                </select>
+              </div>
+
+
+            </div>
+            <div class="row">
+              <div class="col-md-3">
+                <!-- <label for="contractlineperformreview-Unit" field-name="Unit" class="control-label">Unit:</label>
+                <div id="contractlineperformreview-Unit" name="Unit" class="form-control bg-light sen-display">
+                  <div style="height:20px;"></div>
+                </div> -->
+                <!-- <input type="text" id="contractlineperformreview-Unit" name="Unit" class="form-control"> -->
+              </div>
+              <div class="col-md-3">
+                <!-- <label for="contractlineperformreview-ContractedUnitPrice" field-name="ContractedUnitPrice"
+                  class="control-label">Unit Price:</label>
+                <div id="contractlineperformreview-ContractedUnitPrice" name="ContractedUnitPrice"
+                  class="form-control bg-light sen-display">
+                  <div style="height:20px;"></div>
+                </div> -->
+                <!-- <input type="number" step="any" id="contractlineperformreview-ContractedUnitPrice"
+                  name="ContractedUnitPrice" class="form-control"> -->
+              </div>
+              <div class="col-md-3">
+                <!-- //danh sách role raci -->
+                <label for="contractlineperformreview-MyDutyOnly" field-name="MyDutyOnly" class="control-label">My Duty
+                  Only:</label>
+                <input type="checkbox" id="contractlineperformreview-MyDutyOnly" name="MyDutyOnly"
+                  class="form-check-input">
+              </div>
+              <div class="col-md-3">
+                <!-- //hiển thị danh sách files -->
+                <a href="javascript:void(0)" id="contractlineperformreview-attachment-link"
+                  class="btn btn-subtle-secondary">All Files</a>
+                <!-- <a href="javascript:void(0)" id="contractlineperformreview-ipcview-link"
+                  class="btn btn-subtle-secondary"
+                  onclick="contractlineperformreviewobject.showipcline({ el: this })">IPC</a> -->
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div class="card-body" id="contractlineperformreview-line-section">
+        <div class="table-responsive">
+          <table class="table table-sm fs-9 mb-5">
+            <tbody class="list"> </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <button type="button" class="btn btn-subtle-primary" onclick="contractlineperformreviewobject.save()">Save &
+          Close</button>
+        <button type="button" class="btn btn-subtle-secondary"
+          onclick="contractlineperformreviewobject.form.cancel()">Cancel</button>
+      </div>
+    </div>
+  </form>
+
+  <script>
+    var contractlineperformreviewobject = {};
+    // contractlineperformreviewobject.model = JSON.parse(('<%- JSON.stringify(model) %>').replace(/\r?\n|\r/g, "\\n"));
+    contractlineperformreviewobject.model = <%- JSON.stringify(model) %>;
+    contractlineperformreviewobject.container = document.getElementById("contractlineperformreview-section");//khu vực chứa form nghiệp vụ
+    // console.log(contractlineperformreviewobject.model);
+
+    // Khởi tạo bảng
+    contractlineperformreviewobject.form = new senapp.utils.form({
+      meta: contractlineperformreviewobject.model.metareview,
+      data: contractlineperformreviewobject.model.data.datas[0] || {},
+      urldata: contractlineperformreviewobject.model.url,
+      container: contractlineperformreviewobject.container,
+      mode: (contractlineperformreviewobject.model.url.path == '/senobject/edit') ? 'edit' : 'create',
+    });
+
+    contractlineperformreviewobject.form.onInputChange = async function ({ input, fieldmeta }) {
+      // //console.log(`Input changed: ${fieldmeta}, ${input.value}`);
+      senapp.utils.input2data({ fieldmeta: fieldmeta, data: this.data, input: input });
+
+      switch (fieldmeta.field) {
+        case 'Bigint':
+          if (this.data.Bigint !== 0) {
+            senapp.window.toast({ message: `Bigint must be ${this.data.Bigint}`, type: 'info' });
+            this.data.Numeric = this.data.Bigint;
+            //map các trường nội dung vào input
+            senapp.utils.data2inputs({ meta: this.meta, data: this.data, container: this.container });
+          }
+          break;
+      }
+      // //console.log(this.data);
+    };
+
+    //#region line
+
+    contractlineperformreviewobject.lineobject = { model: {} };
+    contractlineperformreviewobject.lineobject.model.meta = contractlineperformreviewobject.model.metareviewline;
+    contractlineperformreviewobject.lineobject.urldata = {
+      //lists: '/senobjectline/list',
+      // listnews: '/senobjectline/list',
+      // item: '/senobjectline/item',
+      // create: '/senobjectline/create',
+      // edit: '/senobjectline/edit',
+      // delete: '/senobjectline/delete',
+      // update: '/senobjectline/edit',
+      // meta: '/senobjectline/meta'
+    };
+    contractlineperformreviewobject.lineobject.filterRows = [
+      { field: 'Role', operator: 'equals', value: '' },
+      { field: 'ApprovalStatus', operator: 'equals', value: '' },
+      { field: 'MyDuty', operator: 'equals', value: '' },
+    ];
+
+
+    contractlineperformreviewobject.lineobject.tblline = {};
+    contractlineperformreviewobject.lineobject.tbllines = [];
+
+    contractlineperformreviewobject.lineobject.localFilter = function (element) {
+      const searchText = element.value.toLowerCase();
+      const tableobject = this.tblline;
+
+      //tạo bản sao dữ liệu để lọc
+      let data4filter = tableobject.datas.slice();//sao chép mảng để lọc
+      //xóa tbody nếu có
+      const tbody = tableobject.tableelement.querySelector('tbody.row-datas');
+      if (tbody) { tbody.innerHTML = ''; }
+
+      //nếu có từ khóa tìm kiếm thì không làm gì cả
+      //lọc dữ liệu từ contractmemberbycontractobject.model.datas
+      //căn cứ vào filterRows để lọc
+
+      // Tạo điều kiện lọc theo dạng object với function
+      const filterConditions = {};
+
+      this.filterRows.filter(m => ['Role', 'ApprovalStatus', 'MyDuty'].includes(m.field)).forEach(filter => {
+        if (filter.value && filter.value !== '') {
+          const field = filter.field;
+          const value = filter.value.toLowerCase();
+
+          switch (filter.operator) {
+            case 'equals':
+              filterConditions[field] = (v) => {
+                if (v === null || v === undefined) return false;
+                return v.toString().toLowerCase() === value;
+              };
+              break;
+            // Thêm các toán tử khác nếu cần
+          }
+        }
+      });
+      //console.log(filterConditions);
+      data4filter = tableobject.filterData(data4filter, filterConditions);
+
+      // this.filterRows.filter(m=>['Role', 'ApprovalStatus'].includes(m.field)).forEach(filter => {
+      //   if (filter.value && filter.value !== '') {
+      //     const field = filter.field;
+      //     const operator = filter.operator;
+      //     const value = filter.value.toLowerCase();
+      //     switch (operator) {
+      //       case 'equals':
+      //         data4filter = data4filter.filter(item => {
+      //           const itemValue = item[field];
+      //           if (itemValue === null || itemValue === undefined) {
+      //             return false;
+      //           }
+      //           return itemValue.toString().toLowerCase() === value;
+      //         });
+      //         break;
+      //       //thêm các toán tử khác nếu cần
+      //     }
+      //   }
+      // });
+
+      // data4filter = this.filterData(data4filter, { Email: function (value) { return value.toLowerCase().includes(searchText); } });
+      // const tbody = tableobject.tableelement.querySelector('tbody.row-datas');
+      data4filter.forEach(data => {
+        const tr = tableobject.genRowData({ data: data });
+        tbody.appendChild(tr);
+      });
+
+
+      // if (!searchText || searchText.length === 0) {
+      //   //nếu không có từ khóa tìm kiếm thì load lại dữ liệu ban đầu
+      //   const tbody = tableobject.tableelement.querySelector('tbody.row-datas');
+      //   tableobject.datas.forEach(data => {
+      //     const tr = tableobject.genRowData({ data: data });
+      //     tbody.appendChild(tr);
+      //   });
+      //   return;
+      // }
+      // else {
+      //   //nếu có từ khóa tìm kiếm thì không làm gì cả
+      //   //lọc dữ liệu từ contractmemberbycontractobject.model.datas
+      //   //căn cứ vào filterRows để lọc
+
+      //   // Tạo điều kiện lọc theo dạng object với function
+      //   const filterConditions = {};
+
+      //   this.filterRows.filter(m => ['Role', 'ApprovalStatus'].includes(m.field)).forEach(filter => {
+      //     if (filter.value && filter.value !== '') {
+      //       const field = filter.field;
+      //       const value = filter.value.toLowerCase();
+
+      //       switch (filter.operator) {
+      //         case 'equals':
+      //           filterConditions[field] = (v) => {
+      //             if (v === null || v === undefined) return false;
+      //             return v.toString().toLowerCase() === value;
+      //           };
+      //           break;
+      //         // Thêm các toán tử khác nếu cần
+      //       }
+      //     }
+      //   });
+      //   //console.log(filterConditions);
+      //   data4filter = this.filterData(data4filter, filterConditions);
+
+      //   // this.filterRows.filter(m=>['Role', 'ApprovalStatus'].includes(m.field)).forEach(filter => {
+      //   //   if (filter.value && filter.value !== '') {
+      //   //     const field = filter.field;
+      //   //     const operator = filter.operator;
+      //   //     const value = filter.value.toLowerCase();
+      //   //     switch (operator) {
+      //   //       case 'equals':
+      //   //         data4filter = data4filter.filter(item => {
+      //   //           const itemValue = item[field];
+      //   //           if (itemValue === null || itemValue === undefined) {
+      //   //             return false;
+      //   //           }
+      //   //           return itemValue.toString().toLowerCase() === value;
+      //   //         });
+      //   //         break;
+      //   //       //thêm các toán tử khác nếu cần
+      //   //     }
+      //   //   }
+      //   // });
+
+      //   // data4filter = this.filterData(data4filter, { Email: function (value) { return value.toLowerCase().includes(searchText); } });
+      //   const tbody = tableobject.tableelement.querySelector('tbody.row-datas');
+      //   data4filter.forEach(data => {
+      //     const tr = tableobject.genRowData({ data: data });
+      //     tbody.appendChild(tr);
+      //   });
+      // }
+
+
+    }
+
+    contractlineperformreviewobject.lineobject.accept = async function (element) {
+      //hàm chấp thuận dòng
+      //console.log('Accept line');
+    };
+    contractlineperformreviewobject.lineobject.viewfile = async function (element) {
+      //hàm xem file đính kèm của dòng
+      const data = contractlineperformreviewobject.form.data;
+      const id = data[contractlineperformreviewobject.form.keyfield];
+      const assignmentid = element.getAttribute('data-assignmentid') || 0;
+      const url = `${'/common/files?viewname=contractlineperformfiles'}&submissionid=${id}&assignmentid=${assignmentid}&displaymode=by_assignment&worktype=${encodeURIComponent(contractlineperformreviewobject.model.url.query.worktype || '')}`;
+      senapp.window.offcanvas({
+        title: `Files of ${data["SubmissionName"] || ''}`,
+        url: url,
+        size: 'md'
+      });
+
+      // //console.log('View Files');
+    };
+    contractlineperformreviewobject.lineobject.loadLine = async function () {
+      const formobject = contractlineperformreviewobject.form;
+      const masterdata = formobject.data;
+
+      // const urldata = JSON.parse(JSON.stringify(contractlineperformreviewobject.lineobject.urldata));
+      // let datanew =JSON.parse(JSON.stringify(contractlineperformreviewobject.lineobject.model.datanew));
+      // datanew.ParentId = formobject.data[contractlineperformreviewobject.form.keyfield];
+      // urldata.listnews += `?pagesize=0&ParentId=${datanew.ParentId}`;
+
+      let tblline = new senapp.utils.table({
+        // datanew: datanew,
+        meta: contractlineperformreviewobject.lineobject.model.meta,
+        urldata: {
+          update: '/contractlineperform/editline?itemworktype=' + encodeURIComponent(contractlineperformreviewobject.model.url.query.itemworktype || ''),
+        },
+        container: formobject.container.querySelector('#contractlineperformreview-line-section'),//khu vực chứa danh sách
+        filterrow: false,
+        allowsorting: false, //cho phép sắp xếp hay không
+        addrow: false, // cho phép thêm mới
+        editrow: true, // cho phép sửa
+        deleterow: false, // cho phép xóa
+        addnewfirst: false, //thêm mới vào đầu danh sách
+        readonly: false,
+        actionbuttons: { savenews: false }, //hiển thị các nút hành động
+        loadmoreonvisible: true, // tự động tải thêm dữ liệu khi cuộn đến cuối danh sách   
+        metacolumns: [
+          { field: 'SysAction', visible: false, colorder: -9 },
+          { field: 'Ext01', description: 'Decision', colorder: 810, visible: false, show: true, gridwidth: 120 },
+          { field: 'Ext02', description: 'Attachments', colorder: 850, visible: true, show: true, gridwidth: 120 },
+
+        ],
+        customcolumns: ['Ext01', 'Ext02'], // Danh sách các cột tùy chỉnh khi render cell        
+
+      });
+
+      tblline.genCellDataCustom = function ({ data, metacolumn }) {
+        if (!metacolumn || !metacolumn.field) {
+          return null; // Trả về null nếu không có metacolumn hoặc field
+        }
+        // Hàm này sẽ được sử dụng để tạo dữ liệu cho các cột tùy chỉnh
+        const tableobject = this;
+        const td = document.createElement('td');
+        td.setAttribute('data-field', metacolumn.field);
+        //nếu field.visible là false hoặc field.show là false thì không hiển thị cột này  gán class d-none
+        if (!metacolumn.show || !metacolumn.visible) { td.classList.add('d-none'); }
+        switch (metacolumn.field) {
+          case 'Ext01':
+            td.innerHTML = `<a href="javascript:;" onclick="contractlineperformreviewobject.lineobject.accept(this)" title="Accept">Accept</a>`;
+            break;
+          case 'Ext02':
+            td.innerHTML = `<a href="javascript:;" data-assignmentid="${data['AssignmentId'] || 0}" onclick="contractlineperformreviewobject.lineobject.viewfile(this)" title="View Files">View</a>`;
+            break;
+          default:
+            //nếu không phải là cột tùy chỉnh thì trả về giá trị của trường đó
+            td.innerHTML = data[metacolumn.field] || '';
+            break;
+        }
+        return td;
+      }
+
+      //tạm khóa không cần lưu khi thay đổi dòng
+      tblline.synData = async function ({ data, type, mode } = {}) {
+        data.SysDataStatus = 'Update';
+        return { status: 1, message: '', data: {}, errors: {} };
+      };
+
+      //hàm map quyền editable cho cell dùng cho override
+      tblline.mapCellEditableExt = function ({ td, data, metacolumn }) {
+        return data['MyDuty'] === 'Yes';
+      }
+
+      //hàm genCellData để tạo dữ liệu cho bảng
+      tblline.genCellData = function ({ data, metacolumn }) {
+        //nếu metacolumn.field chứa trong customcolumns thì gọi hàm genCellDataCustom
+        if (this.customcolumns && this.customcolumns.includes(metacolumn.field)) {
+          return this.genCellDataCustom({ data, metacolumn });
+        }
+
+        //nếu metacolumn.field là 'SysNo' thì nội dung bằng số dòng trong tbody tr trong bảng
+        if (metacolumn.field === 'SysNo') {
+          return this.genCellDataNo({ data: data, metacolumn: metacolumn });
+        }
+
+        //nếu metacolumn.field là 'SysSelect' thì trả về tdselect
+        if (metacolumn.field === 'SysSelect') {
+          return this.genCellDataSelect({ data: data, metacolumn: metacolumn });
+        }
+
+        //nếu metacolumn.field là 'SysAction' thì trả về tdaction
+        if (metacolumn.field === 'SysAction') {
+          return this.genCellDataAction({ data: data, metacolumn: metacolumn });
+        }
+        if (metacolumn.visible === false) { return null; }
+        const td = document.createElement('td');
+        td.setAttribute('data-field', metacolumn.field);
+        //set tabindex
+        td.setAttribute('tabindex', '0');
+        //nếu field.show là false thì không hiển thị cột này  gán class d-none
+        if (!metacolumn.show) { td.classList.add('d-none'); }
+
+        //nếu trường có tồn tại data thì map giá trị với data 
+        if (metacolumn.data) {
+          const mappedValue = metacolumn.data.find(item => item.id === data[metacolumn.field]);
+          td.textContent = mappedValue ? mappedValue.label : '';
+          //gán quyền chỉnh sửa cho cell
+          this.mapCellEditable({ td: td, data: data, metacolumn: metacolumn });
+          return td;
+        }
+
+        //nếu có inputtype== 'checkbox' 
+        if (metacolumn.inputtype && metacolumn.inputtype === 'checkbox' && (metacolumn.type === 'bool' || metacolumn.type === 'boolean')) {
+          // check của fontawesome  nếu data[metacolumn.field] là true thì checked nếu false thì unchecked
+          // td.innerHTML = `<div class="form-check"> <input style="opacity:1;" class="form-check-input" type="checkbox" disabled ${data[metacolumn.field] ? 'checked' : ''}></div>`;
+          // td.innerHTML = `<div class="form-check form-switch"> <input class="form-check-input" type="checkbox" disabled ${data[metacolumn.field] ? 'checked' : ''}></div>`;
+          // td.innerHTML = `<i class="fa-regular ${data[metacolumn.field] ? 'fa-square-check' : 'fa-square'}"></i>`;
+
+          const checkbox = document.createElement('input');
+          checkbox.type = 'checkbox';
+          checkbox.className = 'form-check-input';
+          checkbox.classList.add('cell-editor');
+          checkbox.value = data[metacolumn.field];
+          checkbox.style.opacity = '1';
+          //nếu data[metacolumn.field]==true thì checkbox chọn
+          if (data[metacolumn.field] == true) { checkbox.checked = true; }
+          //khi thay đổi thì gọi hàm updateData của  tableobject
+          checkbox.onchange = function () {
+            data[metacolumn.field] = this.checked;
+            // phát sự kiện nếu thay đổi
+            td.dispatchEvent(new CustomEvent("cellchange", {
+              bubbles: true,
+              detail: { oldValue: !data[metacolumn.field], newValue: this.checked, cell: td }
+            }));
+            //tableobject.updateByKey(data[tableobject.keyfield]);
+          };
+          td.appendChild(checkbox);
+          //gán quyền chỉnh sửa cho cell
+          this.mapCellEditable({ td: td, data: data, metacolumn: metacolumn });
+          return td;
+        }
+
+        td.innerHTML = senapp.data.stringifyValue(data[metacolumn.field], metacolumn);
+        //gán quyền chỉnh sửa cho cell
+        this.mapCellEditable({ td: td, data: data, metacolumn: metacolumn });
+        return td;
+      };
+
+      tblline.genRowDataExtClass = function ({ tr, data }) {
+        //nếu data.ApprovalStatus == 'Accepted' thì gán class row-accepted
+        if (data.MyDuty !== 'Yes') {
+          tr.classList.add('bg-light');
+        }
+      }
+
+      //hàm genRowData để tạo dữ liệu cho bảng
+      tblline.genRowData = function ({ data }) {
+        const tableobject = this;
+        const tr = document.createElement('tr');
+        //gán giá trị keyfield vào thuộc tính data-id của tr
+        tr.setAttribute('data-id', data[tableobject.keyfield]);
+        tr.className = 'row-data';
+
+        this.metacolumns.forEach(column => {
+          const td = tableobject.genCellData({ data: data, metacolumn: column });
+          // Bắt event trực tiếp ở chính cell
+          if (td) {
+            td.addEventListener("cellchange", async (e) => {
+              // //console.log("Old:", e.detail.oldValue, "New:", e.detail.newValue);
+              if (e.detail.oldValue === e.detail.newValue) return;
+              //nếu giá trị cũ khác giá trị mới thì mới thì đánh dấu dòng thay đổi
+              tr.classList.add('edited');
+              await tableobject.onChangeCell({ td: td, data: data });
+            });
+            //gán class kiểu dữ liệu
+            td.classList.add('type-' + (column.type || 'string').toLowerCase());
+            tr.appendChild(td);
+          }
+
+        });
+
+        tr.addEventListener("focusin", () => {
+          // tr.classList.add("table-active");
+          // //console.log("focus in row", tr.rowIndex);
+        });
+
+        tr.addEventListener("focusout", async (e) => {
+          // e.relatedTarget = phần tử chuẩn bị được focus tiếp theo
+          // nếu phần tử đó vẫn nằm trong cùng tr thì KHÔNG xoá active
+          if (!tr.contains(e.relatedTarget)) {
+            // tr.classList.remove("table-active");
+            await tableobject.onChangeRow({ tr: tr, data: data });
+          }
+        });
+
+        this.genRowDataExtClass({ tr: tr, data: data });
+
+        return tr;
+      }
+
+      //hàm tạo lookupparam để gửi lên server
+      tblline.lookupparam = function ({ lookup, data }) {
+        //console.log('lookupparam:', lookup, data);
+        return `lookupType=contractlineperformreviewstatusupdate&role=${data.Role}&pagesize=${lookup.pagesize || 0}&filter=${encodeURIComponent(JSON.stringify(lookup.filter))}`;
+      }
+
+      tblline.loadDataCurrent = async function ({ datas } = {}) {
+        if (!datas) { datas = this.datas; }
+        const tableobject = this;
+        senapp.window.loading.show(tableobject.tableelement.parentElement);
+        try {
+          //gán dữ liệu cho tableobject.datas
+          tableobject.datas.length = 0; //xóa dữ liệu cũ
+          tableobject.datas.push(...datas);
+          //xóa dữ liệu cũ trên giao diện
+          const tbody = tableobject.tableelement.querySelector('tbody.row-datas');
+          datas.forEach(data => {
+            const tr = tableobject.genRowData({ data: data });
+            tbody.appendChild(tr);
+          });
+          senapp.window.loading.hide(tableobject.tableelement.parentElement);
+        } catch (err) {
+          console.error(err);
+          alert("Error loading data");
+          senapp.window.loading.hide(tableobject.tableelement.parentElement);
+        }
+      };
+
+      await tblline.initTable();
+      // tblline.datas.push(...masterdata.datas);
+      tblline.loadDataCurrent({ datas: masterdata.Data || [] });
+
+
+      //console.log(tblline.datas);
+      contractlineperformreviewobject.lineobject.tblline = tblline;
+      contractlineperformreviewobject.lineobject.tbllines[masterdata[formobject.keyfield]] = tblline;
+    };
+
+    //#endregion line
+
+    //#region form saveBefore
+    contractlineperformreviewobject.form.saveBefore = async function () {
+      const formobject = this;
+      let valid = true;
+      senapp.window.loading.show(this.container); // Hiển thị loading
+      // Gửi dữ liệu đến server để cập nhật data
+      //map dữ liệu từ form vào model
+      senapp.utils.input2datas({ meta: this.meta, data: this.data, container: this.container });
+      const url = new URL(formobject.urldata.path, window.location.origin);
+      url.searchParams.append('mode', 'validate'); //chỉ kiểm tra hợp lệ không thêm mới
+      //gọi api validate
+      const response = await senapp.data.synServer({ url: url, data: this.data, meta: this.meta });
+      senapp.window.loading.hide(); // Ẩn loading
+      if (response.status == 0) {
+        this.mapErrors(response);
+        valid = false;
+      }
+      //kiểm tra dữ liệu bảng con
+      for (const key in contractlineperformreviewobject.lineobject.tbllines) {
+        const tblline = contractlineperformreviewobject.lineobject.tbllines[key];
+        //quét tblline.datanews để validate từng dòng
+        for (let i = 0; i < tblline.datanews.length; i++) {
+          const item = tblline.datanews[i];
+          const response = await tblline.validateServer({ data: item });
+          if (response && response.status == 0) { valid = false; }
+        }
+        //kiểm tra xóa các dòng đã xóa trên giao diện mà là dữ liệu đã lưu trên server
+        //lọc các dòng đã xóa có keyfield>0
+        const deletedRows = tblline.datadeleteds.filter(item => item[tblline.keyfield] > 0);
+        //cho vòng lặp kiểm tra từng dòng đã xóa
+        for (let i = 0; i < deletedRows.length; i++) {
+          const item = deletedRows[i];
+          const response = await tblline.validateServer({ data: item, type: 'delete' });
+          if (response && response.status == 0) { valid = false; }
+        }
+      }
+
+
+      return valid;
+    };
+    //#endregion form saveBefore
+    //#region form saveAfter
+    contractlineperformreviewobject.form.saveAfter = async function (response) {
+      const formobject = this;
+      //lưu dữ liệu bảng con
+      let valid = true;
+      for (const key in contractlineperformreviewobject.lineobject.tbllines) {
+        const tblline = contractlineperformreviewobject.lineobject.tbllines[key];
+        //cập nhật lại ParentId
+        tblline.datanew.ParentId = response.data[formobject.keyfield];
+        for (let i = 0; i < tblline.datanews.length; i++) {
+          const item = tblline.datanews[i];
+          item.ParentId = response.data[formobject.keyfield];
+        }
+
+        //xóa các dòng đã xóa trên giao diện mà là dữ liệu đã lưu trên server
+        await tblline.synDeleteDatas();
+        const resline = await tblline.saveNews();
+        //console.log(resline);
+
+        // if (resline.status == 0) {
+        //   valid = false;
+        //   senapp.window.toast({ message: 'Save line data error', type: 'danger' });
+        // }
+
+      }
+
+
+
+      if (!valid) {
+        return false;
+      }
+      return true;
+    };
+    //#endregion form saveAfter
+
+    //danh sách role raci
+    contractlineperformreviewobject.roles = async function () {
+      const url = `/common/lookup?lookupType=raci_list`;
+      const response = await fetch(url, { method: 'GET', });
+      const resjson = await response.json();
+      if (resjson.datas) {
+        //map trường trước khi return
+        const mappedData = resjson.datas.map(item => ({
+          id: item.Role,
+          value: item.Role,
+          label: item.RoleName
+        }));
+        return mappedData;
+      }
+      return [];
+    };
+
+    //danh sách status
+    contractlineperformreviewobject.statuses = async function () {
+      const url = `/common/lookup?lookupType=contractlineperformreviewstatus`;
+      const response = await fetch(url, { method: 'GET', });
+      const resjson = await response.json();
+      if (resjson.datas) {
+        //map trường trước khi return
+        const mappedData = resjson.datas.map(item => ({
+          id: item.Description,
+          value: item.Description,
+          label: item.Description
+        }));
+        return mappedData;
+      }
+      return [];
+    };
+
+    //danh sách worktype
+    contractlineperformreviewobject.getWorkType = async function () {
+      const url = `/common/lookup?lookupType=workcategory`;
+      const response = await fetch(url, { method: 'GET', });
+      const resjson = await response.json();
+      if (resjson.datas) {
+        //map trường trước khi return
+        const mappedData = resjson.datas.map(item => ({
+          id: item.Alias,
+          value: item.Alias,
+          label: item.Alias
+        }));
+        return mappedData;
+      }
+      return [];
+    };
+
+    // //hàm gán giá trị vào cho thẻ p để hiển thị số liệu
+    // contractlineperformreviewobject.form.mapdata2display = function () {
+    //   //senapp.data.stringifyValue(data[metacolumn.field], metacolumn);
+    //   // Gán giá trị vào thẻ p tương ứng 
+    //   const formobject = this;
+    //   const data = formobject.data;
+    //   const metacolumns = formobject.metacolumns;
+    //   metacolumns.forEach(metacolumn => {
+    //     const pElement = formobject.container.querySelector(`#contractlineperformreview-${metacolumn.field}`);
+    //     if (pElement) {
+    //       // //console.log(metacolumn.field);
+    //       pElement.innerHTML = senapp.data.stringifyValue(data[metacolumn.field], metacolumn) || '<div style="height:20px;"></div>';
+    //     }
+    //   });
+    // };
+
+
+    contractlineperformreviewobject.save = async function () {
+      const formobject = contractlineperformreviewobject.form;
+      // const changedRows = contractlineperformreviewobject.lineobject.tblline.datas.filter(row => row.SysDataStatus === 'Update' || row.SysDataStatus === 'Create' || row.SysDataStatus === 'Delete');
+      const changedRows = contractlineperformreviewobject.lineobject.tblline.datas.filter(row => row.SysDataStatus === 'Update' && row.MyDuty === 'Yes');
+
+      senapp.window.loading.show();
+      const promises = changedRows.map(row =>
+        contractlineperformreviewobject.lineobject.tblline.updateByKey(row[contractlineperformreviewobject.lineobject.tblline.keyfield])
+          //cập nhật trạng thái về null sau khi lưu
+          .then(() => { row.SysDataStatus = null; })
+      );
+      try {
+        await Promise.all(promises);
+        senapp.window.loading.hide();
+        //console.log("Tất cả đã lưu xong!");
+
+        //đóng modal nếu có
+        const modal = formobject.container.closest('.modal');
+        if (modal) {
+          const bootstrapModal = bootstrap.Modal.getInstance(modal);
+          bootstrapModal.hide();
+        }
+        else {
+          //nếu có offcanvas thì đóng offcanvas
+          const offcanvas = formobject.container.closest('.offcanvas');
+          if (offcanvas) {
+            const bootstrapOffcanvas = bootstrap.Offcanvas.getInstance(offcanvas);
+            bootstrapOffcanvas.hide();
+          }
+        }
+        //nếu có callback thì gọi callback
+        if (formobject.urldata.query.callback) {
+          senapp.utils.executefunctionbyname(formobject.urldata.query.callback, window, [response]);
+        }
+      } catch (err) {
+        senapp.window.alert({ message: `⚠️ ${await senapp.utils.text.t('Có lỗi khi lưu:')}`, type: 'danger' });
+        console.error("Có lỗi khi lưu:", err);
+      }
+    };
+
+    contractlineperformreviewobject.showipcline = async function ({ el }) {
+      //hàm này dùng để show IPC line
+      const data = contractlineperformreviewobject.form.data;
+      const paymentid = parseInt(data.SubmissionId) || 0;
+      const url = `/paymentorderipc/ipcline?paymentid=${paymentid}`;
+      senapp.window.modal({ title: `IPC detail`, url, size: 'xl', maximizebutton: true });
+    }
+
+    $(async function () {
+      const metaextra = [
+        { field: 'Role', type: 'string', description: 'Role', data: [] },
+        { field: 'Status', type: 'string', description: 'Status', data: [] },
+        { field: 'MyDutyOnly', type: 'boolean', description: 'My Duty Only', data: [] },
+        //thêm các thiết lập meta nếu cần
+      ];
+      //gán data cho role và status
+      const roleraci = await contractlineperformreviewobject.roles();
+      metaextra.find(item => item.field === 'Role').data = roleraci;
+      const statuses = await contractlineperformreviewobject.statuses();
+      metaextra.find(item => item.field === 'Status').data = statuses;
+
+      const workcategory = await contractlineperformreviewobject.getWorkType();
+      contractlineperformreviewobject.lineobject.model.meta.find(item => item.field === 'WorkCat').data = workcategory;
+      //console.log('WorkCat', workcategory);
+      //console.log('WorkCatmeta', contractlineperformreviewobject.lineobject.model.meta);
+
+      //push mảng metaextra vào mảng form meta 
+      contractlineperformreviewobject.form.meta.push(...metaextra);
+
+      await contractlineperformreviewobject.form.initForm();
+      // contractlineperformreviewobject.form.mapdata2display();
+      await contractlineperformreviewobject.lineobject.loadLine();
+
+      const roleSelect = document.getElementById('contractlineperformreview-Role');
+      const statusSelect = document.getElementById('contractlineperformreview-Status');
+      const checkboxMyDutyOnly = document.getElementById('contractlineperformreview-MyDutyOnly');
+      roleSelect.addEventListener('change', function () {
+        const roleValue = roleSelect.value;
+        //tìm  field 'Role' trong filterRows và cập nhật giá trị
+        const filter = contractlineperformreviewobject.lineobject.filterRows.find(item => item.field === 'Role');
+        if (filter) {
+          filter.value = roleValue;
+        } else {
+          contractlineperformreviewobject.lineobject.filterRows.push({ field: 'Role', operator: 'equals', value: roleValue });
+        }
+        contractlineperformreviewobject.lineobject.localFilter(roleSelect);
+      });
+      statusSelect.addEventListener('change', function () {
+        const statusValue = statusSelect.value == 'All' ? '' : statusSelect.value;
+        const filter = contractlineperformreviewobject.lineobject.filterRows.find(item => item.field === 'ApprovalStatus');
+        if (filter) {
+          filter.value = statusValue;
+        } else {
+          contractlineperformreviewobject.lineobject.filterRows.push({ field: 'ApprovalStatus', operator: 'equals', value: statusValue });
+        }
+        contractlineperformreviewobject.lineobject.localFilter(statusSelect);
+      });
+
+      checkboxMyDutyOnly.addEventListener('change', function () {
+        const isChecked = checkboxMyDutyOnly.checked;
+        const filter = contractlineperformreviewobject.lineobject.filterRows.find(item => item.field === 'MyDuty');
+        if (filter) {
+          filter.value = isChecked ? 'Yes' : '';
+        } else {
+          contractlineperformreviewobject.lineobject.filterRows.push({ field: 'MyDuty', operator: 'equals', value: isChecked ? 'Yes' : '' });
+        }
+        contractlineperformreviewobject.lineobject.localFilter(checkboxMyDutyOnly);
+      });
+
+      const attachmentLink = document.getElementById('contractlineperformreview-attachment-link');
+      attachmentLink.addEventListener('click', function () {
+        const data = contractlineperformreviewobject.form.data;
+        const id = data[contractlineperformreviewobject.form.keyfield];
+        const url = `${'/common/files?viewname=contractlineperformfiles'}&submissionid=${id}&assignmentid=0&displaymode=by_submissions&worktype=${encodeURIComponent(contractlineperformreviewobject.model.url.query.worktype || '')}`;
+        senapp.window.offcanvas({
+          title: `Files of ${data["SubmissionName"] || ''}`,
+          url: url,
+          size: 'md'
+        });
+
+        // senapp.window.openAttachmentWindow({
+        //   parentid: contractlineperformreviewobject.form.data[contractlineperformreviewobject.form.keyfield],
+        //   parenttype: contractlineperformreviewobject.model.metareview.senobject,
+        //   title: 'All Files'
+        // });
+      });
+
+      const ipcviewLink = document.getElementById('contractlineperformreview-ipcview-link');
+      if (contractlineperformreviewobject.model.url.query.worktype !== 'payment_order') { ipcviewLink.style.display = 'none'; }
+
+      // const myDutyOnlyInput = document.getElementById('contractlineperformreview-MyDutyOnly');
+      // myDutyOnlyInput.addEventListener('change', function () {  
+      // });
+
+    });
+
+  </script>
+
+</div>

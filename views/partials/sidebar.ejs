@@ -1,0 +1,296 @@
+<nav class="navbar navbar-vertical navbar-expand-lg consims-sidebar">
+  <div class="consims-sidebar-brand">
+    <a class="consims-brand-link" href="/">
+      <img class="consims-brand-logo" src="<%=senapp.logo? senapp.logo.FilePath : '/assets/img/icons/logo.png' %>" alt="consIMS" />
+      <span class="consims-brand-copy">
+        <strong><%= senapp.appname %></strong>
+        <small>v1.0.0</small>
+      </span>
+    </a>
+  </div>
+  <button class="btn consims-sidebar-collapse navbar-vertical-toggle" type="button" aria-label="Collapse sidebar">
+    <span data-feather="chevron-left"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarVerticalCollapse">
+    <div class="navbar-vertical-content consims-sidebar-content">
+      <div class="consims-nav-section">
+        <div class="consims-nav-heading" data-short="O">
+          <span class="nav-heading-text">Overview</span>
+        </div>
+        <ul class="navbar-nav flex-column consims-nav-list" id="navbarVerticalNav">
+          <li class="nav-item">
+            <a class="nav-link consims-nav-link active" href="/" data-link="/" data-reload="true">
+              <span class="consims-nav-icon" data-icon-key="dashboard"></span>
+              <span class="nav-link-text">Dashboard</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="consims-nav-section">
+        <div class="consims-nav-heading" data-short="M">
+          <span class="nav-heading-text">Menu</span>
+        </div>
+        <ul class="navbar-nav flex-column consims-nav-list" id="navbarVerticalMenu"></ul>
+      </div>
+      <div class="consims-nav-section consims-nav-section-general">
+        <div class="consims-nav-heading" data-short="G">
+          <span class="nav-heading-text">General</span>
+        </div>
+        <ul class="navbar-nav flex-column consims-nav-list">
+          <li class="nav-item">
+            <a class="nav-link consims-nav-link" href="#!" data-static-link="help">
+              <span class="consims-nav-icon" data-icon-key="help"></span>
+              <span class="nav-link-text">Trợ giúp</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link consims-nav-link" href="#!" data-static-link="settings">
+              <span class="consims-nav-icon" data-icon-key="settings"></span>
+              <span class="nav-link-text">Cài đặt</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="consims-sidebar-footer">
+    <a class="consims-logout-link" href="/logout">
+      <span class="consims-logout-icon" data-icon-key="logout"></span>
+      <span>Đăng xuất</span>
+    </a>
+  </div>
+  <script>
+    senapp.sidebar = {};
+    senapp.sidebar.model = JSON.parse('<%- JSON.stringify(model) %>');
+    senapp.sidebar.menu = [];
+    senapp.sidebar.labelMap = {
+      "Contracts": "Contract"
+    };
+    senapp.sidebar.iconKeyMap = {
+      "Contracts": "contract",
+      "Contract": "contract",
+      "Submission Review": "submissionReview",
+      "Payment": "payment"
+    };
+    senapp.sidebar.primaryMenuLinks = ["/contract", "/contractlineperform", "/paymentorder"];
+    senapp.sidebar.icons = {
+      dashboard: {
+        outline: `<svg class="icon-outline" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M9.52941 18.2354C13.6878 18.2354 17.0588 14.8644 17.0588 10.706H9.52941L9.52945 3.17655C5.37106 3.17652 2 6.54758 2 10.706C2 14.8644 5.37103 18.2354 9.52941 18.2354Z" stroke="#1E2B58" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.8235 1.76465V7.33931H18V6.94112C18 4.08223 15.6824 1.76465 12.8235 1.76465Z" stroke="#1E2B58" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+        filled: `<svg class="icon-filled" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M9.52941 18.2354C13.6878 18.2354 17.0588 14.8644 17.0588 10.706H9.52941L9.52945 3.17655C5.37106 3.17652 2 6.54758 2 10.706C2 14.8644 5.37103 18.2354 9.52941 18.2354Z" fill="#1E2B58"/><path d="M12.8235 1.76465V7.33931H18V6.94112C18 4.08223 15.6824 1.76465 12.8235 1.76465Z" fill="#1E2B58"/><path d="M9.52941 18.2354C13.6878 18.2354 17.0588 14.8644 17.0588 10.706H9.52941L9.52945 3.17655C5.37106 3.17652 2 6.54758 2 10.706C2 14.8644 5.37103 18.2354 9.52941 18.2354Z" stroke="#1E2B58" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.8235 1.76465V7.33931H18V6.94112C18 4.08223 15.6824 1.76465 12.8235 1.76465Z" stroke="#1E2B58" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+      },
+      contract: {
+        outline: `<svg class="icon-outline" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M7.96436 17.9644H3.96435C2.85978 17.9644 1.96435 17.069 1.96436 15.9644L1.96443 3.96447C1.96444 2.8599 2.85987 1.96448 3.96443 1.96448H12.9647C14.0692 1.96448 14.9647 2.85991 14.9647 3.96448V7.96448M5.46467 5.96448H11.4647M5.46467 8.96448H11.4647M5.46467 11.9645H8.46467M10.9645 15.207L15.2072 10.9644L18.0356 13.7928L13.7929 18.0354H10.9645V15.207Z" stroke="#1E2B58" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+        filled: `<svg class="icon-filled" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M18.1442 13.8671C18.3382 14.053 18.3382 14.3631 18.1442 14.549L14.1587 18.3687C14.0708 18.453 13.9537 18.5 13.832 18.5H11.5091C11.2483 18.5 11.0369 18.2886 11.0369 18.0278V15.8399C11.0369 15.7111 11.0894 15.588 11.1823 15.4989L15.1874 11.6605C15.3701 11.4854 15.6582 11.4854 15.8409 11.6604L18.1442 13.8671Z" fill="#1E2B58"/><path fill-rule="evenodd" clip-rule="evenodd" d="M13.1106 1.5C14.2763 1.5001 15.2214 2.4058 15.2214 3.52301V9.57823C15.2214 9.83567 15.1163 10.082 14.9305 10.2601L10.4572 14.5472C10.0855 14.9035 9.87529 15.3961 9.87529 15.9109V16.7396C9.87529 17.2612 9.45245 17.6841 8.93084 17.6841H3.61083C2.44541 17.6838 1.5002 16.778 1.5 15.6611L1.50103 3.52301C1.50104 2.40574 2.44609 1.5 3.61186 1.5H13.1106ZM5.18983 11.9894C4.82556 11.9895 4.53021 12.2725 4.53019 12.6216C4.53019 12.9707 4.82555 13.2538 5.18983 13.2538H8.35607C8.72037 13.2538 9.0157 12.9708 9.0157 12.6216C9.01569 12.2725 8.72036 11.9894 8.35607 11.9894H5.18983ZM5.18983 8.95491C4.82556 8.95494 4.53021 9.23799 4.53019 9.5871C4.53019 9.93623 4.82555 10.2193 5.18983 10.2193H11.5223C11.8866 10.2193 12.1819 9.93625 12.1819 9.5871C12.1819 9.23797 11.8866 8.95491 11.5223 8.95491H5.18983ZM5.18983 5.92039C4.82556 5.92043 4.53021 6.20347 4.53019 6.55259C4.53019 6.90171 4.82555 7.18474 5.18983 7.18478H11.5223C11.8866 7.18478 12.1819 6.90173 12.1819 6.55259C12.1819 6.20345 11.8866 5.92039 11.5223 5.92039H5.18983Z" fill="#1E2B58"/><path d="M18.1442 13.8671C18.3382 14.053 18.3382 14.3631 18.1442 14.549L14.1587 18.3687C14.0708 18.453 13.9537 18.5 13.832 18.5H11.5091C11.2483 18.5 11.0369 18.2886 11.0369 18.0278V15.8399C11.0369 15.7111 11.0894 15.588 11.1823 15.4989L15.1874 11.6605C15.3701 11.4854 15.6582 11.4854 15.8409 11.6604L18.1442 13.8671Z" stroke="#1E2B58" stroke-width="0.377778" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+      },
+      submissionReview: {
+        outline: `<svg class="icon-outline" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M8.58313 18H4.58312C3.47855 17.9999 2.58312 17.1045 2.58313 15.9999L2.58321 3.99999C2.58321 2.89542 3.47864 2 4.58321 2H13.5834C14.688 2 15.5834 2.89543 15.5834 4V9.5M11.5834 15.1667L13.4168 17L17.4168 12.9998M6.08344 6H12.0834M6.08344 9H12.0834M6.08344 12H9.08344" stroke="#1E2B58" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+        filled: `<svg class="icon-filled" xmlns="http://www.w3.org/2000/svg" width="20" height="22" viewBox="0 0 20 22" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M13.1104 1.31152C14.3727 1.31163 15.4102 2.2944 15.4102 3.52344V10.7266C15.4102 10.8426 15.3899 10.9567 15.3555 11.0664C15.0767 11.0229 14.791 11 14.5 11C11.4624 11 9 13.4624 9 16.5C9 16.9741 9.06006 17.4342 9.17285 17.873H3.61035C2.34851 17.8725 1.31176 16.8897 1.31152 15.6611L1.3125 3.52344C1.31251 2.29436 2.34986 1.31152 3.6123 1.31152H13.1104ZM5.18945 12.1787C4.92203 12.1789 4.71876 12.3849 4.71875 12.6221C4.71901 12.8591 4.92219 13.0642 5.18945 13.0645H8.35645C8.62372 13.0643 8.82689 12.8591 8.82715 12.6221C8.82714 12.3848 8.62387 12.1789 8.35645 12.1787H5.18945ZM5.18945 9.14355C4.92211 9.14378 4.71887 9.3498 4.71875 9.58691C4.71875 9.82411 4.92201 10.03 5.18945 10.0303H11.5225C11.79 10.0302 11.9932 9.82421 11.9932 9.58691C11.993 9.34969 11.7899 9.14363 11.5225 9.14355H5.18945ZM5.18945 6.10938C4.92203 6.1096 4.71876 6.31554 4.71875 6.55273C4.71883 6.78986 4.92207 6.99587 5.18945 6.99609H11.5225C11.79 6.99602 11.9931 6.78997 11.9932 6.55273C11.9932 6.31543 11.79 6.10945 11.5225 6.10938H5.18945Z" fill="#1E2B58"/><path fill-rule="evenodd" clip-rule="evenodd" d="M14.5 11.75C17.1234 11.75 19.25 13.8766 19.25 16.5C19.25 19.1234 17.1234 21.25 14.5 21.25C11.8766 21.25 9.75 19.1234 9.75 16.5C9.75 13.8766 11.8766 11.75 14.5 11.75ZM17.3623 14.7754C17.1626 14.5757 16.8384 14.5757 16.6387 14.7754L13.7275 17.6865L12.5889 16.5479C12.3892 16.3484 12.0659 16.3484 11.8662 16.5479C11.6665 16.7476 11.6665 17.0718 11.8662 17.2715L13.3662 18.7715C13.4621 18.867 13.5922 18.9209 13.7275 18.9209C13.8629 18.9208 13.9931 18.8671 14.0889 18.7715L17.3623 15.498C17.5614 15.2985 17.5613 14.975 17.3623 14.7754Z" fill="#1E2B58"/></svg>`
+      },
+      payment: {
+        outline: `<svg class="icon-outline" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M6.5 6.5H13.5M6.5 10.5H13.5M4.8 2.5H15.2C15.918 2.5 16.5 3.17157 16.5 4V17.5L14.3333 16L12.1667 17.5L10 16L7.83333 17.5L5.66667 16L3.5 17.5V4C3.5 3.17157 4.08203 2.5 4.8 2.5Z" stroke="#1E2B58" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+        filled: `<svg class="icon-filled" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M15.2 2.5H4.8C4.08203 2.5 3.5 3.17157 3.5 4V17.5L5.66667 16L7.83333 17.5L10 16L12.1667 17.5L14.3333 16L16.5 17.5V4C16.5 3.17157 15.918 2.5 15.2 2.5Z" fill="#1E2B58"/><path d="M6.5 6.5H10H13.5M6.5 10.5H13.5M4.8 2.5H15.2C15.918 2.5 16.5 3.17157 16.5 4V17.5L14.3333 16L12.1667 17.5L10 16L7.83333 17.5L5.66667 16L3.5 17.5V4C3.5 3.17157 4.08203 2.5 4.8 2.5Z" stroke="#1E2B58" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/><line x1="7" y1="6.5" x2="13" y2="6.5" stroke="#999A9F" stroke-linecap="round"/><line x1="7" y1="10.5" x2="13" y2="10.5" stroke="#999A9F" stroke-linecap="round"/></svg>`
+      },
+      help: {
+        outline: `<svg class="icon-outline" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="1.66669" y="1.66663" width="16.6667" height="16.6667" rx="8.33333" stroke="#1E2B58" stroke-width="1.25"/><path d="M10.4167 14.1666L10.4167 9.16663" stroke="#1E2B58" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/><path d="M8.75002 9.16663L10.4167 9.16663" stroke="#1E2B58" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/><path d="M10.4167 6.66659L10.4167 5.83325" stroke="#1E2B58" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+        filled: `<svg class="icon-filled" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M9.99969 1.04163C14.9471 1.04163 18.9585 5.05223 18.9587 9.99963C18.9587 14.9472 14.9472 18.9586 9.99969 18.9586C5.05229 18.9584 1.04169 14.9471 1.04169 9.99963C1.04186 5.05234 5.0524 1.0418 9.99969 1.04163ZM8.74969 8.54163C8.40467 8.5418 8.12469 8.82156 8.12469 9.16663C8.12472 9.51168 8.40468 9.79145 8.74969 9.79163H9.79169V14.1666C9.79171 14.5118 10.0715 14.7916 10.4167 14.7916C10.7618 14.7916 11.0417 14.5118 11.0417 14.1666V9.16663C11.0417 8.82145 10.7619 8.54164 10.4167 8.54163H8.74969ZM10.4167 5.20862C10.0715 5.20862 9.79169 5.48844 9.79169 5.83362V6.66663C9.79188 7.01164 10.0716 7.29163 10.4167 7.29163C10.7617 7.29161 11.0415 7.01163 11.0417 6.66663V5.83362C11.0417 5.48845 10.7619 5.20863 10.4167 5.20862Z" fill="#1E2B58"/></svg>`
+      },
+      settings: {
+        outline: `<svg class="icon-outline" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="2.5" stroke="#1E2B58" stroke-width="1.25"/><path d="M10 1.66663C10.76 1.66663 11.5 1.76163 12.206 1.94063C12.782 2.08663 13.079 2.58363 13.175 2.99763C13.288 3.48763 13.595 3.92863 14.062 4.19863C14.491 4.44563 14.976 4.50263 15.426 4.39663C15.839 4.29963 16.414 4.34663 16.8 4.79563C17.519 5.63463 18.086 6.60863 18.458 7.67563C18.679 8.30963 18.337 8.88063 17.974 9.17963C17.556 9.52463 17.292 10.0436 17.292 10.625C17.292 11.2066 17.556 11.7246 17.974 12.0696C18.337 12.3686 18.679 12.9396 18.458 13.5736C18.086 14.6406 17.519 15.6146 16.8 16.4536C16.414 16.9026 15.839 16.9496 15.426 16.8526C14.977 16.7466 14.492 16.8046 14.062 17.0526C13.595 17.3226 13.288 17.7636 13.175 18.2536C13.079 18.6666 12.782 19.1636 12.207 19.3096C11.501 19.4886 10.761 19.5836 10 19.5836C9.238 19.5836 8.498 19.4876 7.791 19.3076C7.216 19.1616 6.919 18.6656 6.823 18.2526C6.71 17.7626 6.405 17.3216 5.938 17.0516C5.508 16.8036 5.023 16.7466 4.574 16.8526C4.161 16.9496 3.585 16.9026 3.2 16.4536C2.48 15.6146 1.914 14.6406 1.542 13.5736C1.321 12.9396 1.663 12.3686 2.026 12.0696C2.444 11.7246 2.708 11.2066 2.708 10.625C2.708 10.0436 2.444 9.52463 2.026 9.17963C1.663 8.88063 1.321 8.30963 1.542 7.67563C1.914 6.60963 2.48 5.63563 3.199 4.79663C3.585 4.34663 4.161 4.30063 4.573 4.39763C5.023 4.50363 5.508 4.44563 5.938 4.19763C6.405 3.92763 6.71 3.48763 6.823 2.99763C6.919 2.58363 7.216 2.08663 7.791 1.94063C8.498 1.76163 9.238 1.66663 10 1.66663Z" stroke="#1E2B58" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+        filled: `<svg class="icon-filled" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10.0002 1.04199C10.7606 1.04204 11.4999 1.13746 12.2062 1.31641C12.7817 1.46232 13.0795 1.95927 13.175 2.37305C13.2882 2.86303 13.5951 3.30422 14.0627 3.57422C14.4914 3.82152 14.9768 3.87858 15.426 3.77246C15.8132 3.68108 16.3426 3.71713 16.7248 4.0918L16.8 4.1709L17.0627 4.49219C17.6582 5.25488 18.133 6.11707 18.4582 7.0498C18.6791 7.68389 18.337 8.25589 17.9748 8.55469C17.5569 8.89944 17.2923 9.41835 17.2922 10C17.2923 10.5812 17.5567 11.0996 17.9748 11.4443C18.3371 11.7431 18.6789 12.3144 18.4582 12.9482C18.0864 14.0148 17.5197 14.9893 16.8 15.8281C16.4147 16.277 15.8387 16.3236 15.426 16.2266C14.9772 16.121 14.4919 16.1791 14.0627 16.4268C13.5951 16.6969 13.2882 17.1374 13.175 17.627C13.0793 18.0405 12.7821 18.5375 12.2072 18.6836C11.501 18.8628 10.7612 18.9589 10.0002 18.959C9.23826 18.959 8.49781 18.8623 7.79121 18.6826C7.21674 18.5365 6.91914 18.0406 6.82343 17.627C6.71039 17.1373 6.40482 16.6966 5.93769 16.4268C5.50817 16.1788 5.02229 16.1217 4.57343 16.2275C4.16062 16.3248 3.58477 16.2772 3.19941 15.8281C2.47988 14.989 1.91361 14.0146 1.54218 12.9482C1.3215 12.3144 1.66318 11.7432 2.02558 11.4443C2.44373 11.0996 2.70906 10.5811 2.70917 10C2.70908 9.41849 2.44348 8.89949 2.02558 8.55469C1.6633 8.25584 1.32145 7.68382 1.54218 7.0498C1.91347 5.98434 2.47942 5.01061 3.19843 4.17188L3.27265 4.0918C3.65516 3.71643 4.18616 3.68189 4.57343 3.77344C5.02247 3.87947 5.50836 3.82195 5.93769 3.57422C6.40464 3.30454 6.71024 2.86385 6.82343 2.37402C6.9189 1.96019 7.21622 1.46344 7.79121 1.31738C8.49809 1.13792 9.23862 1.04203 10.0002 1.04199ZM10.0002 6.97949C8.33183 6.97949 6.97968 8.33164 6.97968 10C6.97968 11.6684 8.33183 13.0205 10.0002 13.0205C11.6685 13.0204 13.0207 11.6683 13.0207 10C13.0207 8.3317 11.6685 6.97959 10.0002 6.97949Z" fill="#1E2B58"/></svg>`
+      },
+      logout: {
+        outline: `<svg class="icon-outline" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M13.3333 13.3333V15C13.3333 16.8409 11.8409 18.3333 9.99998 18.3333H5.83331C3.99236 18.3333 2.49998 16.8409 2.49998 15V4.99996C2.49998 3.15901 3.99236 1.66663 5.83331 1.66663H9.99998C11.8409 1.66663 13.3333 3.15901 13.3333 4.99996V6.66663" stroke="#1E2B58" stroke-width="1.25" stroke-linecap="round"/><path d="M15.8333 12.5L17.7441 10.5893C18.0695 10.2638 18.0695 9.73618 17.7441 9.41074L15.8333 7.5" stroke="#1E2B58" stroke-width="1.25" stroke-linecap="round"/><path d="M17.5 10L7.5 10" stroke="#1E2B58" stroke-width="1.25" stroke-linecap="round"/></svg>`
+      }
+    };
+    senapp.sidebar.getIconHtmlByKey = function (iconKey) {
+      const icon = senapp.sidebar.icons[iconKey] || senapp.sidebar.icons.contract;
+      return `${icon.outline || ""}${icon.filled || ""}`;
+    };
+    senapp.sidebar.getIconHtml = function (item) {
+      return senapp.sidebar.getIconHtmlByKey(senapp.sidebar.iconKeyMap[item.menuname] || "contract");
+    };
+    senapp.sidebar.hydrateStaticIcons = function () {
+      document.querySelectorAll(".consims-sidebar [data-icon-key]").forEach(function (el) {
+        el.innerHTML = senapp.sidebar.getIconHtmlByKey(el.getAttribute("data-icon-key"));
+      });
+    };
+    senapp.sidebar.renderMenuItem = function (item, containerSelector) {
+      const menuName = senapp.sidebar.labelMap[item.menuname] || item.menuname;
+      const reload = item.reload === true ? "true" : "false";
+      const navItem = `<li class="nav-item">
+        <a class="nav-link consims-nav-link" href="${item.link}" data-link="${item.link}" data-reload="${reload}">
+          <span class="consims-nav-icon">${senapp.sidebar.getIconHtml(item)}</span>
+          <span class="nav-link-text">${menuName}</span>
+        </a>
+      </li>`;
+      $(containerSelector).append(navItem);
+    };
+    senapp.sidebar.hydrateStaticIcons();
+    (senapp.menu || []).forEach(function (item) {
+      if (!item || !item.link) return;
+      if (item.link === "/") return;
+      senapp.sidebar.menu.push(item);
+      const isPrimary = senapp.sidebar.primaryMenuLinks.some(function (link) {
+        return item.link.indexOf(link) === 0;
+      });
+      if (isPrimary) {
+        senapp.sidebar.renderMenuItem(item, "#navbarVerticalMenu");
+      }
+    });
+    senapp.sidebar.menu.forEach(function (item) {
+      const isPrimary = senapp.sidebar.primaryMenuLinks.some(function (link) {
+        return item.link.indexOf(link) === 0;
+      });
+      if (!isPrimary) {
+        senapp.sidebar.renderMenuItem(item, "#navbarVerticalMenu");
+      }
+    });
+    senapp.sidebar.menuclickbydatalink = function (datalink) {
+      const linkElement = $(".consims-sidebar a[data-link='" + datalink + "']");
+      if (linkElement.length > 0) {
+        const event = $.Event("click");
+        linkElement.trigger(event);
+      } else {
+        console.warn("No link found with data-link:", datalink);
+      }
+    };
+    senapp.sidebar.setActiveLink = function (href) {
+      href = href || "/";
+      $(".consims-sidebar a.nav-link").removeClass("active");
+      const exactLink = $(".consims-sidebar a[data-link='" + href + "']");
+      if (exactLink.length > 0) {
+        exactLink.first().addClass("active");
+        return;
+      }
+      $(".consims-sidebar a[data-link]").each(function () {
+        const link = $(this).data("link");
+        if (link && link !== "/" && href.indexOf(link) === 0) {
+          $(this).addClass("active");
+          return false;
+        }
+      });
+      if (href === "/" && $(".consims-sidebar a.nav-link.active").length === 0) {
+        $(".consims-sidebar a[data-link='/']").first().addClass("active");
+      }
+    };
+    senapp.sidebar.pageLoadTimer = null;
+    senapp.sidebar.setPageLoading = function (isLoading) {
+      const content = document.getElementById("maincontent");
+      if (!content) return;
+      content.classList.toggle("is-page-loading", isLoading);
+    };
+    senapp.sidebar.menuclick = function (event) {
+      if ($(this).data("reload") !== true) {
+        event.preventDefault();
+        const href = $(this).attr("href");
+        if (!href) return;
+
+        window.clearTimeout(senapp.sidebar.pageLoadTimer);
+        senapp.sidebar.setActiveLink($(this).data("link") || href);
+        senapp.sidebar.setPageLoading(true);
+
+        senapp.sidebar.pageLoadTimer = window.setTimeout(function () {
+          $("#maincontent").load(href, function (_response, status) {
+            if (status === "error") {
+              senapp.sidebar.setPageLoading(false);
+              window.location.href = href;
+              return;
+            }
+
+            window.requestAnimationFrame(function () {
+              window.setTimeout(function () {
+                senapp.sidebar.setPageLoading(false);
+              }, 80);
+            });
+
+          const ham = document.querySelector('button.navbar-toggler-humburger-icon');
+          if (ham && ham.getAttribute("aria-expanded") === "true") {
+            ham.click();
+          }
+          });
+        }, 120);
+      }
+    };
+    $(".consims-sidebar").on("click", "a.nav-link[data-link]", senapp.sidebar.menuclick);
+    $(".consims-sidebar").on("click", "a.nav-link[data-static-link]", function (event) {
+      event.preventDefault();
+      $(".consims-sidebar a.nav-link").removeClass("active");
+      $(this).addClass("active");
+    });
+    senapp.sidebar.setActiveLink(window.location.pathname);
+
+    (function() {
+  const NAVBAR_MAP = {
+    'dashboard': { title: 'Contract Dashboard', desc: 'Real-time overview of project performance and health' },
+    'contract': { title: 'Contract List', desc: 'Manage information and status of contracts in the system' },
+    'submissionReview': { title: 'Submission Review', desc: 'Review and evaluate submission forms from contractors' },
+    'payment': { title: 'Payment', desc: 'Manage payment periods and cumulative payment records' },
+    'help': { title: 'Help Center', desc: 'Guidance on using the consIMS system and answering questions' },
+    'settings': { title: 'Settings', desc: 'Configure system parameters and customize your account' }
+  };
+
+  function updateNavbarText(key) {
+    const config = NAVBAR_MAP[key];
+    if (!config) return;
+
+    const titleEl = document.getElementById('navbar-title');
+    const descEl = document.getElementById('navbar-description');
+
+    if (titleEl) titleEl.textContent = config.title;
+    if (descEl) descEl.textContent = config.desc;
+  }
+
+  // Lắng nghe sự kiện click bằng cơ chế Event Delegation (bắt từ document)
+  document.addEventListener('click', function(event) {
+    const target = event.target;
+    const sidebarLink = target.closest('.consims-sidebar a.nav-link');
+    
+    if (sidebarLink) {
+      // 1. Kiểm tra menu tĩnh trước
+      const staticLink = sidebarLink.getAttribute('data-static-link');
+      if (staticLink && NAVBAR_MAP[staticLink]) {
+        updateNavbarText(staticLink);
+        return;
+      }
+
+      // 2. Lấy tên hiển thị (text) bên trong menu để nhận diện chính xác tuyệt đối, tránh nhận nhầm URL lồng nhau
+      const linkText = (sidebarLink.querySelector('.nav-link-text')?.textContent || '').trim().toLowerCase();
+      const linkPath = (sidebarLink.getAttribute('data-link') || sidebarLink.getAttribute('href') || '').toLowerCase();
+      
+      // Ưu tiên nhận diện bằng Text hiển thị của Menu trước để chính xác 100%
+      if (linkText.includes('submission') || linkText.includes('review')) {
+        updateNavbarText('submissionReview');
+      } else if (linkText.includes('payment')) {
+        updateNavbarText('payment');
+      } else if (linkText.includes('contract')) {
+        updateNavbarText('contract');
+      } else if (linkText.includes('dashboard')) {
+        updateNavbarText('dashboard');
+      } 
+      // Phương án dự phòng (Fallback) quét theo URL giống cũ nếu text không khớp
+      else if (linkPath) {
+        if (linkPath === '/' || linkPath.includes('dashboard')) {
+          updateNavbarText('dashboard');
+        } else if (linkPath.includes('submission') || linkPath.includes('review')) {
+          updateNavbarText('submissionReview');
+        } else if (linkPath.includes('payment') || linkPath.includes('order')) {
+          updateNavbarText('payment');
+        } else if (linkPath.includes('contract')) {
+          updateNavbarText('contract');
+        }
+      }
+    }
+  }, true); // Giữ nguyên capture: true để chạy thâu tóm sự kiện trước
+
+  // Đồng thời xử lý trường hợp F5 (tải lại trang đầu tiên)
+  // Đợi menu động render xong hoàn toàn mới check active link hiện tại
+  setTimeout(() => {
+    const activeText = ($('.consims-sidebar a.nav-link.active .nav-link-text').text() || '').trim().toLowerCase();
+    if (activeText.includes('submission') || activeText.includes('review')) {
+      updateNavbarText('submissionReview');
+    }
+  }, 300);
+})();
+
+  </script>
+</nav>

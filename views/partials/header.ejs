@@ -1,0 +1,103 @@
+<nav class="navbar navbar-top fixed-top navbar-expand consims-topbar" id="navbarDefault">
+  <div class="collapse navbar-collapse justify-content-between">
+    <div class="consims-topbar-left">
+      <button class="btn navbar-toggler navbar-toggler-humburger-icon hover-bg-transparent consims-mobile-toggle"
+        type="button" data-bs-toggle="collapse" data-bs-target="#navbarVerticalCollapse"
+        aria-controls="navbarVerticalCollapse" aria-expanded="false" aria-label="Toggle Navigation">
+        <span class="navbar-toggle-icon"><span class="toggle-line"></span></span>
+      </button>
+      <div class="consims-page-title">
+        <h1 id="navbar-title">
+          <% if (!title || title === 'Home page' || title === 'Home') { %>
+            Contract Dashboard
+          <% } else { %>
+            <%= title %>
+          <% } %>
+        </h1>
+        <p id="navbar-description">Real-time overview of project performance and health</p>
+      </div>
+    </div>
+    <ul class="navbar-nav navbar-nav-icons flex-row consims-topbar-actions">
+      <li class="nav-item consims-topbar-search-item">
+        <form class="consims-topbar-search" role="search">
+          <span data-feather="search"></span>
+          <input type="search" placeholder="Search..." aria-label="Search" />
+        </form>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link consims-icon-button consims-notification-button" href="#" role="button"
+          data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-bs-auto-close="outside">
+          <span data-feather="bell"></span>
+          <span class="consims-notification-dot"></span>
+        </a>
+        <div class="dropdown-menu dropdown-menu-end notification-dropdown-menu py-0 shadow border navbar-dropdown-caret"
+          id="navbarDropdownNotfication" aria-labelledby="navbarDropdownNotfication">
+          <div class="card position-relative border-0">
+            <div class="card-header p-3">
+              <div class="d-flex justify-content-between align-items-center">
+                <h5 class="text-body-emphasis mb-0">Notifications</h5>
+                <button class="btn btn-link p-0 fs-9 fw-normal" type="button">Mark all as read</button>
+              </div>
+            </div>
+            <div class="card-body p-0">
+              <div class="px-3 py-3 notification-card position-relative read border-top">
+                <p class="fs-9 text-body-highlight mb-1 fw-semibold">No new workflow notifications</p>
+                <p class="text-body-secondary fs-10 mb-0">Contract, submission, and payment updates will appear here.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="lh-1 pe-0 consims-avatar-link" id="navbarDropdownUser" href="#!" role="button"
+          data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">
+          <div class="avatar avatar-l">
+            <img class="rounded-circle" src="/assets/img/team/ava.png" alt="" />
+          </div>
+        </a>
+        <div class="dropdown-menu dropdown-menu-end navbar-dropdown-caret py-0 dropdown-profile shadow border"
+          aria-labelledby="navbarDropdownUser">
+          <div class="card position-relative border-0">
+            <div class="card-body p-0">
+              <div class="text-center pt-4 pb-3">
+                <div class="avatar avatar-xl">
+                  <img class="rounded-circle" src="/assets/img/team/ava.png" alt="" />
+                </div>
+                <h6 class="mt-2 text-body-emphasis">
+                  <%= senapp.user.username %>
+                </h6>
+              </div>
+            </div>
+            <div>
+              <ul class="nav d-flex flex-column mb-2 pb-1">
+                <li class="nav-item">
+                  <a class="nav-link px-3 d-block" href="/profile" 
+                    data-static-link="profile"
+                    data-navbar-title="User Profile" 
+                    data-navbar-desc="View and update your personal information, security, and account preferences">
+                    <span class="me-2 text-body align-bottom" data-feather="user"></span>
+                    <span class="sen-label">Profile</span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link px-3 d-block flex" href="/resetpassword">
+                    <span class="me-2 text-body align-bottom" data-feather="lock"></span>
+                    <span class="sen-label">Reset Password</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+            <div class="card-footer p-0 border-top border-translucent">
+              <div class="px-3 my-3">
+                <a class="btn btn-phoenix-secondary d-flex flex-center w-100" href="/logout">
+                  <span class="me-2" data-feather="log-out"></span>
+                  <span class="sen-label">Sign out</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>
+</nav>

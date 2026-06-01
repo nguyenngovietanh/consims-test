@@ -1,0 +1,105 @@
+<div id="paymentorderipcupdate-section" class="" style="margin: 0 auto;">
+  <form id="paymentorderipcupdate-form">
+    <div class="card">
+      <div class="card-header">
+        <h4 class="mb-0">
+          Create IPC from Draft
+        </h4>
+      </div>
+      <div class="card-body">
+        <!-- Thông báo tổng -->
+        <div class="message-all callout d-none" role="alert"></div>
+        <div class="row g-3 align-items-center mb-1">
+          <div class="col-md-12">
+            <label for="paymentorderipcupdate-POName" field-name="POName" class="control-label">Description:</label>
+            <input type="text" id="paymentorderipcupdate-POName" name="POName" class="form-control">
+          </div>
+        </div>
+
+        <div class="row g-3 align-items-center mb-1">
+          <div class="col-md-12">
+            <label for="paymentorderipcupdate-PaymentDate" field-name="PaymentDate" class="control-label">Payment
+              Date:</label>
+            <input type="date" id="paymentorderipcupdate-PaymentDate" name="PaymentDate" class="form-control">
+          </div>
+          <!-- <div class="col-md-9">
+          </div> -->
+        </div>
+        <div class="row g-3 align-items-center mb-1">
+          <div class="col-md-12">
+            <label for="paymentorderipcupdate-PORemarks" field-name="PORemarks" class="control-label">Remarks:</label>
+            <textarea id="paymentorderipcupdate-PORemarks" name="PORemarks" class="form-control" rows="4"></textarea>
+          </div>
+        </div>
+
+
+
+      </div>
+      <div class="card-footer">
+        <button type="submit" class="btn btn-subtle-primary"><span class="sen-label">Save & Close</span></button>
+        <button type="button" class="btn btn-subtle-secondary" onclick="paymentorderipcupdateobject.form.cancel()"><span
+            class="sen-label">Cancel</span></button>
+      </div>
+    </div>
+  </form>
+
+  <script>
+    var paymentorderipcupdateobject = {};
+    // paymentorderipcupdateobject.model = <%- JSON.stringify(model) %>;// dùng cách này là ok nhất không bị các trường hợp rớt dòng nhưng bị cảnh báo
+    paymentorderipcupdateobject.model = JSON.parse(('<%- JSON.stringify(model) %>').replace(/\r?\n|\r/g, "\\n"));//xử lí xuống dòng trong chuỗi json
+    paymentorderipcupdateobject.container = document.getElementById("paymentorderipcupdate-section");//khu vực chứa form nghiệp vụ
+
+    // Khởi tạo bảng
+    paymentorderipcupdateobject.form = new senapp.utils.form({
+      meta: paymentorderipcupdateobject.model.meta,
+      data: paymentorderipcupdateobject.model.data,
+      urldata: paymentorderipcupdateobject.model.url,
+      container: paymentorderipcupdateobject.container,
+      mode: (paymentorderipcupdateobject.model.url.path == '/paymentorderipc/edit') ? 'edit' : 'create',
+    });
+
+    // paymentorderipcupdateobject.form.onInputChange = async function ({ input, fieldmeta }) {
+    //   // console.log(`Input changed: ${fieldmeta}, ${input.value}`);
+    //   senapp.utils.input2data({ fieldmeta: fieldmeta, data: this.data, input: input });
+    //   switch (fieldmeta.field) {
+    //     case 'Bigint':
+    //       if (this.data.Bigint !== 0) {
+    //         senapp.window.toast({ message: `Bigint must be ${this.data.Bigint}`, type: 'info' });
+    //         this.data.Numeric = this.data.Bigint;
+    //         // this.refreshCellDisplayByData({ data: this.data, fields: ['Numeric'] });
+    //         //map các trường nội dung vào input
+    //         // console.log('1',this.data);
+    //         senapp.utils.data2inputs({ meta: this.meta, data: this.data, container: this.container });
+    //         // console.log('2',this.data);
+    //       }
+    //       break;
+    //   }
+    //   // console.log(this.data);
+
+
+    //   // //trường hợp input là select có nhiều lựa chọn
+    //   // if (input.tagName.toLowerCase() === 'select' && input.multiple) {
+    //   //   //nếu là select nhiều lựa chọn thì lấy tất cả các lựa chọn đã chọn
+    //   //   const selectedOptions = Array.from(input.selectedOptions);
+    //   //   this.data[field] = selectedOptions.map(option => option.value);
+    //   // } else {
+    //   //   this.data[field] = input.value;
+    //   // }
+
+    //   //console.log(`Input changed: ${field}, ${input.value}`);
+
+    // };
+
+    paymentorderipcupdateobject.form.saveBefore = async function () {
+      this.data.ContractId = parseInt(paymentorderipcupdateobject.model.url.query.contractid) || 0;//thêm ContractId vào data để gửi lên server
+      return true;
+    };
+    $(function () {
+
+      paymentorderipcupdateobject.form.initForm();
+    });
+
+  </script>
+
+
+</div>

@@ -1,0 +1,537 @@
+<div id="paymentorderipcprintcumulative-section" class="" style="margin: 0 auto;">
+  <form id="paymentorderipcprintcumulative-form">
+    <div class="card">
+      <div class="card-header">
+        <h4 class="mb-0">
+          <a class="me-3" href="javascript:;" onclick="paymentorderipcprintcumulativeobject.print()"
+            title="Print IPC"><i class="fas fa-print text-muted"></i></a>
+          IPC Print
+        </h4>
+      </div>
+      <div class="card-body">
+        <!-- Thông báo tổng -->
+        <div class="message-all callout d-none" role="alert"></div>
+        <div id="paymentorderipcprintcumulative-section-print">
+          <div class="container pt-4">
+            <style>
+              /* CSS custom tối thiểu (ưu tiên Bootstrap) */
+              /* .sheet {
+                background: #fff;
+                border: 2px solid #000;
+                max-width: 860px;
+              } */
+
+              .sheet {
+                background: #fff;
+                border: 2px solid #000;
+                max-width: 760px;
+                /* an toàn khi in */
+                margin: 0 auto;
+              }
+
+              .approved-badge {
+                background: #d40000;
+                color: #fff;
+                font-weight: 700;
+              }
+
+              .logo-badge {
+                width: 28px;
+                height: 28px;
+                border: 2px solid #1f4e79;
+                border-radius: 50%;
+                position: relative;
+                box-sizing: border-box;
+                flex: 0 0 auto;
+              }
+
+              .logo-badge:before {
+                content: "";
+                position: absolute;
+                inset: 6px;
+                border: 2px solid #c00000;
+                border-left-color: transparent;
+                border-bottom-color: transparent;
+                border-radius: 50%;
+                transform: rotate(45deg);
+              }
+
+              /* giống “phiếu” hơn (tùy chọn) */
+              .table td,
+              .table th {
+                vertical-align: top;
+              }
+
+              /* Toggle row styles */
+              .toggle-row {
+                cursor: pointer;
+                user-select: none;
+              }
+
+              .toggle-row:hover td {
+                background-color: #f8f9fa;
+              }
+
+              .toggle-icon {
+                display: inline-block;
+                margin-right: 6px;
+                font-style: normal;
+                transition: transform .2s ease;
+                font-size: 10px;
+              }
+
+              .toggle-row.collapsed .toggle-icon {
+                transform: rotate(-90deg);
+              }
+            </style>
+
+            <div class="sheet mx-auto shadow-sm">
+
+              <!-- HEADER (grid bootstrap + border) -->
+              <div class="row g-0 border-bottom border-dark">
+                <!-- Logo -->
+                <div class="col-4 border-end border-dark p-2">
+                  <div class="d-flex align-items-center gap-2">
+                    <!-- <span class="logo-badge" aria-hidden="true"></span>
+                  <div class="fw-bold">LOGO</div> -->
+                    <img src="<%=senapp.logo? senapp.logo.FilePath : '/assets/img/icons/logo.png' %>" alt="phoenix"
+                      width="125" />
+                  </div>
+                </div>
+
+                <!-- Meta -->
+                <div class="col-8 border-end border-dark">
+                  <div class="p-2 border-bottom border-dark small">
+                    <div class="row g-0">
+                      <div class="col-3 fw-bold" style="text-align:left;">Hợp đồng:</div>
+                      <div class="col-9 fw-bold" style="text-align:left;">
+                        <div class="sen-display" name="ContractName"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="p-2 border-bottom border-dark small">
+                    <div class="row g-0">
+                      <div class="col-3 fw-bold" style="text-align:left;">Ngày nhận:</div>
+                      <div class="col-9" style="text-align:left;">
+                        <div class="sen-display" name="PaymentDate"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="p-2 small">
+                    <div class="row g-0">
+                      <div class="col-6 fw-bold" style="text-align:left;">Số hạch toán:</div>
+                      <div class="col-6 fw-bold" style="text-align:left;">Kỳ thanh toán:</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- TITLE -->
+              <div class="text-center border-bottom border-dark py-2">
+                <div class="fw-bold">THÔNG BÁO THANH TOÁN</div>
+                <div class="fw-bold">(NCC/NTP)</div>
+              </div>
+
+              <!-- INFO TABLE -->
+              <div class="p-0">
+                <table class="table table-bordered table-sm fs-9 mb-0">
+                  <colgroup>
+                    <col style="width:13%">
+                    <col style="width:37%">
+                    <col style="width:13%">
+                    <col style="width:37%">
+                  </colgroup>
+                  <tbody>
+                    <tr>
+                      <td class="fw-bold">NCC/NTP:</td>
+                      <td colspan="3" style="text-align:left;">
+                        <div class="sen-display" name="ContractorName"></div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="fw-bold">Số HĐ:</td>
+                      <td style="text-align:left;">
+                        <div class="sen-display" name="ContractCode"></div>
+                      </td>
+                      <td class="fw-bold">Ký ngày:</td>
+                      <td style="text-align:left;">
+                        <div class="sen-display" name="PaymentDate"></div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="fw-bold">Hạng mục:</td>
+                      <td colspan="3" style="text-align:left;">
+                        <div class="sen-display" name="IPCName"></div>
+                      </td>
+
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- MAIN TABLE -->
+              <div class="p-0">
+                <table class="table table-bordered table-sm fs-9 mb-5">
+                  <colgroup>
+                    <col style="width:56px">
+                    <col>
+                    <col style="width:210px">
+                  </colgroup>
+                  <thead>
+                    <tr class="text-center">
+                      <th class="fw-bold"><i class="toggle-icon">▼</i>No.</th>
+                      <th class="fw-bold">Nội dung</th>
+                      <th class="fw-bold">Giá trị</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr class="toggle-row" data-toggle-group="group-a" aria-expanded="true">
+                      <td class="text-center fw-bold"><i class="toggle-icon">▼</i>A</td>
+                      <td class="fw-bold">GIÁ TRỊ HỢP ĐỒNG (BAO GỒM VAT)</td>
+                      <td class="text-end fw-bold"></td>
+                    </tr>
+                    <tr data-group="group-a">
+                      <td class="text-center">1</td>
+                      <td>Giá trị hợp đồng ban đầu</td>
+                      <td class="text-end">
+                        <div class="sen-display" name="ContractAmount_"></div>
+                      </td>
+                    </tr>
+
+                    <tr data-group="group-a">
+                      <td class="text-center">2</td>
+                      <td>Điều chỉnh hợp đồng</td>
+                      <td class="text-end">
+                        <div class="sen-display" name="ChangedContractAmount"></div>
+                      </td>
+                    </tr>
+                    <tr data-group="group-a">
+                      <td class="text-center">3</td>
+                      <td>Giá trị hợp đồng sau điều chỉnh</td>
+                      <td class="text-end">
+                        <div class="sen-display" name="SumContractAmount"></div>
+                      </td>
+                    </tr>
+
+                    <tr class="toggle-row" data-toggle-group="group-b" aria-expanded="true">
+                      <td class="text-center fw-bold"><i class="toggle-icon">▼</i>B</td>
+                      <td class="fw-bold">GIÁ TRỊ THANH TOÁN</td>
+                      <td class="text-end fw-bold"></td>
+                    </tr>
+                    <tr data-group="group-b">
+                      <td class="text-center">1</td>
+                      <td>Giá trị thực hiện kỳ này</td>
+                      <td class="text-end">
+                        <div class="sen-display" name="Perform"></div>
+                      </td>
+                    </tr>
+                    <tr data-group="group-b">
+                      <td class="text-center">2</td>
+                      <td>Giá trị thực hiện đến kỳ này</td>
+                      <td class="text-end">
+                        <div class="sen-display" name="AccumulatedPerform"></div>
+                      </td>
+                    </tr>
+
+                    <tr data-group="group-b">
+                      <td class="text-center">3</td>
+                      <td>Giá trị giữ bảo lưu đến kỳ này</td>
+                      <td class="text-end">
+                        <div class="sen-display" name="AccumulatedRetention"></div>
+                      </td>
+                    </tr>
+
+                    <tr data-group="group-b">
+                      <td class="text-center">4</td>
+                      <td>Giá trị thực hiện được thanh toán đến kỳ này</td>
+                      <td class="text-end">
+                        <div class="sen-display" name="AccumulatedPayed"></div>
+                      </td>
+                    </tr>
+                    <tr data-group="group-b">
+                      <td class="text-center">5</td>
+                      <td>Giá trị tạm ứng đến kỳ này</td>
+                      <td class="text-end">
+                        <div class="sen-display" name="AccumulatedAdvancePayment"></div>
+                      </td>
+                    </tr>
+
+                    <tr data-group="group-b">
+                      <td class="text-center">6</td>
+                      <td>Hoàn trả tạm ứng đến kỳ này</td>
+                      <td class="text-end">
+                        <div class="sen-display" name="AccumulatedAdvancePaymentRecovery"></div>
+                      </td>
+                    </tr>
+
+                    <tr data-group="group-b">
+                      <td class="text-center">7</td>
+                      <td>Giá trị khấu trừ đến kỳ này</td>
+                      <td class="text-end">
+                        <div class="sen-display" name="AccumulatedTotalRecoveryAmount"></div>
+                      </td>
+                    </tr>
+                    <tr data-group="group-b">
+                      <td class="text-center">8</td>
+                      <td>Giá trị tạm giữ đến kỳ này</td>
+                      <td class="text-end">
+                        <div class="sen-display" name="AccumulatedHoldAmount"></div>
+                      </td>
+                    </tr>
+
+                    <tr data-group="group-b">
+                      <td class="text-center">9</td>
+                      <td>Tổng giá trị đã đề nghị thanh toán đến các kỳ trước (Bao gồm tạm ứng)</td>
+                      <td class="text-end">
+                        <div class="sen-display" name="AccumulatedPayable"></div>
+                      </td>
+                    </tr>
+
+
+                    <tr class="toggle-row" data-toggle-group="group-b-5" aria-expanded="true">
+                      <td class="text-center fw-bold"><i class="toggle-icon">▼</i>10</td>
+                      <td class="fw-bold">
+                        Đề nghị thanh toán kỳ này (10) = (4)+(5)-(6)-(7)-(8)-(9)
+                      </td>
+                      <td class="text-end fw-bold">
+                        <div class="sen-display" name="Total"></div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- APPROVALS TITLE -->
+              <div class="border-top border-dark border-bottom border-dark p-2 fw-bold small">
+                Thông tin phê duyệt:
+              </div>
+
+              <!-- APPROVALS TABLE -->
+              <table class="table table-bordered table-sm fs-9 mb-5">
+                <colgroup>
+                  <col style="width:14%">
+                  <col style="width:26%">
+                  <col style="width:20%">
+                  <col style="width:18%">
+                  <col>
+                </colgroup>
+                <thead>
+                  <tr class="text-center">
+                    <th class="fw-bold">Vai trò</th>
+                    <th class="fw-bold">Nhân sự thực hiện</th>
+                    <th class="fw-bold">Thời gian</th>
+                    <th class="fw-bold">Quyết định</th>
+                    <th class="fw-bold">Ý kiến</th>
+                  </tr>
+                </thead>
+                <tbody id="paymentorderipcprintcumulative-asignee-section">
+                  <tr>
+                    <td>Trình</td>
+                    <td>Võ Thị Hồng Phượng</td>
+                    <td class="text-center">2026-02-04 11:31:49</td>
+                    <td class="text-center">Đã trình</td>
+                    <td>Trình</td>
+                  </tr>
+                  <tr>
+                    <td>Soát xét</td>
+                    <td>Võ Thị Hồng Phượng</td>
+                    <td class="text-center">2026-02-04 11:31:49</td>
+                    <td class="text-center">Đồng ý</td>
+                    <td>Soát xét</td>
+                  </tr>
+                  <tr>
+                    <td>Phê duyệt</td>
+                    <td>Phan Phước Phước</td>
+                    <td class="text-center">2026-02-04 16:27:31</td>
+                    <td class="text-center">Từ chối</td>
+                    <td>có thể PCC theo yêu cầu của cửa hàng</td>
+                  </tr>
+                </tbody>
+              </table>
+
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer d-none">
+        <button type="submit" class="btn btn-subtle-primary"><span class="sen-label">Save & Close</span></button>
+        <button type="button" class="btn btn-subtle-secondary"
+          onclick="paymentorderipcprintcumulativeobject.form.cancel()"><span class="sen-label">Cancel</span></button>
+      </div>
+    </div>
+  </form>
+
+  <script>
+    var paymentorderipcprintcumulativeobject = {};
+    paymentorderipcprintcumulativeobject.model = <%- JSON.stringify(model) %>;// dùng cách này là ok nhất không bị các trường hợp rớt dòng nhưng bị cảnh báo
+    // paymentorderipcprintcumulativeobject.model = JSON.parse(('<%- JSON.stringify(model) %>').replace(/\r?\n|\r/g, "\\n"));//xử lí xuống dòng trong chuỗi json
+    paymentorderipcprintcumulativeobject.container = document.getElementById("paymentorderipcprintcumulative-section");//khu vực chứa form nghiệp vụ
+
+    // Khởi tạo bảng
+    paymentorderipcprintcumulativeobject.form = new senapp.utils.form({
+      meta: paymentorderipcprintcumulativeobject.model.meta,
+      data: paymentorderipcprintcumulativeobject.model.data,
+      urldata: paymentorderipcprintcumulativeobject.model.url,
+      container: paymentorderipcprintcumulativeobject.container,
+      mode: 'view',//chỉ xem không cho sửa
+    });
+
+    // paymentorderipcprintcumulativeobject.form.saveBefore = async function () {
+    //   this.data.ContractId = parseInt(paymentorderipcprintcumulativeobject.model.url.query.contractid) || 0;//thêm ContractId vào data để gửi lên server
+    //   return true;
+    // };
+
+    paymentorderipcprintcumulativeobject.mapasignee = function () {
+      /*
+      const metaassignee = [
+        { field: 'RoleInWord', type: 'string', description: 'Role In Word', isnullable: true, show: true, visible: true, readonly: true },
+        { field: 'FullName', type: 'string', description: 'Full Name', isnullable: true, show: true, visible: true, readonly: true },
+        { field: 'ActualFinish', type: 'date', description: 'Actual Finish', isnullable: true, show: true, visible: true, readonly: true },
+        { field: 'ApprovalStatus', type: 'string', description: 'Approval Status', isnullable: true, show: true, visible: true, readonly: true },
+        { field: 'Remarks', type: 'string', description: 'Remarks', isnullable: true, show: true, visible: true, readonly: true }
+      ];
+      */
+      const tbody = paymentorderipcprintcumulativeobject.container.querySelector('#paymentorderipcprintcumulative-asignee-section');
+      tbody.innerHTML = '';//xóa dữ liệu cũ
+      const asignees = paymentorderipcprintcumulativeobject.model.data.dataext?.asignee || [];
+      asignees.forEach(asignee => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${asignee.RoleInWord || ''}</td>
+          <td>${asignee.FullName || ''}</td>
+          <td class="text-center">${asignee.ActualFinish ? new Date(asignee.ActualFinish).toLocaleString() : ''}</td>
+          <td class="text-center">${asignee.ApprovalStatus || ''}</td>
+          <td>${asignee.Remarks || ''}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+    }
+
+    paymentorderipcprintcumulativeobject.metacontractinfo;
+    paymentorderipcprintcumulativeobject.mapmeta = async function () {
+      //ví dụ nếu muốn ẩn cột nào đó trong form thì có thể gán show hoặc visible của trường đó thành false ở đây
+      // paymentorderipcprintcumulativeobject.form.metacolumns.find(c => c.field === 'ContractorName').show = false;
+      const urlmeta = `/paymentorderipc/metacontractinfo`;
+      const response = await fetch(urlmeta, {
+        method: 'GET', headers: { 'Content-Type': 'application/json' }
+      }).then(res => res.json())
+        .then(data => {
+          paymentorderipcprintcumulativeobject.metacontractinfo = data;
+        })
+        .catch(error => {
+          console.error('Error fetching meta contract info:', error);
+        });
+    }
+
+    paymentorderipcprintcumulativeobject.mapcontract = function () {
+      // console.log(paymentorderipcprintcumulativeobject.metacontractinfo);
+      senapp.utils.data2displays({
+        metas: paymentorderipcprintcumulativeobject.metacontractinfo.meta,
+        data: paymentorderipcprintcumulativeobject.model.data.dataext?.contractinfo || {},
+        container: paymentorderipcprintcumulativeobject.container
+      });
+    }
+
+    // Gọi hàm này SAU KHI modal đã render xong
+    paymentorderipcprintcumulativeobject.initToggleRows = function (container) {
+      container = container || document;//mặc định là document nhưng nếu có container cụ thể thì truyền vào để chỉ scope tìm kiếm trong container đó, tránh ảnh hưởng đến các phần khác
+      container.querySelectorAll('.toggle-row[data-toggle-group]').forEach(function (row) {
+        // Tránh bind nhiều lần
+        if (row.dataset.toggleBound === '1') return;
+        row.dataset.toggleBound = '1';
+
+        row.addEventListener('click', function () {
+          const groupName = row.getAttribute('data-toggle-group');
+          const isExpanded = row.getAttribute('aria-expanded') === 'true';
+
+          // Toggle tất cả <tr> con trong nhóm
+          container.querySelectorAll(`tr[data-group="${groupName}"]`).forEach(function (tr) {
+            tr.style.display = isExpanded ? 'none' : ''; // '' = trả về mặc định (table-row)
+          });
+
+          // Cập nhật trạng thái + icon
+          row.setAttribute('aria-expanded', isExpanded ? 'false' : 'true');
+          row.classList.toggle('collapsed', isExpanded);
+        });
+      });
+
+      // ── 2. Click vào "No." header → mở rộng hết / gom lại hết ──
+      const thNo = container.querySelector('thead th:first-child');
+      if (thNo && thNo.dataset.toggleBound !== '1') {
+        thNo.dataset.toggleBound = '1';
+
+        // Đổi cursor để người dùng biết có thể click
+        thNo.style.cursor = 'pointer';
+        thNo.title = 'Click để mở rộng / gom lại tất cả';
+
+        // Trạng thái tổng: mặc định đang mở hết
+        let allExpanded = true;
+
+        thNo.addEventListener('click', function () {
+          allExpanded = !allExpanded;
+
+          // Toggle tất cả toggle-row
+          container.querySelectorAll('.toggle-row[data-toggle-group]').forEach(function (row) {
+            const groupName = row.getAttribute('data-toggle-group');
+
+            container.querySelectorAll(`tr[data-group="${groupName}"]`).forEach(function (tr) {
+              tr.style.display = allExpanded ? '' : 'none';
+            });
+
+            row.setAttribute('aria-expanded', allExpanded ? 'true' : 'false');
+            row.classList.toggle('collapsed', !allExpanded);
+          });
+
+          // Cập nhật icon trên header No.
+          thNo.innerHTML = allExpanded
+            ? '<i class="toggle-icon">▼</i> No.'
+            : '<i class="toggle-icon" style="transform:rotate(-90deg)">▼</i> No.';
+        });
+      }
+
+      //ngầm định thu gọn hết các nhóm
+      // thNo.click(); //gọi sự kiện click để thu gọn hết ngay khi load modal, nếu muốn mặc định mở hết thì bỏ dòng này đi
+
+      // container.querySelectorAll('.toggle-row[data-toggle-group]').forEach(function (row) {
+      //   const groupName = row.getAttribute('data-toggle-group');
+      //   container.querySelectorAll(`tr[data-group="${groupName}"]`).forEach(function (tr) {
+      //     tr.style.display = 'none';
+      //   });
+      //   row.setAttribute('aria-expanded', 'false');
+      //   row.classList.add('collapsed');
+      // });
+
+    }
+
+    //print 
+    paymentorderipcprintcumulativeobject.print = function () {
+      //lấy đối tượng cần in
+      const elementToPrint = paymentorderipcprintcumulativeobject.container.querySelector('#paymentorderipcprintcumulative-section-print');
+      if (!elementToPrint) {
+        console.error('Không tìm thấy phần tử để in');
+        return;
+      }
+      senapp.common.printelem({
+        elem: elementToPrint,
+        title: 'Phiếu thanh toán lũy kế IPC',
+        // css: '/assets/css/print.css' //nếu có css riêng cho in ấn thì thêm vào đây
+      });
+
+    }
+
+    $(async function () {
+      await paymentorderipcprintcumulativeobject.form.initForm();
+      await paymentorderipcprintcumulativeobject.mapmeta();
+      paymentorderipcprintcumulativeobject.mapasignee();
+      paymentorderipcprintcumulativeobject.mapcontract();
+
+      // Truyền container để đảm bảo đúng scope trong modal
+      paymentorderipcprintcumulativeobject.initToggleRows(paymentorderipcprintcumulativeobject.container);
+
+    });
+
+  </script>
+
+
+</div>

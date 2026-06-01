@@ -1,0 +1,82 @@
+<div id="roleupdate-section" class="" style="margin: 0 auto;">
+  <form id="roleupdate-form">
+
+    <div class="card">
+      <div class="card-header"><h4 class="mb-0"><%= title %></h4></div>
+      <div class="card-body">
+        <!-- Thông báo tổng -->
+        <div class="message-all callout d-none" role="alert"></div>
+
+        <div class="row g-3 align-items-center mb-1">
+          <div class="col-md-6">
+            <label for="roleupdate-Code" field-name="Code" class="control-label">Code:</label>
+            <input type="text" id="roleupdate-Code" name="Code" class="form-control">
+          </div>
+          <div class="col-md-6">
+            <label for="roleupdate-Alias" field-name="Alias" class="control-label">Alias:</label>
+            <input type="text" id="roleupdate-Alias" name="Alias" class="form-control">
+          </div>
+          <!-- <div class="col-md-6">
+            <label for="roleupdate-RoleType" field-name="RoleType" class="control-label">Role Type:</label>
+            <input type="text" id="roleupdate-RoleType" name="RoleType" class="form-control">
+          </div> -->
+        </div>
+
+        <div class="row g-3 align-items-center mb-1">
+          <div class="col-md-12">
+            <label for="roleupdate-RoleName" field-name="RoleName" class="control-label">Role Name:</label>
+            <input type="text" id="roleupdate-RoleName" name="RoleName" class="form-control">
+          </div>
+
+        </div>
+        <div class="row g-3 align-items-center mb-1">
+          <div class="col-md-12">
+            <label for="roleupdate-WorkingPlace" field-name="WorkingPlace" class="control-label">Working Place:</label>
+            <select id="roleupdate-WorkingPlace" name="WorkingPlace" class="form-control">
+            </select>
+          </div>
+
+        </div>
+        <div class="row g-3 align-items-center mb-1">
+          <div class="col-md-6">
+            <label for="roleupdate-IsActive" field-name="IsActive" class="control-label">Active:</label>
+            <select id="roleupdate-IsActive" name="IsActive" class="form-control">
+              <!-- <option value="">-- Select --</option> -->
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
+          </div>
+
+        </div>
+        <div class="row g-3 align-items-center d-none">
+          <label for="roleupdate-RoleId" field-name="RoleId" class="control-label">Role Id:</label>
+          <input type="text" id="roleupdate-RoleId" name="RoleId" class="form-control" readonly>
+        </div>
+
+      </div>
+      <div class="card-footer">
+        <button type="submit" class="btn btn-subtle-primary">Save & Close</button>
+        <button type="button" class="btn btn-subtle-secondary" onclick="roleupdateobject.form.cancel()">Cancel</button>
+      </div>
+    </div>
+  </form>
+
+  <script>
+    var roleupdateobject = {};
+    roleupdateobject.model = JSON.parse('<%- JSON.stringify(model) %>');
+    roleupdateobject.container = document.getElementById("roleupdate-section");//khu vực chứa form nghiệp vụ
+    console.log(roleupdateobject.model);
+    // Khởi tạo bảng
+    roleupdateobject.form = new senapp.utils.form({
+      meta: roleupdateobject.model.meta,
+      data: roleupdateobject.model.data,
+      urldata: roleupdateobject.model.url,
+      container: roleupdateobject.container,
+      mode: (roleupdateobject.model.url.path == '/role/edit') ? 'edit' : 'create',
+    });
+
+    $(function () { roleupdateobject.form.initForm(); });
+
+  </script>
+
+</div>

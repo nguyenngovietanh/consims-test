@@ -1,0 +1,188 @@
+<%
+model.langlist = [
+  { id: 'en', label: 'English' },
+  { id: 'vi', label: 'Vietnamese' }  
+];
+%>
+
+<div id="profile-section">
+  <div class="mb-9">
+    <div class="row g-6">
+      <div class="col-12 col-xl-4">
+        <div class="card mb-5">
+          <div class="card-header hover-actions-trigger position-relative mb-6" style="min-height: 130px; ">
+            <div class="bg-holder rounded-top"
+              style="background-image: linear-gradient(0deg, #000000 -3%, rgba(0, 0, 0, 0) 83%), url(assets/img/generic/59.png)">
+              <!-- <input class="d-none" id="upload-settings-cover-image" type="file" /> -->
+              <label class="cover-image-file-input" for="upload-settings-cover-image"></label>
+              <!-- <div class="hover-actions end-0 bottom-0 pe-1 pb-2 text-white dark__text-gray-1100"><span class="fa-solid fa-camera me-2"></span></div> -->
+            </div>
+            <input class="d-none" id="upload-settings-porfile-picture" type="file" />
+            <label class="avatar avatar-4xl status-online feed-avatar-profile cursor-pointer"
+              for="upload-settings-porfile-picture"><img class="rounded-circle img-thumbnail shadow-sm border-0"
+                src="/assets/img/team/avatar.webp" width="200" alt="" /></label>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-12">
+                <div class="d-flex flex-wrap mb-2 align-items-center">
+                  <h3 class="me-2">
+                    <%= model?.data?.FullName||'' %>
+                  </h3>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="col-12 col-xl-8">
+        <form method="POST" action="/profile">
+          <input type="hidden" name="UserId" value="<%= model?.data?.UserId || '' %>" />
+          <div class="mb-4">
+            <div class="mb-6">
+              <h4 class="mb-4"><span class="sen-label">Personal Information</span></h4>
+              <div class="row g-3">
+                <div class="col-12 col-sm-6">
+                  <div class="form-icon-container">
+                    <div class="form-floating">
+                      <input class="form-control form-icon-input" id="profile-FullName" name="FullName"
+                        value="<%= model?.data?.FullName||'' %>" type="text" placeholder="Full Name" />
+                      <label class="text-body-tertiary form-icon-label" for="profile-FullName"
+                        style="text-transform:none;">Full
+                        Name</label>
+                    </div><span class="fa-solid fa-user text-body fs-9 form-icon"></span>
+                  </div>
+                </div>
+                <div class="col-12 col-sm-6">
+                  <div class="form-icon-container">
+                    <div class="form-floating">
+                      <input class="form-control form-icon-input" id="profile-Address" name="Address"
+                        value="<%= model?.data?.Address||'' %>" type="text" placeholder="Address" />
+                      <label class="text-body-tertiary form-icon-label" for="profile-Address"
+                        style="text-transform:none;">Address</label>
+                    </div><span class="fa-solid fas fa-map-marker-alt text-body fs-9 form-icon"></span>
+                  </div>
+                </div>
+                <div class="col-12 col-sm-6">
+                  <div class="form-icon-container">
+                    <div class="form-floating">
+                      <input class="form-control form-icon-input" id="profile-PhoneDirect" type="text"
+                        name="PhoneDirect" value="<%= model.data.PhoneDirect || '' %>" placeholder="Phone Direct" />
+                      <label class="text-body-tertiary form-icon-label" for="profile-PhoneDirect"
+                        style="text-transform:none;">Phone Direct</label>
+                    </div><span class="fa-solid fas fa-phone text-body fs-9 form-icon"></span>
+                  </div>
+                </div>
+
+                <div class="col-12 col-sm-6">
+                  <div class="form-icon-container">
+                    <div class="form-floating">
+                      <input class="form-control form-icon-input" id="profile-BirthDay" type="date" name="BirthDay"
+                        value="<%= model.data.BirthDay || '' %>" placeholder="BirthDay" />
+                      <label class="text-body-tertiary form-icon-label" for="profile-BirthDay"
+                        style="text-transform:none;">BirthDay</label>
+                    </div><span class="fa-solid fas fa-birthday-cake text-body fs-9 form-icon"></span>
+                  </div>
+                </div>
+
+                <div class="col-12 col-sm-6">
+                  <div class="form-icon-container">
+                    <div class="form-floating">
+                      <select class="form-select form-icon-input" id="profile-Sex" name="Sex"
+                        aria-label="Floating label select example">
+                        <% for (let i=0; i < model.sexlist.length; i++) { %>
+                          <option value="<%= model.sexlist[i].id %>" <%=model.sexlist[i].id===model?.data?.Sex
+                            ? "selected" : "" %>>
+                            <%= model.sexlist[i].label %>
+                          </option>
+                          <% } %>
+                      </select>
+                      <label class="text-body-tertiary form-icon-label" for="Sex"
+                        style="text-transform:none;">Sex</label>
+                    </div><span class="fa-solid fas fa-mars text-body fs-9 form-icon"></span>
+                  </div>
+                </div>
+
+                <div class="col-12 col-sm-6">
+                  <div class="form-icon-container">
+                    <div class="form-floating">
+                      <select class="form-select form-icon-input" id="profile-lang" name="Lang"
+                        aria-label="Floating label select example">
+                        <% for (let i=0; i < model.langlist.length; i++) { %>
+                          <option value="<%= model.langlist[i].id %>" <%=model.langlist[i].id===model?.data?.Lang
+                            ? "selected" : "" %>>
+                            <%= model.langlist[i].label %>
+                          </option>
+                          <% } %>
+                      </select>
+                      <label class="text-body-tertiary form-icon-label" for="Lang"
+                        style="text-transform:none;">Language</label>
+                    </div><span class="fa-solid fas fa-language text-body fs-9 form-icon"></span>
+                  </div>
+                </div>
+
+                <!-- <div class="col-12 col-sm-6">
+                <div class="form-icon-container">
+                  <div class="form-floating">
+                    <textarea class="form-control form-icon-input" id="info" style="height: 115px;"
+                      placeholder="Info"></textarea>
+                    <label class="text-body-tertiary form-icon-label" for="info">Info</label>
+                  </div><span class="fa-solid fa-circle-info text-body fs-9 form-icon"></span>
+                </div>
+              </div> -->
+              </div>
+            </div>
+            <div>
+              <% if (model.error) { %>
+                <div class="callout callout-danger" role="alert">
+                  <%= model.error %>
+                </div>
+                <% } else if (model.success) { %>
+                  <div class="callout callout-success" role="alert">
+                    <%= model.success %>
+                  </div>
+                  <% } %>
+            </div>
+
+            <div class="text-end mb-6 d-none">
+              <div>
+                <!-- <button class="btn btn-phoenix-secondary me-2">Cancel Changes</button> -->
+                <button class="btn btn-phoenix-primary" type="submit"><span class="sen-label">Save
+                    Information</span></button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+  <script>
+    var profileobject = {};
+    profileobject.model = JSON.parse('<%- JSON.stringify(model) %>');
+    profileobject.container = document.getElementById("profile-section");//khu vực chứa form nghiệp vụ
+
+    const langselect = document.getElementById("profile-lang");
+    langselect.addEventListener("change", function() {
+      const selectedLang = this.value;
+      // Gửi yêu cầu AJAX để thay đổi ngôn ngữ
+      fetch(`/change-language?language=${selectedLang}`)
+        .then(response => {
+          if (response.ok) {
+            // Nếu thành công, tải lại trang để áp dụng ngôn ngữ mới
+            window.location.reload();
+          } else {
+            console.error('Failed to change language');
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+    });
+
+
+  </script>
+
+</div>

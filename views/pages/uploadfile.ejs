@@ -1,0 +1,103 @@
+<div id="uploadfile-section" class="" style="margin: 0 auto;">
+    <form id="uploadfile-form" enctype="multipart/form-data">
+
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">
+                    <%= title||'Upload Files' %>
+                </h4>
+            </div>
+            <div class="card-body">
+                <!-- Thông báo tổng -->
+                <div class="message-all callout d-none" contractlineperform="alert"></div>
+
+                <div class="row g-3 align-items-center mb-3">
+                    <div class="col-md-12">
+                        <label for="uploadfile-Attachments" field-name="Attachments"
+                            class="control-label">Attachments:</label>
+                        <input type="file" id="uploadfile-Attachments" name="Attachments" class="form-control" multiple>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <button type="submit" class="btn btn-subtle-primary">Save & Close</button>
+                <button type="button" class="btn btn-subtle-secondary"
+                    onclick="uploadfileobject.form.cancel()">Cancel</button>
+            </div>
+        </div>
+    </form>
+
+    <script>
+        var uploadfileobject = {};
+        // uploadfileobject.model = <%- JSON.stringify(model) %>;// dùng cách này là ok nhất nhưng bị cảnh báo
+        // uploadfileobject.model = JSON.parse(('<%- JSON.stringify(model) %>').replace(/\r?\n|\r/g, "\\n"));//xử lí xuống dòng trong chuỗi json
+        uploadfileobject.model = JSON.parse('<%- JSON.stringify(model) %>');
+        uploadfileobject.container = document.getElementById("uploadfile-section");//khu vực chứa form nghiệp vụ
+
+        console.log(uploadfileobject.model);
+        uploadfileobject.urldata = {
+            uploadfile: '/common/uploadfile'
+        };
+
+        // Khởi tạo bảng
+        uploadfileobject.form = new senapp.utils.form({
+            meta: [
+                { field: 'GId', type: 'string', description: 'GUID', isnullable: false, show: false, visible: true },
+                { field: 'FileId', type: 'bigint', description: 'File ID', isnullable: false, show: false, visible: true },
+                { field: 'FileName', type: 'string', description: 'File Name', isnullable: false, show: true, visible: true },
+                { field: 'UploadedBy', type: 'string', description: 'Uploaded By', isnullable: false, show: true, visible: true },
+                { field: 'UploadingDate', type: 'datetime', description: 'Uploading Date', isnullable: false, show: true, visible: true },
+                { field: 'ClientDocs', type: 'string', description: 'Client Docs', isnullable: true, show: true, visible: true },
+                { field: 'Id', type: 'bigint', description: 'ID', key: true, isnullable: false, show: false, visible: true }
+            ],
+            //   data: uploadfileobject.model.data,
+            urldata: uploadfileobject.urldata,
+            container: uploadfileobject.container,
+            mode: (uploadfileobject.model.url.path == '/contractlineperform/edit') ? 'edit' : 'create',
+        });
+
+
+        uploadfileobject.form.saveBefore = async function () {
+            return true;
+            const url = `${uploadfileobject.urldata.uploadfile}`;
+            const formData = new FormData();
+            // Lấy toàn bộ input file
+            this.container.querySelectorAll('input[type="file"]').forEach(input => {
+                for (const file of input.files) {
+                    formData.append(input.name, file);
+                }
+            });
+
+            //nếu không có file thì return true luôn
+            if (formData.getAll('Attachments').length === 0) {
+                return true;
+            }
+
+            const response = await fetch('/common/uploadfile', {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+            if (result.status === 'false' || result.status === 0) {
+                // Gán lại danh sách file url vào dữ liệu form
+                senapp.window.toast({ message: result.message, type: 'danger' });
+                return false;
+            }
+            uploadfileobject.form.data['files'] = result.datas;
+
+
+            // console.log('Uploaded files:', uploadfileobject.form.data['files'],result.datas);
+            return true;
+        };
+
+
+        $(async function () {
+            //   uploadfileobject.form.data.ItemId = uploadfileobject.model.url.query.itemid;
+            await uploadfileobject.form.initForm();
+
+        });
+
+    </script>
+
+</div>

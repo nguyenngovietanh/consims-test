@@ -1,0 +1,793 @@
+<div id="dashboard-overview" class="dashboard-overview" data-active-dashboard="contract">
+  <div class="dashboard-tabs" role="tablist" aria-label="Dashboard tabs">
+    <button class="active" type="button" role="tab" aria-selected="true" data-dashboard-tab="contract"
+      data-dashboard-title="Contract Dashboard" data-dashboard-desc="Real-time overview of project performance and health">
+      Contract Dashboard
+    </button>
+    <button type="button" role="tab" aria-selected="false" data-dashboard-tab="project"
+      data-dashboard-title="Project Dashboard" data-dashboard-desc="Project view (Multi contracts)">
+      Project Dashboard
+    </button>
+    <button type="button" role="tab" aria-selected="false" data-dashboard-tab="company"
+      data-dashboard-title="Company Dashboard" data-dashboard-desc="Contract Management Overview">
+      Company Dashboard
+    </button>
+  </div>
+
+  <section class="dashboard-view active" data-dashboard-view="contract">
+    <div class="dashboard-filter-row" aria-label="Contract dashboard filters">
+      <select class="form-select" aria-label="Project or contract"><option>Project/Contract</option></select>
+      <select class="form-select" aria-label="Client"><option>Client</option></select>
+      <select class="form-select" aria-label="Project manager"><option>Project manager</option></select>
+      <select class="form-select" aria-label="Contract type"><option>Contract type</option></select>
+      <select class="form-select" aria-label="Status"><option>Status</option></select>
+      <select class="form-select" aria-label="Data as on"><option>Data as on</option></select>
+    </div>
+
+    <div class="dashboard-kpi-grid contract" aria-label="Contract summary">
+      <article class="dashboard-kpi"><h3>Original Contract Value</h3><strong>0</strong></article>
+      <article class="dashboard-kpi"><h3>Approved Variations</h3><strong>0</strong></article>
+      <article class="dashboard-kpi"><h3>Revised Contract Value</h3><strong>0</strong></article>
+      <article class="dashboard-kpi"><h3>Revenue Recognized<br>(To date)</h3><strong>0</strong><span class="positive">57.1%</span>&nbsp;<span> of RCV</span></article>
+      <article class="dashboard-kpi"><h3>Cost Incurred<br>(To date)</h3><strong>0</strong><span class="positive">46%</span>&nbsp;<span> of RCV</span></article>
+      <article class="dashboard-kpi"><h3>Forecast Final Cost<br>(EAC)</h3><strong>0</strong></article>
+      <article class="dashboard-kpi"><h3>Forecast<br>Profit</h3><strong>0</strong><span class="positive">46%</span>&nbsp;<span> of RCV</span></article>
+      <article class="dashboard-kpi"><h3>Forecast<br>Margin</h3><strong>0</strong><span class="negative">-1.2%</span>&nbsp;<span> of RCV</span></article>
+      <article class="dashboard-kpi"><h3>Cash Collected<br>(To date)</h3><strong>0</strong><span class="positive">46%</span>&nbsp;<span> of RCV</span></article>
+      <article class="dashboard-kpi"><h3>Outstanding<br>Receivables</h3><strong>0</strong></article>
+    </div>
+
+    <section class="dashboard-section">
+      <h2>1. Finance Performance</h2>
+      <div class="dashboard-section-body two-cols">
+        <div class="dashboard-panel dashboard-panel-inside">
+          <table class="dashboard-table">
+            <thead><tr><th>Description</th><th class="text-end">Amount</th><th class="text-end">% of RCV</th></tr></thead>
+            <tbody data-dashboard-table="contract-finance"></tbody>
+          </table>
+        </div>
+        <div class="dashboard-panel dashboard-panel-inside">
+          <h3>Revenue vs Cost (Cumulative)</h3>
+          <div class="dashboard-chart" data-dashboard-chart="contract-revenue-cost"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="dashboard-section">
+      <h2>2. Progress &amp; Time Performance</h2>
+      <div class="dashboard-section-body three-cols">
+        <div class="dashboard-panel dashboard-panel-inside">
+          <table class="dashboard-table">
+            <thead><tr><th>Description</th><th class="text-end">% of RCV</th></tr></thead>
+            <tbody data-dashboard-table="contract-progress"></tbody>
+          </table>
+        </div>
+        <div class="dashboard-panel dashboard-panel-inside">
+          <h3>Planned vs Actual Process (S-Curve)</h3>
+          <div class="dashboard-chart" data-dashboard-chart="contract-planned-actual"></div>
+        </div>
+        <div class="dashboard-panel dashboard-panel-inside">
+          <h3>Milestone Status</h3>
+          <div class="dashboard-chart" data-dashboard-chart="contract-milestone"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="dashboard-section">
+      <h2>3. Variations (Change Orders)</h2>
+      <div class="dashboard-stat-row">
+        <div><span>Raised (YTD)</span><strong class="text-info">$6.10M</strong></div>
+        <div><span>Approved</span><strong class="text-success">$6.10M</strong></div>
+        <div><span>Pending Approval</span><strong class="text-warning">$6.10M</strong></div>
+        <div><span>Rejected</span><strong class="text-danger">$6.10M</strong></div>
+        <div><span>Avg Approval Time</span><strong>18 Ngay</strong></div>
+      </div>
+      <div class="dashboard-section-body two-cols">
+        <div class="dashboard-panel dashboard-panel-inside">
+          <h3>Variations Aging (Pending)</h3>
+          <div class="dashboard-chart" data-dashboard-chart="contract-variation-aging"></div>
+        </div>
+        <div class="dashboard-panel dashboard-panel-inside">
+          <h3>Variations by Cause (YTD)</h3>
+          <div class="dashboard-chart" data-dashboard-chart="contract-variation-cause"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="dashboard-section">
+      <h2>4. Claims &amp; Disputes</h2>
+      <div class="dashboard-stat-row">
+        <div><span>EOT Claims</span><strong class="text-info">2</strong></div>
+        <div><span>Cost Claims</span><strong class="text-success">3</strong></div>
+        <div><span>Claims Approval</span><strong class="text-warning">1</strong></div>
+        <div><span>Claims Pending</span><strong class="text-danger">4</strong></div>
+        <div><span>Disputes / Arbitration</span><strong>0</strong></div>
+      </div>
+      <div class="dashboard-section-body two-cols">
+        <div class="dashboard-panel dashboard-panel-inside"><h3>Claims Aging (Pending)</h3><div class="dashboard-chart" data-dashboard-chart="contract-claims-aging"></div></div>
+        <div class="dashboard-panel dashboard-panel-inside"><h3>Claims by Type (Value)</h3><div class="dashboard-chart" data-dashboard-chart="contract-claims-type"></div></div>
+      </div>
+    </section>
+
+    <section class="dashboard-section">
+      <h2>5. Payments &amp; Cash Flow</h2>
+      <div class="dashboard-stat-row">
+        <div><span>Invoices Submitted YTD</span><strong class="text-info">2</strong></div>
+        <div><span>Certified Amount</span><strong class="text-success">3</strong></div>
+        <div><span>Claims Approval</span><strong class="text-warning">1</strong></div>
+        <div><span>Claims Pending</span><strong class="text-danger">4</strong></div>
+        <div><span>Disputes / Arbitration</span><strong>0</strong></div>
+      </div>
+      <div class="dashboard-section-body two-cols">
+        <div class="dashboard-panel dashboard-panel-inside"><h3>Receivables Aging</h3><div class="dashboard-chart" data-dashboard-chart="contract-receivables-aging"></div></div>
+        <div class="dashboard-panel dashboard-panel-inside"><h3>Billing vs Collection (Cumulative)</h3><div class="dashboard-chart" data-dashboard-chart="contract-billing-collection"></div></div>
+      </div>
+    </section>
+
+    <section class="dashboard-section">
+      <h2>6. Risk Overview</h2>
+      <div class="dashboard-section-body two-cols">
+        <div class="dashboard-panel"><div class="risk-matrix" aria-label="Risk matrix"><span>High</span><div class="risk-yellow">1</div><div class="risk-orange">2</div><div class="risk-red">2</div><span>Medium</span><div class="risk-yellow">1</div><div class="risk-orange">3</div><div class="risk-orange">1</div><span>Low</span><div class="risk-green">2</div><div class="risk-green">1</div><div class="risk-green">0</div></div></div>
+        <div class="dashboard-panel dashboard-panel-inside">
+          <table class="dashboard-table compact">
+            <thead><tr><th>Top risk</th><th class="text-end">Likelihood</th></tr></thead>
+            <tbody>
+              <tr><td>1. Delay in material approvals</td><td class="text-end text-danger">High</td></tr>
+              <tr><td>2. Design changes impacting MEP</td><td class="text-end text-danger">High</td></tr>
+              <tr><td>3. Skilled labor shortage</td><td class="text-end text-warning">Medium</td></tr>
+              <tr><td>4. Delay in client decisions</td><td class="text-end text-warning">Medium</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="dashboard-section">
+      <h2>7. Personnel</h2>
+      <div class="dashboard-stat-row three">
+        <div><span>Total Actual Personnel</span><strong class="text-info">1.300</strong></div>
+        <div><span>Planned staffing levels</span><strong class="text-danger">1.380</strong></div>
+        <div><span>Variance / Difference</span><strong class="text-danger">50</strong></div>
+      </div>
+      <div class="dashboard-section-body two-cols">
+        <div class="dashboard-panel dashboard-panel-inside">
+          <table class="dashboard-table"><thead><tr><th>Month</th><th class="text-center">Planned Personnel</th><th class="text-center">Actual Personnel</th><th class="text-end">Actual Progress %</th></tr></thead><tbody data-dashboard-table="contract-personnel"></tbody></table>
+        </div>
+        <div class="dashboard-panel dashboard-panel-inside"><h3>Personnel Fluctuation &amp; Actual Progress</h3><div class="dashboard-chart" data-dashboard-chart="contract-personnel"></div></div>
+      </div>
+    </section>
+
+    <section class="dashboard-section">
+      <h2>8. Materials &amp; Equipment</h2>
+      <div class="dashboard-stat-row">
+        <div><span>Total Cumulative Import Value</span><strong class="text-info">$6.10M</strong></div>
+        <div><span>Actual Wastage % / Loss %</span><strong class="text-success">$6.10M</strong></div>
+        <div><span>Material Inventory / Stock</span><strong class="text-warning">$6.10M</strong></div>
+        <div><span>Equipment Readiness Rate</span><strong class="text-danger">$6.10M</strong></div>
+        <div><span>Outsourcing Costs / Month</span><strong>18 Ngay</strong></div>
+      </div>
+      <div class="dashboard-section-body two-cols">
+        <div class="dashboard-panel dashboard-panel-inside">
+          <table class="dashboard-table"><thead><tr><th>Month</th><th class="text-center">Import Value (Billion)</th><th class="text-center">Actual Consumption Value (Billion)</th><th class="text-end">Wastage %</th></tr></thead><tbody data-dashboard-table="contract-materials"></tbody></table>
+        </div>
+        <div class="dashboard-panel dashboard-panel-inside"><h3>Actual Consumption</h3><div class="dashboard-chart" data-dashboard-chart="contract-materials"></div></div>
+      </div>
+    </section>
+
+    <div class="dashboard-bottom-grid">
+      <section class="dashboard-section"><h2>9. Compliance &amp; Contract Admin</h2><div class="dashboard-panel"><table class="dashboard-table compact"><tbody><tr><td>Valid Insurance</td><td class="status-check"><img src="/assets/img/Checked-icon.png" alt=""></td><td class="status-ok">Yes</td></tr><tr><td>Valid Performance Guarantee</td><td class="status-check"><img src="/assets/img/Checked-icon.png" alt=""></td><td class="status-ok">Yes</td></tr><tr><td>Advance Payment Guarantee</td><td class="status-check"><img src="/assets/img/Checked-icon.png" alt=""></td><td class="status-ok">Yes</td></tr><tr><td>Notifications Sent on Time</td><td class="status-check"><img src="/assets/img/Checked-icon.png" alt=""></td><td class="status-ok">92%</td></tr><tr><td>Contract Deliverables Due</td><td class="status-warning"><img src="/assets/img/Warning-icon.png" alt=""></td><td class="status-ok">3</td></tr><tr><td>Missing Notices / Missing Documents</td><td class="status-warning"><img src="/assets/img/Warning-icon.png" alt=""></td><td class="status-ok">2</td></tr></tbody></table></div></section>
+      <section class="dashboard-section"><h2>10. Key Activities (This month)</h2><div class="dashboard-panel"><table class="dashboard-table compact"><thead><tr><th>Key Activity</th><th>Due Date</th><th class="text-end">Status</th></tr></thead><tbody><tr><td>Submit Monthly Progress Report</td><td>5 Jun 2025</td><td class="text-end status-ok">Yes</td></tr><tr><td>Concrete Pouring - Floor 20 Tower B</td><td>6 Jun 2025</td><td class="text-end status-ok">Yes</td></tr><tr><td>MEP Rough-in - Level 15</td><td>7 Jun 2025</td><td class="text-end status-ok">92%</td></tr><tr><td>Temporary Facilities Installation (Facade)</td><td>8 Jun 2025</td><td class="text-end status-ok">3</td></tr><tr><td>Client Review Meeting</td><td>9 Jun 2025</td><td class="text-end status-ok">2</td></tr></tbody></table></div></section>
+      <section class="dashboard-section"><h2>11. Procurement &amp; Subcontracts</h2><div class="dashboard-panel"><table class="dashboard-table compact"><tbody><tr><td>Principal Subcontracts Awarded</td><td class="text-end status-ok">82%</td></tr><tr><td>Subcontract Commitments</td><td class="text-end status-ok">$18.65M</td></tr><tr><td>Committed Value to Date</td><td class="text-end status-ok">$15.25M</td></tr><tr><td>Volume of Subcontracts</td><td class="text-end status-ok">2</td></tr><tr><td>Percentage of Outstanding Clauses</td><td class="text-end status-ok">94%</td></tr></tbody></table></div></section>
+      <section class="dashboard-section"><h2>12. Actions Required</h2><div class="dashboard-panel"><table class="dashboard-table compact"><thead><tr><th>Key Activity</th><th>Responsible Person</th><th>Due Date</th><th class="text-end">Status</th></tr></thead><tbody><tr><td>Approve Variation Order / Change Order - VR-045</td><td>Client</td><td>5 Jun 2025</td><td class="text-end status-ok">Yes</td></tr><tr><td>Provide Structural Drawings</td><td>Consultant</td><td>5 Jun 2025</td><td class="text-end status-ok">Yes</td></tr><tr><td>Pay Pending Invoice #INV-125</td><td>Client</td><td>5 Jun 2025</td><td class="text-end status-ok">92%</td></tr><tr><td>Conduct Site Inspection - QA/QC</td><td>QA/QC Manager</td><td>5 Jun 2025</td><td class="text-end status-ok">3</td></tr><tr><td>Submit EOT Claim - 02</td><td>QA/QC Manager</td><td>5 Jun 2025</td><td class="text-end status-ok">2</td></tr></tbody></table></div></section>
+    </div>
+  </section>
+
+  <section class="dashboard-view" data-dashboard-view="project">
+    <div class="dashboard-filter-row project-filter-row" aria-label="Project dashboard filters">
+      <select class="form-select" aria-label="Project or contract"><option>Project/Contract</option></select>
+      <select class="form-select" aria-label="Project manager"><option>Project manager</option></select>
+      <select class="form-select" aria-label="Client"><option>Client</option></select>
+      <select class="form-select" aria-label="Region"><option>Region</option></select>
+      <select class="form-select" aria-label="Status"><option>Status</option></select>
+      <input class="form-control dashboard-date-input" type="text" aria-label="Data as on" value="[DD/MM/YYYY]">
+    </div>
+
+    <div class="dashboard-kpi-grid project" aria-label="Project summary">
+      <article class="dashboard-kpi kpi-blue"><h3>Total contract</h3><strong>0</strong><span class="text-info">Active: 0</span></article>
+      <article class="dashboard-kpi kpi-green"><h3>Total contract Value</h3><strong>0</strong></article>
+      <article class="dashboard-kpi kpi-navy"><h3>Revised contract Value</h3><strong>0</strong></article>
+      <article class="dashboard-kpi kpi-orange"><h3>Revenue Recognized</h3><strong>0</strong></article>
+      <article class="dashboard-kpi kpi-purple"><h3>Cost Incurred</h3><strong>0</strong><span class="text-info">Active: 0</span></article>
+      <article class="dashboard-kpi kpi-green"><h3>Forecast Final Cost</h3><strong>0</strong></article>
+      <article class="dashboard-kpi kpi-red"><h3>Forecast Profit</h3><strong>0</strong></article>
+      <article class="dashboard-kpi kpi-teal"><h3>Outstanding Receivables</h3><strong>0</strong></article>
+    </div>
+
+    <section class="dashboard-section">
+      <h2>1. Contract Portfolio Overview</h2>
+      <div class="dashboard-panel dashboard-panel-full">
+        <table class="dashboard-table dashboard-bordered-table project-portfolio-table">
+          <thead><tr><th>Contract No.</th><th>Contract Name</th><th>Contract Type</th><th>Status</th><th class="text-center">Original Contract Value</th><th class="text-center">Revised Contract Value</th><th class="text-center">Revenue Recognized (To Date)</th><th class="text-center">Margin % (Forecast)</th></tr></thead>
+          <tbody>
+            <tr><td>1.</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>2.</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>3.</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>4.</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>5.</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr class="dashboard-total-row"><td colspan="4">TOTAL</td><td class="text-center total-blue">$0.00</td><td class="text-center total-green">$0.00</td><td class="text-center total-red">$0.00</td><td class="text-center total-yellow">$0.00</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="dashboard-section">
+      <h2>2. Overall Progress (All Contracts)</h2>
+      <div class="dashboard-section-body two-cols">
+        <div class="dashboard-panel dashboard-panel-inside"><h3>Progress vs Plan (S-Curve)</h3><div class="dashboard-chart" data-dashboard-chart="project-progress"></div></div>
+        <div class="dashboard-panel dashboard-panel-inside">
+          <table class="dashboard-table compact">
+            <thead><tr><th>Progress KPI</th><th class="text-end">% of RCV</th></tr></thead>
+            <tbody><tr><td>Planned Progress (Baseline)</td><td class="text-end">0.0%</td></tr><tr><td>Actual Progress (To Date)</td><td class="text-end">0.0%</td></tr><tr><td>Behind Schedule</td><td class="text-end">0.0%</td></tr><tr><td>Schedule Performance Index (SPI)</td><td class="text-end">0.00</td></tr><tr><td>Milestones Completed</td><td class="text-end">0</td></tr><tr><td>Milestones Overdue</td><td class="text-end">0.00</td></tr><tr><td>Completion Date (Planned)</td><td class="text-end">DD/MM/YYYY</td></tr><tr><td>Completion Date (Planned)</td><td class="text-end">100%</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="dashboard-section">
+      <h2>3. Financial Performance (Consolidated)</h2>
+      <div class="dashboard-stat-row seven">
+        <div><span>Original Contract Value</span><strong>$0,00</strong></div><div><span>Revised Contract Value</span><strong>$0,00</strong></div><div><span>Revenue Recognized</span><strong>$0,00</strong></div><div><span>Cost Incurred</span><strong>$0,00</strong></div><div><span>Forecast Final Cost (EAC)</span><strong>$0,00</strong></div><div><span>Forecast Profit</span><strong>$0,00</strong></div><div><span>Forecast Margin %</span><strong>$0,00</strong></div>
+      </div>
+      <div class="dashboard-section-body two-cols">
+        <div class="dashboard-panel dashboard-panel-inside"><h3>Revenue vs Cost Trend (USD)</h3><div class="dashboard-chart" data-dashboard-chart="project-finance-trend"></div></div>
+        <div class="dashboard-panel dashboard-panel-inside"><h3>Profit Waterfall (USD)</h3><div class="dashboard-chart" data-dashboard-chart="project-profit-waterfall"></div></div>
+      </div>
+    </section>
+
+    <section class="dashboard-section">
+      <h2>4. Variations Summary (All contracts)</h2>
+      <div class="dashboard-stat-row"><div><span>Variations Raised (YTD)</span><strong class="text-info">2</strong></div><div><span>Approved Variations</span><strong class="text-success">3</strong></div><div><span>Pending Approval</span><strong class="text-warning">1</strong></div><div><span>Rejected / Not Approved</span><strong class="text-danger">4</strong></div><div><span>Avg Approval Time</span><strong>0</strong></div></div>
+      <div class="dashboard-section-body two-cols"><div class="dashboard-panel dashboard-panel-inside"><h3>Variations by Status (Value)</h3><div class="dashboard-chart" data-dashboard-chart="project-variation-status"></div></div><div class="dashboard-panel dashboard-panel-inside"><h3>Top Variation Causes (Value)</h3><div class="dashboard-chart" data-dashboard-chart="project-variation-causes"></div></div></div>
+    </section>
+
+    <section class="dashboard-section">
+      <h2>5. Payments &amp; Cash Flow (Consolidated)</h2>
+      <div class="dashboard-stat-row six"><div><span>Invoices Submitted (YTD)</span><strong>$0,00</strong></div><div><span>Certified Amount</span><strong>$0,00</strong></div><div><span>Payments Received</span><strong>$0,00</strong></div><div><span>Retention Held</span><strong>$0,00</strong></div><div><span>Outstanding Receivables</span><strong>$0,00</strong></div><div><span>DSO</span><strong>0 Day</strong></div></div>
+      <div class="dashboard-section-body two-cols"><div class="dashboard-panel dashboard-panel-inside"><h3>Receivables Aging (USD)</h3><div class="dashboard-chart" data-dashboard-chart="project-receivables-aging"></div></div><div class="dashboard-panel dashboard-panel-inside"><h3>Billing vs Collection Trend (USD)</h3><div class="dashboard-chart" data-dashboard-chart="project-billing-trend"></div></div></div>
+    </section>
+
+    <section class="dashboard-section">
+      <h2>6. Claims &amp; Disputes (All contracts)</h2>
+      <div class="dashboard-stat-row seven"><div><span>EOT Claims</span><strong>0</strong></div><div><span>EOT Days Claimed</span><strong>0 Day</strong></div><div><span>Cost Claims</span><strong>0</strong></div><div><span>Claims Value (Submitted)</span><strong>$0,00</strong></div><div><span>Claims Approved</span><strong>$0,00</strong></div><div><span>Claims Pending</span><strong>$0,00</strong></div><div><span>Disputes / Arbitration</span><strong>0</strong></div></div>
+      <div class="dashboard-section-body two-cols"><div class="dashboard-panel dashboard-panel-inside"><h3>Claims by Status (Value)</h3><div class="dashboard-chart" data-dashboard-chart="project-claims-status"></div></div><div class="dashboard-panel dashboard-panel-inside"><h3>Claims by Type (Value)</h3><div class="dashboard-chart" data-dashboard-chart="project-claims-type"></div></div></div>
+    </section>
+
+    <section class="dashboard-section">
+      <h2>7. Personnel</h2>
+      <div class="dashboard-stat-row three"><div><span>Total Actual Personnel</span><strong class="text-info">1.300</strong></div><div><span>Planned staffing levels</span><strong class="text-danger">1380</strong></div><div><span>Variance / Difference</span><strong class="text-danger">50</strong></div></div>
+      <div class="dashboard-section-body two-cols"><div class="dashboard-panel dashboard-panel-inside"><table class="dashboard-table"><thead><tr><th>Month</th><th class="text-center">Planned Personnel</th><th class="text-center">Actual Personnel</th><th class="text-end">Actual Progress %</th></tr></thead><tbody data-dashboard-table="project-personnel"></tbody></table></div><div class="dashboard-panel dashboard-panel-inside"><h3>Personnel Fluctuation &amp; Actual Progress</h3><div class="dashboard-chart" data-dashboard-chart="project-personnel"></div></div></div>
+    </section>
+
+    <section class="dashboard-section">
+      <h2>8. Materials &amp; Equipment</h2>
+      <div class="dashboard-stat-row"><div><span>Total Cumulative Import Value</span><strong class="text-info">$6.10M</strong></div><div><span>Actual Wastage % / Loss %</span><strong class="text-success">$6.10M</strong></div><div><span>Material Inventory / Stock</span><strong class="text-warning">$6.10M</strong></div><div><span>Equipment Readiness Rate</span><strong class="text-danger">$6.10M</strong></div><div><span>Outsourcing Costs / Month</span><strong>18 Ngay</strong></div></div>
+      <div class="dashboard-section-body two-cols"><div class="dashboard-panel dashboard-panel-inside"><table class="dashboard-table"><thead><tr><th>Month</th><th class="text-center">Import Value</th><th class="text-center">Actual Consumption Value</th><th class="text-end">Wastage %</th></tr></thead><tbody data-dashboard-table="project-materials"></tbody></table></div><div class="dashboard-panel dashboard-panel-inside"><h3>Actual Consumption</h3><div class="dashboard-chart" data-dashboard-chart="project-materials"></div></div></div>
+    </section>
+
+    <section class="dashboard-section"><h2>9. Key Risks (Top 5)</h2><div class="dashboard-panel dashboard-panel-full"><table class="dashboard-table dashboard-bordered-table dashboard-risk-table"><thead><tr><th>Risk Title</th><th>Risk category</th><th>Impact</th><th>Likelihood</th><th>Risk Score</th><th>Owner</th><th>Status</th></tr></thead><tbody><tr><td>1.</td><td></td><td class="risk-cell risk-red"></td><td class="risk-cell risk-red"></td><td></td><td></td><td></td></tr><tr><td>2.</td><td></td><td class="risk-cell risk-red"></td><td class="risk-cell risk-orange"></td><td></td><td></td><td></td></tr><tr><td>3.</td><td></td><td class="risk-cell risk-orange"></td><td class="risk-cell risk-yellow"></td><td></td><td></td><td></td></tr><tr><td>4.</td><td></td><td class="risk-cell risk-yellow"></td><td class="risk-cell risk-green"></td><td></td><td></td><td></td></tr><tr><td>5.</td><td></td><td class="risk-cell risk-green"></td><td class="risk-cell risk-green"></td><td></td><td></td><td></td></tr></tbody></table></div></section>
+
+    <div class="dashboard-bottom-grid">
+      <section class="dashboard-section"><h2>10. Key Milestones (All contracts)</h2><div class="dashboard-panel dashboard-panel-full"><table class="dashboard-table dashboard-bordered-table"><thead><tr><th>Risk Title</th><th>Baseline Date</th><th>Planned Date</th><th>Forecast Date</th><th>Status</th><th>Progress</th></tr></thead>
+        <tbody>
+          <tr><td>1.</td><td></td><td></td><td></td><td></td><td><span class="progress-strip green"></span></td></tr>
+          <tr><td>2.</td><td></td><td></td><td></td><td></td><td><span class="progress-strip red"></span></td></tr>
+          <tr><td>3.</td><td></td><td></td><td></td><td></td><td><span class="progress-strip orange"></span></td></tr>
+          <tr><td>4.</td><td></td><td></td><td></td><td></td><td><span class="progress-strip gray"></span></td></tr>
+          <tr><td>5.</td><td></td><td></td><td></td><td></td><td><span class="progress-strip green"></span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+  <section class="dashboard-section"><h2>11. Key Actions &amp; Upcoming Tasks (Top 5)</h2><div class="dashboard-panel dashboard-panel-full"><table class="dashboard-table dashboard-bordered-table"><thead><tr><th>Task</th><th>Owner</th><th>Due date</th><th>Priority</th><th>Status</th></tr></thead><tbody><tr><td>1.</td><td></td><td></td><td class="priority-high">High</td><td class="text-info"><a href="">Open</a></td></tr><tr><td>2.</td><td></td><td></td><td class="priority-medium">Medium</td><td class="text-info"><a href="">Open</a></td></tr><tr><td>3.</td><td></td><td></td><td class="priority-low">Low</td><td class="text-info"><a href="">Open</a></td></tr><tr><td>4.</td><td></td><td></td><td class="priority-low">Low</td><td class="text-info"><a href="">Open</a></td></tr><tr><td>5.</td><td></td><td></td><td class="priority-low">Low</td><td class="text-info"><a href="">Open</a></td></tr></tbody></table></div></section>
+    </div>
+  </section>
+
+  <section class="dashboard-view" data-dashboard-view="company">
+    <div class="dashboard-filter-row" aria-label="Company dashboard filters">
+      <select class="form-select" aria-label="Project or contract"><option>Project/Contract</option></select>
+      <select class="form-select" aria-label="Client"><option>Client</option></select>
+      <select class="form-select" aria-label="Project manager"><option>Project manager</option></select>
+      <select class="form-select" aria-label="Contract type"><option>Contract type</option></select>
+      <select class="form-select" aria-label="Status"><option>Status</option></select>
+      <select class="form-select" aria-label="Data as on"><option>Data as on</option></select>
+    </div>
+
+    <div class="dashboard-kpi-grid company" aria-label="Company summary">
+      <article class="dashboard-kpi"><h3>Total Active Contracts</h3><strong>0</strong><span class="positive">+5</span>&nbsp;<span> vs Apr 2025</span></article>
+      <article class="dashboard-kpi"><h3>Total Contract Value</h3><strong>0</strong></article>
+      <article class="dashboard-kpi"><h3>Revenue Recognized</h3><strong>0</strong></article>
+      <article class="dashboard-kpi"><h3>Remaining Backlog</h3><strong>0</strong><span class="positive">+5</span>&nbsp;<span> vs Apr 2025</span></article>
+      <article class="dashboard-kpi"><h3>Gross Margin % (Forecast)</h3><strong>0</strong><span class="positive">46%</span>&nbsp;<span> of RCV</span></article>
+      <article class="dashboard-kpi"><h3>Cash Collected (YTD)</h3><strong>0</strong><span class="negative">-1,2%</span>&nbsp;<span> vs Apr 2025</span></article>
+      <article class="dashboard-kpi"><h3>Outstanding Receivables</h3><strong>0</strong><span class="positive">46%</span>&nbsp;<span> of RCV</span></article>
+      <article class="dashboard-kpi"><h3>Contracts at Risk</h3><strong>0</strong></article>
+    </div>
+
+    <section class="dashboard-section">
+      <h2>1. Contract Portfolio Overview</h2>
+      <div class="dashboard-section-body four-cols">
+        <div class="dashboard-panel dashboard-panel-inside"><h3>By status</h3><div class="dashboard-chart small" data-dashboard-chart="company-status"></div></div>
+        <div class="dashboard-panel dashboard-panel-inside"><h3>By Contract Type</h3><div class="dashboard-chart small" data-dashboard-chart="company-type"></div></div>
+        <div class="dashboard-panel dashboard-panel-inside"><h3>By client (Top 5)</h3><div class="dashboard-chart small" data-dashboard-chart="company-client"></div></div>
+        <div class="dashboard-panel dashboard-panel-inside"><h3>My region</h3><div class="dashboard-chart small" data-dashboard-chart="company-region"></div></div>
+      </div>
+    </section>
+
+    <section class="dashboard-section">
+      <h2>2. Action Center &amp; Alerts</h2>
+      <div class="dashboard-panel dashboard-panel-full">
+        <table class="dashboard-table dashboard-alert-table">
+          <thead><tr><th>Alert</th><th>Priority</th><th>Details</th><th class="text-end">Time</th></tr></thead>
+          <tbody>
+            <tr><td><img src="/assets/img/Warning-yellow-icon.png" alt=""></td><td class="text-warning">Medium</td><td>Margin below 5% in 3 contracts</td><td class="text-end">10 mins ago</td></tr>
+            <tr><td><img src="/assets/img/Warning-red-icon.png" alt=""></td><td class="text-danger">High</td><td>Payment overdue &gt; 60 days for $18.7M</td><td class="text-end">25 mins ago</td></tr>
+            <tr><td><img src="/assets/img/Warning-red-icon.png" alt=""></td><td class="text-danger">High</td><td>Pending Variations &gt; 30 days for $24.3M</td><td class="text-end">1 hr ago</td></tr>
+            <tr><td><img src="/assets/img/Warning-red-icon.png" alt=""></td><td class="text-danger">High</td><td>Delay &gt; 15 days in 4 projects</td><td class="text-end">2 hrs ago</td></tr>
+            <tr><td><img src="/assets/img/Warning-yellow-icon.png" alt=""></td><td class="text-warning">Medium</td><td>Insurance expiring in 14 days for 2 projects</td><td class="text-end">3 hrs ago</td></tr>
+            <tr><td><img src="/assets/img/Warning-red-icon.png" alt=""></td><td class="text-danger">High</td><td>Claim notice deadline in 7 days for 1 project</td><td class="text-end">1 day ago</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="dashboard-section">
+      <h2>3. Financial Performance (All Contracts)</h2>
+      <div class="dashboard-stat-row eight"><div><span>Original Contract Value</span><strong>$400.5M</strong></div><div><span>Approved Variations</span><strong>$38.6M</strong></div><div><span>Pending Variations</span><strong>$24.3M</strong></div><div><span>Revised Contract Value</span><strong>$439.1M</strong></div><div><span>Cost to Date</span><strong>$193.6M</strong></div><div><span>Forecast Final Cost</span><strong>$383.6M</strong></div><div><span>Forecast Profit</span><strong>$55.5M</strong></div><div><span>Forecast Margin %</span><strong>12.6%</strong></div></div>
+      <div class="dashboard-section-body three-equal-cols"><div class="dashboard-panel dashboard-panel-inside"><h3>Revenue vs Cost Trend</h3><div class="dashboard-chart" data-dashboard-chart="company-finance-trend"></div></div><div class="dashboard-panel dashboard-panel-inside"><h3>Margin % by Project (Forecast)</h3><div class="dashboard-chart" data-dashboard-chart="company-margin-project"></div></div><div class="dashboard-panel dashboard-panel-inside"><h3>Top Variation Causes (Value)</h3><div class="dashboard-chart" data-dashboard-chart="company-variation-causes"></div></div></div>
+    </section>
+
+    <section class="dashboard-section">
+      <h2 class="dashboard-company-action-title"><span>4. Risk Heat Map</span><a href="#!" class="dashboard-section-action">View all</a></h2>
+      <div class="dashboard-section-body two-cols">
+        <div class="dashboard-panel"><div class="risk-matrix company-risk"><span>High</span><div class="risk-orange">1</div><div class="risk-orange">2</div><div class="risk-red">2</div><span>Medium</span><div class="risk-yellow">1</div><div class="risk-orange">3</div><div class="risk-orange">1</div><span>Low</span><div class="risk-green">2</div><div class="risk-yellow">1</div><div class="risk-orange">0</div></div></div>
+        <div class="dashboard-panel dashboard-panel-inside"><table class="dashboard-table compact"><thead><tr><th>Top risk</th><th class="text-end">Priority</th></tr></thead><tbody><tr><td>1. Delay in material approvals</td><td class="text-end text-danger">High</td></tr><tr><td>2. Design changes impacting MEP</td><td class="text-end text-danger">High</td></tr><tr><td>3. Skilled labor shortage</td><td class="text-end text-warning">Medium</td></tr><tr><td>4. Delay in client decisions</td><td class="text-end text-warning">Medium</td></tr></tbody></table></div>
+      </div>
+    </section>
+
+    <section class="dashboard-section">
+      <h2>5. Variations Overview</h2>
+      <div class="dashboard-stat-row"><div><span>Variations Raised (YTD)</span><strong>143</strong><small>$62.7M</small></div><div><span>Approved Variations</span><strong class="text-success">$38.6M</strong></div><div><span>Pending Variations</span><strong class="text-warning">$24.3M</strong></div><div><span>Rejected Variations</span><strong class="text-danger">$2.8M</strong></div><div><span>Avg Approval Days</span><strong>18 Days</strong></div></div>
+      <div class="dashboard-section-body two-cols"><div class="dashboard-panel dashboard-panel-inside"><h3>Pending Variations Aging</h3><div class="dashboard-chart" data-dashboard-chart="company-variation-aging"></div></div><div class="dashboard-panel dashboard-panel-inside"><h3>Variations by Cause (Value)</h3><div class="dashboard-chart" data-dashboard-chart="company-validation-causes"></div></div></div>
+    </section>
+
+    <section class="dashboard-section">
+      <h2 class="dashboard-company-action-title"><span>6. Claims &amp; Disputes Overview</span><a href="#!" class="dashboard-section-action">View all</a></h2>
+      <div class="dashboard-stat-row five"><div><span>EOT Claims</span><strong>12</strong><small>$62.7M</small></div><div><span>Claims Approved</span><strong>9</strong><small>$22.1M</small></div><div><span>Cost Claims</span><strong class="text-success">$15.2M</strong><small>(-58%)</small></div><div><span>Claims Pending &gt; 30 Days</span><strong class="text-danger">$9.3M</strong></div><div><span>Disputes / Arbitration</span><strong>3</strong></div><div><span></span><strong></strong></div></div>
+      <div class="dashboard-section-body two-cols"><div class="dashboard-panel dashboard-panel-inside"><h3>Claims &amp; disputes overview</h3><div class="dashboard-chart" data-dashboard-chart="company-claims-overview"></div></div><div class="dashboard-panel dashboard-panel-inside"><h3>Claims Success Ratio</h3><div class="dashboard-chart" data-dashboard-chart="company-claims-success"></div></div></div>
+    </section>
+
+    <section class="dashboard-section">
+      <h2 class="dashboard-company-action-title"><span>7. Payment &amp; Cashflow Overview</span><a href="#!" class="dashboard-section-action">View all</a></h2>
+      <div class="dashboard-stat-row"><div><span>Invoices Submitted (YTD)</span><strong>143</strong><small>$286.4M</small></div><div><span>Payments Received</span><strong class="text-warning">$247.8M</strong></div><div><span>Certified Amount</span><strong class="text-success">$190.7M</strong></div><div><span>Retention Held</span><strong class="text-danger">$26.8M</strong></div><div><span>DSO</span><strong>56 Days</strong></div></div>
+      <div class="dashboard-section-body two-cols"><div class="dashboard-panel dashboard-panel-inside"><h3>Receivables Aging</h3><div class="dashboard-chart" data-dashboard-chart="company-payment-aging"></div></div><div class="dashboard-panel dashboard-panel-inside"><h3>Billing vs Collection Trend</h3><div class="dashboard-chart" data-dashboard-chart="company-billing-trend"></div></div></div>
+    </section>
+
+    <div class="dashboard-bottom-grid company-bottom-grid">
+      <section class="dashboard-section company-span-6"><h2>8. Procurement &amp; Subcontracts</h2><div class="dashboard-stat-row four compact-row"><div><span>Major Subcontracts Awarded</span><strong>78%</strong></div><div><span>Procurement Against Budget</span><strong class="text-success">$152.4M</strong></div><div><span>Payments Received</span><strong class="text-warning">6</strong><small>$62.7M</small></div><div><span>Subcontract Claims</span><strong class="text-danger">92%</strong></div></div></section>
+      <section class="dashboard-section company-span-6"><h2>9. Key KPI Summary</h2><div class="dashboard-stat-row four compact-row"><div><span>Avg. SPI (Schedule)</span><strong>0.92</strong></div><div><span>Avg. CPI (Cost)</span><strong class="text-success">0.97</strong></div><div><span>Safety Incidents (YTD)</span><strong class="text-warning">14</strong></div><div><span>Quality NCRs (Open)</span><strong class="text-info">27</strong></div></div></section>
+      <section class="dashboard-section company-span-8"><h2>10. Compliance Overview</h2><div class="dashboard-stat-row five compact-row"><div><span>Insurance Expiring Soon</span><strong>2</strong></div><div><span>Procurement Against Budget</span><strong class="text-success">3</strong></div><div><span>Missing Notices</span><strong class="text-danger">4</strong></div><div><span>Deliverables Due</span><strong>7</strong></div><div><span>Expired Permits</span><strong>1</strong></div></div></section>
+      <section class="dashboard-section company-span-4"><h2>11. Project Health Summary</h2><div class="dashboard-stat-row three compact-row"><div><span>Avg. CPI (Cost)</span><strong class="text-success">32</strong><small>(-66%)</small></div><div><span>Safety Incidents (YTD)</span><strong class="text-warning">9</strong><small>(-19%)</small></div><div><span>Quality NCRs (Open)</span><strong class="text-danger">7</strong><small>(-15%)</small></div></div></section>
+    </div>
+  </section>
+</div>
+
+<script>
+  (function () {
+    const root = document.getElementById("dashboard-overview");
+    if (!root) return;
+
+    const tabButtons = Array.from(root.querySelectorAll("[data-dashboard-tab]"));
+    const views = Array.from(root.querySelectorAll("[data-dashboard-view]"));
+    const titleEl = document.getElementById("navbar-title");
+    const descEl = document.getElementById("navbar-description");
+    const chartInstances = {};
+    let tabTransitionTimer = null;
+
+    const palette = {
+      navy: "#1e2b58",
+      blue: "#7b8cff",
+      green: "#6ed49a",
+      orange: "#ffae52",
+      red: "#e6374d",
+      cyan: "#27c9d7",
+      yellow: "#ffc233",
+      grid: "#d7dce8",
+      text: "#454b5f"
+    };
+    const months = ["2/2026", "3/2026", "4/2026", "5/2026", "6/2026", "7/2026"];
+    const longMonths = ["9/2025", "10/2025", "11/2025", "12/2025", "1/2026", "2/2026", "3/2026", "4/2026"];
+
+    function fillTable(selector, rows) {
+      const body = root.querySelector(selector);
+      if (body) body.innerHTML = rows.join("");
+    }
+
+    function seedTables() {
+      const financeRows = ["Original Contract Value", "Approved Variations", "Pending Variations", "Revised Contract Value", "Revenue Recognized (To date)", "Cost Incurred (To date)", "Forecast Final Cost (EAC)", "Forecast Profit", "Tender Margin", "Forecast Profit"];
+      const personnelRows = [["9/2025", 100, 95, "2%"], ["10/2025", 150, 140, "5%"], ["11/2025", 200, 210, "12%"], ["12/2025", 250, 245, "20%"], ["1/2026", 270, 230, "25%"], ["2/2026", 280, 260, "32%"], ["3/2026", 300, 290, "45%"], ["4/2026", 320, 310, "55%"]];
+      const materialRows = [["9/2025", 2.5, 2.4, "0.5%"], ["10/2025", 4.2, 3.9, "1.5%"], ["11/2025", 8.1, 7.8, "1.2%"], ["12/2025", 12.5, 11.8, "3.5%"], ["1/2026", 9.0, 8.5, "2.8%"], ["2/2026", 7.5, 7.0, "3.2%"], ["3/2026", 15.2, 14.5, "4.5%"], ["4/2026", 10.4, 13.0, "2.5%"]];
+
+      fillTable('[data-dashboard-table="contract-finance"]', financeRows.map(function (label) { return '<tr><td>' + label + '</td><td class="text-end">$52.600.000</td><td class="text-end">100%</td></tr>'; }));
+      fillTable('[data-dashboard-table="contract-progress"]', financeRows.map(function (label) { return '<tr><td>' + label + '</td><td class="text-end">100%</td></tr>'; }));
+
+      ["contract", "project"].forEach(function (prefix) {
+        fillTable('[data-dashboard-table="' + prefix + '-personnel"]', personnelRows.map(function (row) { return '<tr><td>' + row[0] + '</td><td class="text-center">' + row[1] + '</td><td class="text-center">' + row[2] + '</td><td class="text-end">' + row[3] + '</td></tr>'; }));
+        fillTable('[data-dashboard-table="' + prefix + '-materials"]', materialRows.map(function (row) { return '<tr><td>' + row[0] + '</td><td class="text-center">' + row[1] + '</td><td class="text-center">' + row[2] + '</td><td class="text-end">' + row[3] + '</td></tr>'; }));
+      });
+    }
+
+    function baseGrid() {
+      return { left: 42, right: 18, top: 28, bottom: 56 };
+    }
+
+    function chart(name, option) {
+      if (!window.echarts || chartInstances[name]) return;
+      const el = root.querySelector('[data-dashboard-chart="' + name + '"]');
+      if (!el || !el.offsetParent) return;
+      const instance = echarts.init(el);
+      instance.setOption(option);
+      chartInstances[name] = instance;
+    }
+
+    function resizeCharts() {
+      Object.keys(chartInstances).forEach(function (key) { chartInstances[key].resize(); });
+    }
+
+    function lineOption(series, categories) {
+      return {
+        color: [palette.blue, palette.green, palette.orange],
+        tooltip: { trigger: "axis" },
+        legend: { bottom: 4, itemWidth: 10, itemHeight: 10, textStyle: { color: palette.text, fontSize: 11 } },
+        grid: baseGrid(),
+        xAxis: { type: "category", data: categories || months, axisTick: { show: false }, axisLine: { lineStyle: { color: "#aeb6c8" } } },
+        yAxis: { type: "value", min: 0, max: 100, splitLine: { lineStyle: { color: palette.grid, type: "dashed" } } },
+        series: series.map(function (item) { return { name: item.name, type: "line", smooth: true, symbolSize: 8, lineStyle: { width: 2 }, data: item.data }; })
+      };
+    }
+
+    function donutOption(data, colors, center) {
+      return {
+        color: colors || [palette.blue, palette.green, palette.orange, palette.red, palette.cyan, palette.yellow],
+        tooltip: { trigger: "item" },
+        legend: { right: 12, top: "middle", orient: "vertical", itemWidth: 9, itemHeight: 9, textStyle: { fontSize: 11 } },
+        series: [{ type: "pie", radius: ["42%", "68%"], center: center || ["38%", "50%"], avoidLabelOverlap: true, label: { show: false }, data: data }]
+      };
+    }
+
+    function percentDonut(name) {
+      chart(name, {
+        color: [palette.green, palette.yellow, palette.red, "#1296ed"],
+        legend: { bottom: 4, itemWidth: 9, itemHeight: 9, textStyle: { fontSize: 11 } },
+        series: [{ type: "pie", radius: ["42%", "70%"], center: ["50%", "45%"], label: { formatter: "0%", color: "#fff", fontSize: 16 }, data: [{ value: 25, name: "0-20 days" }, { value: 25, name: "21-40 days" }, { value: 25, name: "61-90 days" }, { value: 25, name: "> 90 days" }] }]
+      });
+    }
+
+    function companyAgingDonut(name) {
+      chart(name, {
+        color: [palette.green, palette.yellow, palette.red, "#1296ed"],
+        tooltip: { trigger: "item" },
+        legend: { bottom: 4, itemWidth: 9, itemHeight: 9, textStyle: { fontSize: 11 } },
+        series: [{
+          type: "pie",
+          radius: ["42%", "68%"],
+          center: ["50%", "45%"],
+          avoidLabelOverlap: true,
+          label: {
+            show: true,
+            position: "outside",
+            formatter: "{b}",
+            color: palette.text,
+            fontSize: 10,
+            lineHeight: 12
+          },
+          labelLine: { show: true, length: 14, length2: 12 },
+          data: [
+            { value: 25, name: "0-20 days" },
+            { value: 25, name: "21-40 days" },
+            { value: 25, name: "61-90 days" },
+            { value: 25, name: "> 90 days" }
+          ]
+        }]
+      });
+    }
+
+    function wrapAxisLabel(value) {
+      const text = String(value || "");
+      const firstLineLimit = 15;
+      const secondLineLimit = 14;
+      if (text.length <= firstLineLimit) return text;
+
+      const words = text.split(" ");
+      let first = "";
+      let rest = "";
+
+      words.forEach(function (word) {
+        if ((first + " " + word).trim().length <= firstLineLimit) {
+          first = (first + " " + word).trim();
+        } else {
+          rest = (rest + " " + word).trim();
+        }
+      });
+
+      if (!first) {
+        first = text.slice(0, firstLineLimit);
+        rest = text.slice(firstLineLimit);
+      }
+
+      if (rest.length > secondLineLimit) rest = rest.slice(0, secondLineLimit - 3).trim() + "...";
+      return first + (rest ? "\n" + rest : "");
+    }
+
+    function horizontalBarOption(categories, values, maxValue) {
+      return {
+        color: [palette.blue],
+        tooltip: { trigger: "axis" },
+        grid: { left: 132, right: 24, top: 14, bottom: 30 },
+        xAxis: { type: "value", min: 0, max: maxValue || 1, splitLine: { lineStyle: { color: palette.grid, type: "dashed" } } },
+        yAxis: { type: "category", data: categories, axisTick: { show: false }, axisLine: { show: false }, axisLabel: { fontSize: 10, lineHeight: 12, width: 110, overflow: "truncate", formatter: wrapAxisLabel } },
+        series: [{ type: "bar", data: values, barWidth: 18, label: { show: true, position: "insideRight", color: "#fff" } }]
+      };
+    }
+
+    function companyHorizontalBarOption(categories, values, maxValue) {
+      return {
+        color: [palette.blue],
+        tooltip: { trigger: "axis" },
+        grid: { left: 88, right: 18, top: 22, bottom: 30 },
+        xAxis: { type: "value", min: 0, max: maxValue || 1, splitLine: { lineStyle: { color: palette.grid, type: "dashed" } } },
+        yAxis: {
+          type: "category",
+          data: categories,
+          axisTick: { show: false },
+          axisLine: { show: false },
+          axisLabel: { fontSize: 10, lineHeight: 12, width: 72, overflow: "truncate", formatter: wrapAxisLabel }
+        },
+        series: [{ type: "bar", data: values, barWidth: 18, label: { show: true, position: "insideRight", color: "#fff", fontWeight: 800 } }]
+      };
+    }
+
+    function companyMarginOption(categories, values) {
+      const colors = ["#4f9761", "#5cad6f", "#6cc782", "#83d393", "#97dca5", "#e45f63"];
+      return {
+        tooltip: { trigger: "axis" },
+        grid: { left: 42, right: 18, top: 28, bottom: 44 },
+        xAxis: {
+          type: "category",
+          data: categories,
+          axisTick: { show: false },
+          axisLabel: { fontSize: 10, width: 60, overflow: "truncate" }
+        },
+        yAxis: {
+          type: "value",
+          min: -10,
+          max: 30,
+          axisLabel: { formatter: "{value}%" },
+          splitLine: { lineStyle: { color: palette.grid, type: "dashed" } }
+        },
+        series: [{
+          type: "bar",
+          data: values.map(function (value, index) {
+            return { value: value, itemStyle: { color: colors[index] || palette.green } };
+          }),
+          barWidth: 28
+        }]
+      };
+    }
+
+    function waterfallOption() {
+      return {
+        color: [palette.green, "#e87884"],
+        tooltip: { trigger: "axis" },
+        grid: { left: 42, right: 18, top: 28, bottom: 36 },
+        xAxis: { type: "category", data: ["Revenue", "EAC", "Forecast Profit"], axisTick: { show: false } },
+        yAxis: { type: "value", min: 0, max: 100, splitLine: { lineStyle: { color: palette.grid, type: "dashed" } } },
+        series: [
+          {
+            type: "bar",
+            stack: "waterfall",
+            itemStyle: { color: "transparent" },
+            emphasis: { itemStyle: { color: "transparent" } },
+            data: [0, 48, 0]
+          },
+          {
+            type: "bar",
+            stack: "waterfall",
+            barWidth: 96,
+            itemStyle: {
+              color: function (params) {
+                return params.dataIndex === 1 ? "#e87884" : palette.green;
+              }
+            },
+            data: [86, 38, 48]
+          }
+        ]
+      };
+    }
+
+    function barOption(categories, values, colors) {
+      return {
+        color: colors || [palette.green],
+        tooltip: { trigger: "axis" },
+        grid: baseGrid(),
+        xAxis: { type: "category", data: categories, axisTick: { show: false } },
+        yAxis: { type: "value", splitLine: { lineStyle: { color: palette.grid, type: "dashed" } } },
+        series: [{ type: "bar", data: values, barWidth: 34 }]
+      };
+    }
+
+    function comboChart(name, categories, bar1, bar2, line) {
+      chart(name, {
+        color: [palette.blue, palette.green, "#2454ff"],
+        tooltip: { trigger: "axis" },
+        legend: { bottom: 4, itemWidth: 10, itemHeight: 10 },
+        grid: baseGrid(),
+        xAxis: { type: "category", data: categories },
+        yAxis: [{ type: "value" }, { type: "value", min: 0, max: 75, axisLabel: { formatter: "{value}%" } }],
+        series: [{ name: "Planned", type: "bar", data: bar1, barWidth: 18 }, { name: "Actual", type: "bar", data: bar2, barWidth: 18 }, { name: "Progress", type: "line", yAxisIndex: 1, smooth: true, data: line }]
+      });
+    }
+
+    function gaugeOption(value) {
+      return {
+        graphic: [
+          {
+            type: "text",
+            left: "12%",
+            bottom: 8,
+            style: {
+              text: "{value|$15.2M} {label|Approved}",
+              rich: {
+                value: { fill: "#20a852", fontSize: 11, fontWeight: 700 },
+                label: { fill: "#333333", fontSize: 11, fontWeight: 700 }
+              }
+            }
+          },
+          {
+            type: "text",
+            right: "12%",
+            bottom: 8,
+            style: {
+              text: "{value|$6.9M} {label|Approved}",
+              align: "right",
+              rich: {
+                value: { fill: palette.red, fontSize: 11, fontWeight: 700 },
+                label: { fill: "#333333", fontSize: 11, fontWeight: 700 }
+              }
+            }
+          }
+        ],
+        series: [{
+          type: "gauge",
+          startAngle: 180,
+          endAngle: 0,
+          radius: "92%",
+          center: ["50%", "72%"],
+          min: 0,
+          max: 100,
+          splitNumber: 2,
+          axisLine: { lineStyle: { width: 34, color: [[value / 100, "#2aa84a"], [1, palette.red]] } },
+          pointer: { show: false },
+          axisTick: { show: false },
+          splitLine: { show: false },
+          axisLabel: { show: false },
+          detail: { valueAnimation: true, formatter: "{value}%", color: "#2aa84a", fontSize: 30, fontWeight: 800, offsetCenter: [0, "-12%"] },
+          data: [{ value: value }]
+        }]
+      };
+    }
+
+    function initContractCharts() {
+      chart("contract-revenue-cost", lineOption([{ name: "Revenue", data: [10, 10, 14, 34, 19, 14] }, { name: "Cost", data: [25, 39, 41, 54, 62, 43] }, { name: "Forecast EAC", data: [44, 62, 69, 83, 84, 75] }]));
+      chart("contract-planned-actual", lineOption([{ name: "Planned", data: [39, 54, 63, 66, 76, 78] }, { name: "Actual", data: [15, 28, 33, 42, 54, 61] }, { name: "Forecast", data: [14, 28, 33, 42, 54, 61] }]));
+      chart("contract-milestone", donutOption([{ value: 46, name: "Completed" }, { value: 82, name: "On track" }, { value: 10, name: "Overdue" }], [palette.green, "#1296ed", palette.orange]));
+      chart("contract-variation-aging", horizontalBarOption(["0-30 days", "31-60 days", "61-90 days", "> 90 days"], [0.40, 0.71, 0.63, 0.51]));
+      chart("contract-variation-cause", donutOption([{ value: 32, name: "Design Changes" }, { value: 26, name: "Client Requests" }, { value: 18, name: "Site Conditions" }, { value: 14, name: "Regulatory" }, { value: 10, name: "Others" }]));
+      chart("contract-claims-aging", horizontalBarOption(["0-30 days", "31-60 days", "61-90 days", "> 90 days"], [0.57, 0.82, 0.70, 0.60]));
+      chart("contract-claims-type", donutOption([{ value: 30, name: "EOT" }, { value: 28, name: "Cost" }, { value: 32, name: "Disruption" }, { value: 10, name: "Others" }], [palette.blue, palette.green, palette.cyan, palette.yellow]));
+      chart("contract-receivables-aging", donutOption([{ value: 4.2, name: "0-20 days" }, { value: 3.1, name: "31-60 days" }, { value: 2.05, name: "61-90 days" }, { value: 2.1, name: "> 90 days" }], [palette.blue, palette.green, palette.cyan, palette.orange]));
+      chart("contract-billing-collection", { color: [palette.blue, palette.green, palette.orange], tooltip: { trigger: "axis" }, legend: { bottom: 4, itemWidth: 10, itemHeight: 10 }, grid: baseGrid(), xAxis: { type: "category", data: ["11/2025", "12/2025", "1/2026", "2/2026", "3/2026", "4/2026"] }, yAxis: [{ type: "value", min: 0, max: 100 }, { type: "value", min: 0, max: 100 }], series: [{ name: "Billed", type: "bar", data: [55, 65, 80, 84, 70, 35], barWidth: 18 }, { name: "Collected", type: "bar", data: [40, 80, 38, 45, 66, 26], barWidth: 18 }, { name: "Collection %", type: "line", yAxisIndex: 1, smooth: true, data: [45, 47, 59, 73, 92, 70] }] });
+      comboChart("contract-personnel", longMonths, [100, 150, 200, 250, 270, 280, 300, 320], [95, 140, 210, 245, 230, 260, 290, 310], [2, 5, 12, 20, 25, 32, 45, 55]);
+      comboChart("contract-materials", longMonths, [250, 420, 810, 125, 900, 750, 520, 400], [240, 390, 780, 118, 850, 700, 450, 300], [5, 11, 23, 44, 51, 58, 65, 72]);
+    }
+
+    function initProjectCharts() {
+      chart("project-progress", lineOption([{ name: "Planned %", data: [44, 62, 69, 83, 84, 75] }, { name: "Actual %", data: [25, 39, 41, 54, 62, 43] }, { name: "Forecast %", data: [24, 40, 42, 54, 62, 44] }]));
+      chart("project-finance-trend", lineOption([{ name: "Planned %", data: [44, 62, 69, 83, 84, 75] }, { name: "Actual %", data: [25, 39, 41, 54, 62, 43] }, { name: "Forecast %", data: [25, 39, 41, 54, 62, 43] }]));
+      chart("project-profit-waterfall", waterfallOption());
+      chart("project-variation-status", donutOption([{ value: 34, name: "Pending" }, { value: 33, name: "Approved" }, { value: 33, name: "Rejected" }], [palette.yellow, "#23a84a", palette.red]));
+      chart("project-variation-causes", horizontalBarOption(["Residential Towers", "Highway Expansion", "School Complex", "Hospital Project", "Industrial Plant"], [0, 0, 0, 0, 0], 1));
+      chart("project-receivables-aging", donutOption([{ value: 26.3, name: "0-20 days" }, { value: 24.2, name: "31-60 days" }, { value: 28, name: "61-90 days" }, { value: 21.5, name: "> 90 days" }], ["#1296ed", "#23a84a", palette.yellow, palette.red]));
+      chart("project-billing-trend", lineOption([{ name: "Billed", data: [25, 39, 41, 54, 62, 43] }, { name: "Collected", data: [44, 62, 69, 83, 84, 75] }, { name: "Collection %", data: [25, 39, 41, 54, 62, 43] }], ["[MM-YYYY]", "[MM-YYYY]", "[MM-YYYY]", "[MM-YYYY]", "[MM-YYYY]", "[MM-YYYY]"]));
+      chart("project-claims-status", donutOption([{ value: 34, name: "Pending" }, { value: 33, name: "Approved" }, { value: 33, name: "Rejected" }], [palette.yellow, "#23a84a", palette.red]));
+      chart("project-claims-type", horizontalBarOption(["", "", "", "", ""], [0, 0, 0, 0, 0], 1));
+      comboChart("project-personnel", longMonths, [100, 150, 200, 250, 270, 280, 300, 320], [95, 140, 210, 245, 230, 260, 290, 310], [2, 5, 12, 20, 25, 32, 45, 55]);
+      comboChart("project-materials", longMonths, [250, 420, 810, 125, 900, 750, 520, 400], [240, 390, 780, 118, 850, 700, 450, 300], [5, 11, 23, 44, 51, 58, 65, 72]);
+    }
+
+    function initCompanyCharts() {
+      chart("company-status", donutOption([{ value: 12, name: "Active" }, { value: 20, name: "Awarded" }, { value: 21, name: "Tender" }, { value: 12, name: "Suspended" }, { value: 14, name: "Completed" }, { value: 8, name: "Defect Liability" }]));
+      chart("company-type", donutOption([{ value: 42, name: "Lump Sum" }, { value: 24, name: "Unit Rate" }, { value: 18, name: "Cost Plus" }, { value: 12, name: "EPC" }, { value: 8, name: "Design-Build" }]));
+      chart("company-client", donutOption([{ value: 30, name: "ABC Corp" }, { value: 24, name: "Govt of State" }, { value: 21, name: "XYZ Developers" }, { value: 16, name: "Global Infra" }, { value: 9, name: "Others" }]));
+      chart("company-region", donutOption([{ value: 30, name: "Northern" }, { value: 24, name: "Southern" }, { value: 21, name: "Eastern" }, { value: 16, name: "Western" }, { value: 9, name: "International" }]));
+      chart("company-finance-trend", lineOption([{ name: "Revenue (Cumulative)", data: [26, 39, 41, 54, 62, 43] }, { name: "Cost (Cumulative)", data: [45, 64, 70, 84, 85, 76] }], ["3/2026", "4/2026", "5/2026", "6/2026", "7/2026", "8/2026"]));
+      chart("company-margin-project", companyMarginOption(["Metro rail", "Airport Terminal", "Water Bridge", "Tech Park", "Highway Expansion", "Residential Tower"], [25, 19, 14, 7, 4, -3]));
+      chart("company-variation-causes", companyHorizontalBarOption(["Residential Towers", "Highway Expansion", "School Complex", "Hospital Project", "Industrial Plant"], [0.65, 0.37, 0.33, 0.57, 0.23], 1));
+      companyAgingDonut("company-variation-aging");
+      chart("company-validation-causes", companyHorizontalBarOption(["Residential Towers", "Highway Expansion", "School Complex", "Hospital Project", "Industrial Plant"], [0.65, 0.33, 0.33, 0.57, 0.23], 1));
+      companyAgingDonut("company-claims-overview");
+      chart("company-claims-success", gaugeOption(69));
+      companyAgingDonut("company-payment-aging");
+      chart("company-billing-trend", { color: [palette.blue, palette.green], tooltip: { trigger: "axis" }, legend: { bottom: 4, itemWidth: 10, itemHeight: 10 }, grid: baseGrid(), xAxis: { type: "category", data: ["09/2025", "10/2025", "11/2025", "12/2025", "1/2026", "2/2026", "3/2026"] }, yAxis: [{ type: "value", min: 0, max: 500 }, { type: "value", min: 0, max: 75, axisLabel: { formatter: "{value}%" } }], series: [{ name: "Billed (M USD)", type: "bar", data: [285, 288, 286, 330, 380, 395, 355], barWidth: 22 }, { name: "Collected (M USD)", type: "bar", data: [205, 202, 200, 405, 0, 210, 325], barWidth: 22 }] });
+    }
+
+    function initCharts(view) {
+      if (view === "contract") initContractCharts();
+      if (view === "project") initProjectCharts();
+      if (view === "company") initCompanyCharts();
+      requestAnimationFrame(resizeCharts);
+    }
+
+    function activateTab(tabName) {
+      const activeButton = tabButtons.find(function (button) { return button.dataset.dashboardTab === tabName; }) || tabButtons[0];
+      const activeView = views.find(function (view) { return view.dataset.dashboardView === activeButton.dataset.dashboardTab; });
+      const currentView = views.find(function (view) { return view.classList.contains("active"); });
+      const nextTab = activeButton.dataset.dashboardTab;
+
+      window.clearTimeout(tabTransitionTimer);
+
+      tabButtons.forEach(function (button) {
+        const isActive = button === activeButton;
+        button.classList.toggle("active", isActive);
+        button.setAttribute("aria-selected", isActive ? "true" : "false");
+      });
+
+      if (titleEl) titleEl.textContent = activeButton.dataset.dashboardTitle;
+      if (descEl) descEl.textContent = activeButton.dataset.dashboardDesc;
+      root.dataset.activeDashboard = nextTab;
+
+      if (currentView === activeView) {
+        activeView.classList.remove("is-leaving", "is-entering");
+        initCharts(nextTab);
+        return;
+      }
+
+      if (currentView) {
+        currentView.classList.add("is-leaving");
+      }
+
+      tabTransitionTimer = window.setTimeout(function () {
+        views.forEach(function (view) {
+          const isActive = view === activeView;
+          view.classList.toggle("active", isActive);
+          view.classList.remove("is-leaving");
+          view.classList.toggle("is-entering", isActive);
+        });
+        initCharts(nextTab);
+
+        window.requestAnimationFrame(function () {
+          window.requestAnimationFrame(function () {
+            activeView.classList.remove("is-entering");
+            resizeCharts();
+          });
+        });
+      }, currentView ? 130 : 0);
+    }
+
+    seedTables();
+    tabButtons.forEach(function (button) {
+      button.addEventListener("click", function () { activateTab(button.dataset.dashboardTab); });
+    });
+    activateTab("contract");
+    window.addEventListener("resize", resizeCharts);
+  })();
+</script>

@@ -1,0 +1,110 @@
+<div id="roleupdate-section">
+  <form id="roleupdate-form">
+
+    <div class="card">
+      <div class="card-header">
+        <h2 class="mb-0">
+          <%= title %>
+        </h2>
+      </div>
+      <div class="card-body">
+        <!-- Thông báo tổng -->
+        <div id="roleupdate-message" class="callout d-none" role="alert"></div>
+        <div class="row g-3 align-items-center">
+          <div>
+            <label for="role-name" field-name="name" class="control-label">Role Name:</label>
+            <input type="text" id="roleupdate-name" name="name" class="form-control">
+          </div>
+          <div>
+            <label for="role-description" field-name="description" class="control-label">Description:</label>
+            <input type="text" id="roleupdate-description" name="description" class="form-control">
+          </div>
+          <div>
+            <label for="role-permissions" field-name="permissions" class="control-label">Permissions (comma
+              separated):</label>
+            <input type="text" id="roleupdate-permissions" name="permissions" class="form-control">
+            <!-- <select id="roleupdate-permissions-select" name="permissions"></select> -->
+          </div>
+          <!-- thêm thẻ isactive  -->
+          <div class="">
+            <input class="form-check-input" type="checkbox" value="" id="roleupdate-isactive" name="isactive" >
+            <label class="form-check-label" for="roleupdate-isactive" field-name="isactive">
+              Indeterminate checkbox
+            </label>
+          </div>
+
+
+        </div>
+      </div>
+      <div class="card-footer">
+        <button type="submit" class="btn btn-primary">Update Role</button>
+      </div>
+    </div>
+  </form>
+
+  <script>
+
+    var roleupdateobject = {};
+    roleupdateobject.model = JSON.parse('<%- JSON.stringify(model) %>');
+    roleupdateobject.container = document.getElementById("roleupdate-section");//khu vực chứa form nghiệp vụ
+    roleupdateobject.mode = (roleupdateobject.model.url.path == '/role/edit') ? 'edit' : 'create'; //mode là edit hoặc create
+    roleupdateobject.keyfield = roleupdateobject.model.meta.find(m => m.key == true).field;//gán trường khóa để thuận tiện xử lý
+    //console.log(roleupdateobject.model);    
+    roleupdateobject.container.querySelector('#roleupdate-form').addEventListener('submit', function (event) {
+      event.preventDefault();
+      // Gửi dữ liệu đến server để cập nhật role
+      //map dữ liệu từ form vào model
+      senapp.utils.input2data({meta:roleupdateobject.model.meta, data: roleupdateobject.model.data, container: roleupdateobject.container });
+      console.log(roleupdateobject.model.data);
+      const url = roleupdateobject.model.url.path;
+      $.post(url, roleupdateobject.model.data, function (response) {
+        if (response.status == 0) {
+          //map errors vào input tương ứng
+          senapp.utils.errors2input({ errors: response.errors, container: roleupdateobject.container });
+          //hiển thị thông báo chung vào roleupdate-message
+          const messageDiv = roleupdateobject.container.querySelector('#roleupdate-message');
+          messageDiv.textContent = response.message;
+          messageDiv.classList.remove('d-none');
+          messageDiv.classList.add('callout-danger');
+        } else {
+          //alert(response.message);
+          //nếu cập nhật thành công thì load  lại trang list bằng $.load
+          $('#maincontent').load('/role');
+        }
+      });
+
+      // fetch('/role/update', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/x-www-form-urlencoded'
+      //   },
+      //   body: new URLSearchParams(Object.fromEntries(formData.entries()))
+      // })
+      //   .then(response => response.json())
+      //   .then(data => {
+      //     if (data.status === 1) {
+      //       alert('Role updated successfully');
+      //     } else {
+      //       alert('Error updating role: ' + data.error);
+      //     }
+      //   })
+      //   .catch(error => console.error('Error:', error));
+
+    });
+    $(function () {
+      //gán meta vào label
+      senapp.utils.meta2label({ meta: roleupdateobject.model.meta, container: roleupdateobject.container });
+      //map các trường nội dung vào input
+      senapp.utils.data2input({meta: roleupdateobject.model.meta, data: roleupdateobject.model.data, container: roleupdateobject.container });
+      //gán readonly cho các trường khóa trong trường hợp edit
+      if (roleupdateobject.mode == 'edit') { senapp.utils.meta2input({ meta: roleupdateobject.model.meta, container: roleupdateobject.container }); }
+
+      //focus vào trường đầu tiên
+      const firstInput = roleupdateobject.container.querySelector('input');
+      if (firstInput) { firstInput.focus(); }
+
+    })
+
+  </script>
+
+</div>

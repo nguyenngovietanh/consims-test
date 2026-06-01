@@ -1,0 +1,223 @@
+<div id="contractmemberbycontract-section">
+  <div class="mb-9">
+    <!-- <h2 class="mb-4"><%- title %></h2> -->
+    <div class="mb-1">
+      <div class="">
+        <!-- <a onclick="contractmemberbycontractobject.tbl.create()" class="btn btn-subtle-primary">Create New</a> -->
+        <a onclick="contractmemberbycontractobject.tbl.deleteBySelected()" class="btn btn-subtle-secondary">Delete
+          Selected</a>
+      </div>
+    </div>
+    <div class="row-fluid">
+      <div class="card">
+        <div class="card-body">
+          <div class="search-box mb-3 mx-auto d-none">
+            <div class="position-relative"><input onchange="contractmemberbycontractobject.localFilter(this)" class="form-control search-member search form-control-sm" type="search" placeholder="Search Email" aria-label="Search" /></div>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-sm fs-9 mb-5">
+              <tbody class="list">
+                <!-- Table datas will be added here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var contractmemberbycontractobject = {};
+    contractmemberbycontractobject.model = JSON.parse('<%- JSON.stringify(model) %>');
+    contractmemberbycontractobject.container = document.getElementById("contractmemberbycontract-section");//khu vực chứa danh sách
+    contractmemberbycontractobject.urldata = {
+      lists: `/contractmember/memberbycontract?id=${contractmemberbycontractobject.model.url.query.id}&pagesize=0`,
+      item: '/contractmember/item',
+      create: '/contractmember/create?callback=' + encodeURIComponent('contractmemberbycontractobject.createcallback'),
+      edit: '/contractmember/edit?callback=' + encodeURIComponent('contractmemberbycontractobject.editcallback'),
+      delete: '/contractmember/delete'
+    };
+
+    console.log(contractmemberbycontractobject.model);
+
+
+    contractmemberbycontractobject.createcallback = function (response) {
+      //nếu response[0] tồn tại thì hiển thị thông báo lỗi
+      if (response[0]) {
+        if (response[0].status == 0) {
+          alert(response[0].message);
+          return;
+        }
+        //contractmemberbycontractobject.tbl.onAddRowData({ data: response[0].data.data });
+        senapp.sidebar.menuclickbydatalink('/contractmemberbycontract');
+      }
+    };
+
+    contractmemberbycontractobject.editcallback = function (response) {
+      //nếu response[0] tồn tại thì hiển thị thông báo lỗi
+      if (response[0]) {
+        if (response[0].status == 0) {
+          alert(response[0].message);
+          return;
+        }
+        //contractmemberbycontractobject.tbl.onChangeRowData({ data: response[0].data.data });
+        senapp.sidebar.menuclickbydatalink('/contractmemberbycontract');
+      }
+    };
+    //ẩn hết các trường chỉ để lại trường cần thiết
+    contractmemberbycontractobject.model.meta.forEach(element => {
+      const excludedFields = ['Email']; // Danh sách các trường không cần thiết
+      if (!excludedFields.includes(element.field)) { element.visible = false; }
+    });
+
+    // Khởi tạo bảng
+    contractmemberbycontractobject.tbl = new senapp.utils.table({
+      meta: contractmemberbycontractobject.model.meta,
+      urldata: contractmemberbycontractobject.urldata,
+      container: contractmemberbycontractobject.container,
+      tableelement: contractmemberbycontractobject.container.querySelector('table'),
+      modal: true,
+      selectcolumn: true,
+      deleterow: true, // cho phép xóa
+      filterrow: false, // không hiển thị filter row
+      //filtercompact: false // hiển thị filter row ở dạng compact
+      loadmoreonvisible: true, // tự động tải thêm dữ liệu khi cuộn đến cuối danh sách
+      //loadmoreshowtoast: true,
+      metacolumns: [
+        { field: 'SysAction', visible: false },
+      ],
+    });
+
+    contractmemberbycontractobject.tbl.loadData = async function ({ page = 1 } = {}) {
+
+      //nếu this.urldata.lists không tồn tại thì thoát
+      if (!this.urldata || !this.urldata.lists) return;
+
+      if (this.reloaddata === true) {
+        this.clearRowData(); // Xóa dữ liệu cũ trước khi tải lại
+        page = 1; // Đặt lại trang về 1
+        this.reloaddata = false; // Đặt lại trạng thái reloaddata
+      }
+
+      const tableobject = this;
+      const sort = this.getSortFields();
+      const filter = this.filter;
+      const url = new URL(this.urldata.lists, window.location.origin);
+      url.searchParams.set("page", page);
+      url.searchParams.set("sortfield", sort.sortfield);
+      url.searchParams.set("sorttype", sort.sorttype);
+      url.searchParams.set("filter", JSON.stringify(filter));
+      const urldata = url.toString();
+
+      senapp.window.loading.show(tableobject.tableelement.parentElement);
+      try {
+        const resdata = await senapp.data.getServerData({ url: urldata });
+        // xử lý dữ liệu ở đây
+        senapp.data.parseDataFromServer({ datas: resdata.datas, meta: tableobject.meta });
+        //gán dữ liệu cho tableobject.datas
+        tableobject.datas.push(...resdata.datas);
+
+        const tbody = tableobject.tableelement.querySelector('tbody.row-datas');
+        resdata.datas.forEach(data => {
+          const tr = tableobject.genRowData({ data: data });
+          tbody.appendChild(tr);
+        });
+
+        if (resdata.page < resdata.totalpages) {
+          const tr = this.genRowDataLoadMore({ page: resdata.page, pagesize: resdata.pagesize, totalpages: resdata.totalpages, total: resdata.total });
+          tbody.appendChild(tr);
+        }
+
+        senapp.window.loading.hide(tableobject.tableelement.parentElement);
+      } catch (err) {
+        console.error(err);
+        alert("Error loading data");
+        senapp.window.loading.hide(tableobject.tableelement.parentElement);
+      }
+    };
+
+    //hàm changeRowFilter
+    contractmemberbycontractobject.tbl.changeRowFilter = async function ({ meta, condition } = {}) {
+      //điều kiện chỉ là đối tượng condition={field: 'fieldname', op: 'operator', value: 'value'}
+      if (condition && condition.field && condition.op) {
+        //nếu trường condition.value không có thì set là null
+        if (condition.value === undefined || condition.value === null) { condition.value = null; }
+        this.metaAddFilter({ meta: meta, field: condition.field, op: condition.op, value: condition.value });
+      }
+      else {
+        //nếu không có điều kiện thì xóa tất cả filter
+        this.metaClearFilter({ meta: meta });
+        //map giá trị filter trong meta sang input điều kiện lọc của rowfilter
+        this.mapMetaFilterToRowFilter();
+      }
+      this.filter = this.metaGetAllFilters({ meta: meta });
+      //this.inittable();
+      this.clearRowData();
+      await this.loadData();
+    };
+
+    contractmemberbycontractobject.localFilter = function (element) {
+      const searchText = element.value.toLowerCase();
+      const tableobject = this.tbl;
+
+      //tạo bản sao dữ liệu để lọc
+      let data4filter = tableobject.datas.slice();//sao chép mảng để lọc
+      //xóa tbody nếu có
+      const tbody = tableobject.tableelement.querySelector('tbody.row-datas');
+      if (tbody) { tbody.innerHTML = ''; }
+
+      if (!searchText || searchText.length === 0) {
+        //nếu không có từ khóa tìm kiếm thì load lại dữ liệu ban đầu
+        const tbody = tableobject.tableelement.querySelector('tbody.row-datas');
+        tableobject.datas.forEach(data => {
+          const tr = tableobject.genRowData({ data: data });
+          tbody.appendChild(tr);
+        });
+        return;
+      }
+      else {
+        //nếu có từ khóa tìm kiếm thì không làm gì cả
+        //lọc dữ liệu từ contractmemberbycontractobject.model.datas
+        data4filter = this.filterData(data4filter, { Email: function (value) { return value.toLowerCase().includes(searchText); } });
+        const tbody = tableobject.tableelement.querySelector('tbody.row-datas');
+        data4filter.forEach(data => {
+          const tr = tableobject.genRowData({ data: data });
+          tbody.appendChild(tr);
+        });
+      }
+    }
+
+    // https://chatgpt.com/c/6938f1f8-b178-8320-b4a1-701a3d981c6c
+    contractmemberbycontractobject.filterData = function (source, conditions = {}) {
+      return source.filter(item => {
+        return Object.keys(conditions).every(key => {
+          const condValue = conditions[key];
+
+          // Nếu điều kiện null/undefined/'' thì bỏ qua
+          if (condValue === null || condValue === undefined || condValue === '') {
+            return true;
+          }
+
+          // Nếu là function: cho phép tự custom điều kiện
+          if (typeof condValue === 'function') {
+            return condValue(item[key]);
+          }
+
+          // Mặc định so sánh bằng
+          return item[key] === condValue;
+        });
+      });
+    }
+
+
+
+    contractmemberbycontractobject.tbl.deleteparaext = function (data) {
+      //dùng cho override
+      return `?Account=${encodeURIComponent(data.Account)}&ContractId=${encodeURIComponent(contractmemberbycontractobject.model.url.query.id)}`;
+    }
+
+    $(function () { contractmemberbycontractobject.tbl.initTable(); });
+
+  </script>
+
+</div>

@@ -1,0 +1,141 @@
+<div id="contractlineperformcertificate-section">
+  <div class="mb-9">
+    <!-- <h2 class="mb-4"><%- title %></h2> -->
+    <div class="mb-1 text-end">
+      <div class="" id="contractlineperformcertificate-menu-section"> <a
+          onclick="contractlineperformcertificateobject.signing(this)" class="btn btn-subtle-secondary"><i
+            class="fas fa-file-signature"></i> Sign File</a> </div>
+    </div>
+    <div class="row-fluid">
+      <div class="card">
+        <div class="card-body">
+          <div class="search-box mb-3 mx-auto d-none">
+            <div class="position-relative"><input onchange="contractlineperformcertificateobject.localFilter(this)"
+                class="form-control search-member search form-control-sm" type="search" placeholder="Search Email"
+                aria-label="Search" /></div>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-sm fs-9 mb-5">
+              <tbody class="list">
+                <!-- Table datas will be added here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var contractlineperformcertificateobject = {};
+    contractlineperformcertificateobject.model = JSON.parse('<%- JSON.stringify(model) %>');
+    contractlineperformcertificateobject.container = document.getElementById("contractlineperformcertificate-section");//khu vực chứa danh sách
+    contractlineperformcertificateobject.urldata = {
+      lists: `/common/certificate-info?fileid=${contractlineperformcertificateobject.model.url.query.fileid}`,
+      // item: '/contractmember/item',
+      // create: '/contractmember/create?callback=' + encodeURIComponent('contractlineperformcertificateobject.createcallback'),
+      // edit: '/contractmember/edit?callback=' + encodeURIComponent('contractlineperformcertificateobject.editcallback'),
+      // delete: '/contractmember/delete'
+      callback: `${contractlineperformcertificateobject.model.url.query.callback}`
+    };
+
+    //console.log(contractlineperformcertificateobject.model);
+    contractlineperformcertificateobject.model.meta = [
+      { field: 'Id', type: 'bigint', description: 'ID', key: true, isnullable: false, show: false, visible: false },
+      { field: 'CertificateBy', type: 'string', description: 'Sign By', isnullable: false, show: true, visible: true },
+      { field: 'CertificateDate', type: 'datetime', description: 'On Date', isnullable: false, show: true, visible: true },
+      { field: 'Name', type: 'string', description: 'Full Name', isnullable: false, show: true, visible: true },
+      { field: 'Note', type: 'string', description: 'Note on Sign', isnullable: true, show: true, visible: true },
+      { field: 'JobTitle', type: 'string', description: 'Job Title', isnullable: true, show: true, visible: false },
+      { field: 'Department', type: 'string', description: 'Department', isnullable: true, show: true, visible: false },
+      { field: 'Status', type: 'int', description: 'Status', isnullable: false, show: true, visible: false }
+    ];
+
+    contractlineperformcertificateobject.signing = function (element) {
+      const id = element.getAttribute('data-fileid') || 0;
+      const url = `/common?viewname=contractlineperformcertificatesign&fileid=${contractlineperformcertificateobject.model.url.query.fileid}&callback=` + encodeURIComponent('contractlineperformcertificateobject.signingcallback');
+      senapp.window.modal({
+        title: `Sign File`,
+        url: url
+      });
+    };
+
+    contractlineperformcertificateobject.signingcallback = async function (data) {
+      // xử lý sau khi ký xong
+      // //console.log('Signing callback data:', data);
+      if (data && data.length > 0 && data[0].status === 0) {
+        const url = `${'/common/signfile'}`;
+        const datapost = {
+          fileid: contractlineperformcertificateobject.model.url.query.fileid,
+          signnote: data[0].data.Remark,
+          isread: data[0].data.IsRead
+        };
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(datapost)
+        })
+        const result = await response.json();
+
+        //console.log('Sign file response:', result);
+        contractlineperformcertificateobject.tbl.refreshDataDisplay();
+        //an nut ky file
+        contractlineperformcertificateobject.container.querySelector('#contractlineperformcertificate-menu-section').classList.add('d-none');
+        //goi lai callback neu co
+        if (contractlineperformcertificateobject.urldata.callback) {
+          const callbackfunc = eval(contractlineperformcertificateobject.urldata.callback);
+          if (typeof callbackfunc === 'function') {
+            callbackfunc({
+              fileid: contractlineperformcertificateobject.model.url.query.fileid,
+              status: 'signed'
+            });
+          }
+        }
+
+        // senapp.window.toast({ message: 'File signed successfully.', type: 'success' });
+      } else {
+        senapp.window.toast({ message: 'Unsigned file.', type: 'danger' });
+      }
+      // Tải lại bảng
+
+    };
+
+
+
+    // Khởi tạo bảng
+    contractlineperformcertificateobject.tbl = new senapp.utils.table({
+      meta: contractlineperformcertificateobject.model.meta,
+      urldata: contractlineperformcertificateobject.urldata,
+      container: contractlineperformcertificateobject.container,
+      tableelement: contractlineperformcertificateobject.container.querySelector('table'),
+      modal: true,
+      selectcolumn: false,
+      deleterow: false, // cho phép xóa
+      filterrow: false, // không hiển thị filter row
+      //filtercompact: false // hiển thị filter row ở dạng compact
+      loadmoreonvisible: true, // tự động tải thêm dữ liệu khi cuộn đến cuối danh sách
+      //loadmoreshowtoast: true,
+      metacolumns: [
+        { field: 'SysAction', visible: false },
+        // { field: 'FileName', description: 'File Name', colorder: 2, visible: true, show: true },
+        // { field: 'Ext01', description: 'Sign', colorder: 810, visible: true, show: true, gridwidth: 120 },
+        // { field: 'Ext02', description: 'Action', colorder: 850, visible: true, show: true, gridwidth: 120 },
+      ],
+      // customcolumns: ['FileName', 'Ext01', 'Ext02'],
+    });
+
+
+    $(async function () {
+      await contractlineperformcertificateobject.tbl.initTable();
+      // //console.log(contractlineperformcertificateobject.model.url.query.view);
+      if (contractlineperformcertificateobject.model.url.query.view === true || contractlineperformcertificateobject.model.url.query.view === 'true') {
+        // Ẩn nút ký file
+        contractlineperformcertificateobject.container.querySelector('#contractlineperformcertificate-menu-section').classList.add('d-none');
+      }
+    });
+
+  </script>
+
+</div>

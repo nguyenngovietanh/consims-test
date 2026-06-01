@@ -1,0 +1,812 @@
+<div id="contractmanagement-section" class="" style="margin: 0 auto;">
+  <div class="row gx-0 justify-content-between justify-content-md-start">
+    <div class="col-auto">
+      <div class="dropdown">
+        <a class="btn btn-link text-decoration-none text-body-emphasis fs-8 ps-0"
+          href="/contract/management?ContractId=<%= model.url.query.ContractId %>"><span class="fs-7 me-2">
+            <%= model.data.ContractName %>
+          </span></a>
+      </div>
+    </div>
+    <div class="col-auto d-flex align-items-center">
+    </div>
+    <div class="col-md-auto d-flex align-items-center ms-auto mt-2 mt-md-0">
+      <ul class="nav w-100 fs-9">
+        <li class="nav-item"><a class="nav-link d-flex align-items-center text-body px-2 px-xl-3 fw-bold d-none"
+            href="/contract/management-items?ContractId=<%= model.url.query.ContractId %>"> <span
+              class="me-1 fas fa-list" data-fa-transform="up-2" style="min-width: 14px"></span><span
+              class="d-none d-xxl-inline">Items</span></a>
+        </li>
+        <li class="nav-item"><a class="nav-link d-flex align-items-center text-body px-2 px-xl-3 fw-bold"
+            href="javascript:;"
+            onclick="senapp.window.offcanvas({ title: 'Members', url: '/contractmember?viewname=contractmemberbycontract&id=<%= model.url.query.ContractId %>'});"><span
+              class="me-1 fa-solid fa-users" data-fa-transform="up-2" style="min-width: 14px"></span><span
+              class="d-none d-xxl-inline">Members</span></a></li>
+
+
+        <!-- fa-solid fa-users -->
+
+
+        <!-- <li class="nav-item"><a class="nav-link d-flex align-items-center text-body px-2 px-xl-3 fw-bold"
+            href="#!"><span class="me-1 fas fa-filter" data-fa-transform="up-2" style="min-width: 14px"></span><span
+              class="d-none d-xxl-inline">Filter</span></a></li>
+        <li class="nav-item"><a class="nav-link d-flex align-items-center text-body px-2 px-xl-3 fw-bold"
+            href="#!"><span class="me-1 fa-solid fa-right-left" data-fa-transform="up-2"
+              style="min-width: 14px"></span><span class="d-none d-xxl-inline">Export/import</span></a></li>
+        <li class="nav-item"><a class="nav-link d-flex align-items-center text-body px-2 px-xl-3 fw-bold"
+            href="#!"><span class="me-1 fas fa-palette" data-fa-transform="up-2" style="min-width: 14px"></span><span
+              class="d-none d-xxl-inline">Modify</span></a></li>
+        <li class="nav-item"><a class="nav-link d-flex align-items-center text-body px-2 px-xl-3 fw-bold"
+            href="#!"><span class="me-1 fa-solid fa-bars-staggered" data-fa-transform="up-2"
+              style="min-width: 14px"></span><span class="d-none d-xxl-inline">Gantt</span></a></li>
+        <li class="nav-item"><a class="nav-link d-flex align-items-center text-body px-2 px-xl-3 fw-bold"
+            href="#!"><span class="me-1 fa-solid fa-calendar-days" data-fa-transform="up-2"
+              style="min-width: 14px"></span><span class="d-none d-xxl-inline">Calendar</span></a></li>
+        <li class="nav-item"><a class="nav-link d-flex align-items-center text-body px-2 px-xl-3 fw-bold"
+            href="#!"><span class="me-1 fa-solid fa-box-archive" data-fa-transform="up-2"
+              style="min-width: 14px"></span><span class="d-none d-xxl-inline">Archive</span></a></li>
+        <li class="nav-item ms-auto"><a class="nav-link d-flex align-items-center pe-0 ps-1 ps-xl-3 text-body h-100"
+            data-phoenix-toggle="offcanvas" data-phoenix-target="#offcanvasKanban" href="#offcanvasKanban"
+            role="button"><span class="fa-solid fa-bars d-inline" data-fa-transform="up-2"
+              style="min-width: 14px"></span></a></li> -->
+      </ul>
+    </div>
+  </div>
+
+  <div id="contractmanagement-body-section">
+    <div class="row g-0">
+      <div class="col-12 col-xxl-12 px-0 bg-body">
+        <div class="px-4 px-lg-6 pt-6 pb-9">
+          <div class="mb-5 d-none">
+            <div class="d-flex justify-content-between">
+              <h2 class="text-body-emphasis fw-bolder mb-2">
+                <%= model.data.ContractName %>
+              </h2>
+              <div class="btn-reveal-trigger">
+                <button class="btn btn-sm dropdown-toggle dropdown-caret-none transition-none btn-reveal" type="button"
+                  data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false"
+                  data-bs-reference="parent"><span class="fas fa-ellipsis-h"></span></button>
+                <div class="dropdown-menu dropdown-menu-end py-2"><a class="dropdown-item" href="#!">Edit</a><a
+                    class="dropdown-item text-danger" href="#!">Delete</a><a class="dropdown-item"
+                    href="#!">Download</a><a class="dropdown-item" href="#!">Report abuse</a></div>
+              </div>
+            </div><span class="badge badge-phoenix badge-phoenix-primary">Ongoing<span
+                class="ms-1 uil uil-stopwatch"></span></span>
+          </div>
+          <div class="row gx-0 gx-sm-5 gy-8 mb-8">
+            <div class="col-12 col-xl-3 col-xxl-4 pe-xl-0">
+              <div class="mb-4 mb-xl-7">
+                <div class="row gx-0 gx-sm-7">
+                  <div class="col-12 col-sm-auto">
+                    <table class="lh-sm mb-4 mb-sm-0 mb-xl-4">
+                      <tbody>
+                        <tr>
+                          <td class="py-1" colspan="2">
+                            <div class="d-flex"><span
+                                class="fa-solid fa-earth-americas me-2 text-body-tertiary fs-9"></span>
+                              <h5 class="text-body">
+                                <%= model.data.ContractType || "" %>
+                              </h5>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="align-top py-1">
+                            <div class="d-flex"><span class="fa-solid fa-user me-2 text-body-tertiary fs-9"></span>
+                              <h5 class="text-body mb-0 text-nowrap">Client :</h5>
+                            </div>
+                          </td>
+                          <td class="ps-1 py-1"><a class="fw-semibold d-block lh-sm" href="#!">
+                              <%= model.data.ClientName %>
+                            </a>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="align-top py-1">
+                            <div class="d-flex"><span
+                                class="fa-solid fa-dollar-sign me-2 text-body-tertiary fs-9"></span>
+                              <h5 class="text-body mb-0 text-nowrap" style="margin-left: 6px;">Currency : </h5>
+                            </div>
+                          </td>
+                          <td class="fw-bold ps-1 py-1 text-body-highlight">
+                            <%= model.data.Currency|| "" %>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="align-top py-1">
+                            <div class="d-flex"><span
+                                class="fa-regular fa-credit-card me-2 text-body-tertiary fs-9"></span>
+                              <h5 class="text-body mb-0 text-nowrap">Budget : </h5>
+                            </div>
+                          </td>
+                          <td class="fw-bold ps-1 py-1 text-body-highlight">
+                            <%= model.data.Budget|| "" %>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="col-12 col-sm-auto">
+                    <table class="lh-sm">
+                      <tbody>
+                        <tr>
+                          <td class="align-top py-1 text-body text-nowrap fw-bold">Started : </td>
+                          <td class="text-body-tertiary text-opacity-85 fw-semibold ps-3">
+                            <%= model.data.ContractDate || "" %>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="align-top py-1 text-body text-nowrap fw-bold">Deadline :</td>
+                          <td class="text-body-tertiary text-opacity-85 fw-semibold ps-3">
+                            <%= model.data.CompleteDate || "" %>
+                          </td>
+                        </tr>
+                        <!-- <tr class="d-none">
+                          <td class="align-top py-1 text-body text-nowrap fw-bold">Progress :</td>
+                          <td class="text-warning fw-semibold ps-3">80%</td>
+                        </tr> -->
+
+                        <tr class="">
+                          <td class="align-top py-1 text-body text-nowrap fw-bold">CPI :</td>
+                          <td class="text-warning fw-semibold ps-3">
+                            <%= model.data.CPI || "" %>
+                          </td>
+                        </tr>
+                        <tr class="">
+                          <td class="align-top py-1 text-body text-nowrap fw-bold">SPI :</td>
+                          <td class="text-warning fw-semibold ps-3">
+                            <%= model.data.SPI || "" %>
+                          </td>
+                        </tr>
+
+                        <tr class="">
+                          <td class="align-top py-1 text-body text-nowrap fw-bold">BWSP :</td>
+                          <td class="text-warning fw-semibold ps-3">
+                            <%= model.data.BWSP || "" %>
+                          </td>
+                        </tr>
+                        <tr class="">
+                          <td class="align-top py-1 text-body text-nowrap fw-bold">BCWS :</td>
+                          <td class="text-warning fw-semibold ps-3">
+                            <%= model.data.BCWS || "" %>
+                          </td>
+                        </tr>
+
+                        <tr class="">
+                          <td class="align-top py-1 text-body text-nowrap fw-bold">CMI :</td>
+                          <td class="text-warning fw-semibold ps-3">
+                            <%= model.data.CMI || "" %>
+                          </td>
+                        </tr>
+
+                        <tr class="">
+                          <td class="align-top py-1 text-body text-nowrap fw-bold">DPI :</td>
+                          <td class="text-warning fw-semibold ps-3">
+                            <%= model.data.DPI || "" %>
+                          </td>
+                        </tr>
+                        <tr class="">
+                          <td class="align-top py-1 text-body text-nowrap fw-bold">EAC :</td>
+                          <td class="text-warning fw-semibold ps-3">
+                            <%= model.data.EAC || "" %>
+                          </td>
+                        </tr>
+                        <tr class="">
+                          <td class="align-top py-1 text-body text-nowrap fw-bold">CMI :</td>
+                          <td class="text-warning fw-semibold ps-3">
+                            <%= model.data.CMI || "" %>
+                          </td>
+                        </tr>
+
+                        <tr class="">
+                          <td class="align-top py-1 text-body text-nowrap fw-bold">ETC :</td>
+                          <td class="text-warning fw-semibold ps-3">
+                            <%= model.data.ETC || "" %>
+                          </td>
+                        </tr>
+
+                        <!-- 
+CriticalIssues: null
+Delay: null
+Duration: 700
+Email: null
+ExpectedFinish: null
+ExtensionInDays: 75
+NIssues: null
+OverBudget: null
+PendingIssues: null
+PhoneMain: null
+ResolvedIssues: null
+
+Currency: null
+ETC: null
+EAC: null
+DPI: null
+SPI: null                         
+BCWS: null
+BWSP: null
+Budget: null
+CMI: null
+CPI: null
+ClientId: 139
+ClientName: "Công ty Cổ Phần Xây Dựng Central"
+CommencementDate: "2016-01-02"
+CompanyName: "Công ty Cổ Phần Xây Dựng Central"
+CompleteDate: "2018-02-15"
+ContractAmount: null
+ContractDate: "2016-01-23"
+ContractName: "Ctr Trung tâm thương mại - cao ốc văn phòng"
+ContractType: "main_contract"
+
+-->
+
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div class="d-flex align-items-center d-none"><span
+                    class="fa-solid fa-list-check me-2 text-body-tertiary fs-9"></span>
+                  <h5 class="text-body-emphasis mb-0 me-2">91<span class="text-body fw-normal ms-2">tasks</span></h5><a
+                    class="fw-bold fs-9 mt-1" href="#!">See tasks <span
+                      class="fa-solid fa-chevron-right me-2 fs-10"></span></a>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-xl-9 col-xxl-8">
+              <div class="">
+                <div class="row text-center mb-4">
+                  <div class="">
+                    <h3>Planned vs. Performed</h3>
+                    <!-- <p class="text-body-tertiary lh-sm mb-0">Payment received across all channels</p> -->
+                  </div>
+
+                </div>
+              </div>
+              <div id="contractmanagement-chart-001" style="height:400px;"></div>
+            </div>
+
+
+            <!-- <div class="row flex-between-center mb-3 g-3">
+                <div class="col-auto">
+                  <h4 class="text-body-emphasis">Task completed over time</h4>
+                  <p class="text-body-tertiary mb-0">Hard works done across all projects</p>
+                </div>
+                <div class="col-8 col-sm-4">
+                  <select class="form-select form-select-sm">
+                    <option>Mar 1 - 31, 2022</option>
+                    <option>April 1 - 30, 2022</option>
+                    <option>May 1 - 31, 2022</option>
+                  </select>
+                </div>
+              </div> -->
+            <!-- <div class="echart-completed-task-chart" style="min-height:200px;width:100%"></div> -->
+
+
+          </div>
+          <div class="col-12 col-sm-5 col-lg-4 col-xl-3 col-xxl-4 d-none">
+            <div class="mb-5">
+              <h4 class="text-body-emphasis">Work loads</h4>
+              <h6 class="text-body-tertiary">Last 7 days</h6>
+            </div>
+            <div class="echart-top-coupons mb-5" style="height:115px;width:100%;"></div>
+            <div class="row justify-content-center">
+              <div class="col-auto col-sm-12">
+                <div class="row justify-content-center justify-content-sm-between g-5 g-sm-0 mb-2">
+                  <div class="col">
+                    <div class="d-flex align-items-center">
+                      <div class="bullet-item me-2 bg-primary"></div>
+                      <h6 class="text-body fw-semibold flex-1 mb-0">Shantinan Mekalan</h6>
+                    </div>
+                  </div>
+                  <div class="col-auto">
+                    <h6 class="text-body fw-semibold mb-0">72%</h6>
+                  </div>
+                </div>
+                <div class="row justify-content-center justify-content-sm-between g-5 g-sm-0 mb-2">
+                  <div class="col">
+                    <div class="d-flex align-items-center">
+                      <div class="bullet-item me-2 bg-primary-lighter"></div>
+                      <h6 class="text-body fw-semibold flex-1 mb-0">Makena Zikonn</h6>
+                    </div>
+                  </div>
+                  <div class="col-auto">
+                    <h6 class="text-body fw-semibold mb-0">18%</h6>
+                  </div>
+                </div>
+                <div class="row justify-content-center justify-content-sm-between g-5 g-sm-0 mb-2">
+                  <div class="col">
+                    <div class="d-flex align-items-center">
+                      <div class="bullet-item me-2 bg-info"></div>
+                      <h6 class="text-body fw-semibold flex-1 mb-0">Meena Kumari</h6>
+                    </div>
+                  </div>
+                  <div class="col-auto">
+                    <h6 class="text-body fw-semibold mb-0">10%</h6>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-sm-7 col-lg-8 col-xl-5 d-none">
+            <h4 class="text-body-emphasis mb-4">Team members</h4>
+            <div class="d-flex mb-8">
+              <div class="dropdown"><a class="dropdown-toggle dropdown-caret-none d-inline-block outline-none" href="#"
+                  role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+                  <div class="avatar avatar-xl  me-1">
+                    <img class="rounded-circle " src="../../assets/img//team/33.webp" alt="" />
+
+                  </div>
+                </a>
+                <div class="dropdown-menu avatar-dropdown-menu p-0 overflow-hidden" style="width: 320px;">
+                  <div class="position-relative">
+                    <div class="bg-holder z-n1"
+                      style="background-image:url(../../assets/img/bg/bg-32.png);background-size: auto;">
+                    </div>
+                    <!--/.bg-holder-->
+
+                    <div class="p-3">
+                      <div class="text-end">
+                        <button class="btn p-0 me-2"><span class="fa-solid fa-user-plus text-white"></span></button>
+                        <button class="btn p-0"><span class="fa-solid fa-ellipsis text-white"></span></button>
+                      </div>
+                      <div class="text-center">
+                        <div class="avatar avatar-xl status-online position-relative me-2 me-sm-0 me-xl-2 mb-2"><img
+                            class="rounded-circle border border-light-subtle" src="../../assets/img//team/33.webp"
+                            alt="" /></div>
+                        <h6 class="text-white">Tyrion Lannister</h6>
+                        <p class="text-light text-opacity-50 fw-semibold fs-10 mb-2">@tyrion222</p>
+                        <div class="d-flex flex-center mb-3">
+                          <h6 class="text-white mb-0">224 <span
+                              class="fw-normal text-light text-opacity-75">connections</span></h6><span
+                            class="fa-solid fa-circle text-body-tertiary mx-1"
+                            data-fa-transform="shrink-10 up-2"></span>
+                          <h6 class="text-white mb-0">23 <span
+                              class="fw-normal text-light text-opacity-75">mutual</span></h6>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="bg-body-emphasis">
+                    <div class="p-3 border-bottom border-translucent">
+                      <div class="d-flex justify-content-between">
+                        <div class="d-flex">
+                          <button class="btn btn-phoenix-secondary btn-icon btn-icon-lg me-2"><span
+                              class="fa-solid fa-phone"></span></button>
+                          <button class="btn btn-phoenix-secondary btn-icon btn-icon-lg me-2"><span
+                              class="fa-solid fa-message"></span></button>
+                          <button class="btn btn-phoenix-secondary btn-icon btn-icon-lg"><span
+                              class="fa-solid fa-video"></span></button>
+                        </div>
+                        <button class="btn btn-phoenix-primary"><span class="fa-solid fa-envelope me-2"></span>Send
+                          Email</button>
+                      </div>
+                    </div>
+                    <ul class="nav d-flex flex-column py-3 border-bottom">
+                      <li class="nav-item"><a class="nav-link px-3 d-flex flex-between-center" href="#!"> <span
+                            class="me-2 text-body d-inline-block" data-feather="clipboard"></span><span
+                            class="text-body-highlight flex-1">Assigned Projects</span><span
+                            class="fa-solid fa-chevron-right fs-11"></span></a></li>
+                      <li class="nav-item"><a class="nav-link px-3 d-flex flex-between-center" href="#!"> <span
+                            class="me-2 text-body" data-feather="pie-chart"></span><span
+                            class="text-body-highlight flex-1">View activiy</span><span
+                            class="fa-solid fa-chevron-right fs-11"></span></a></li>
+                    </ul>
+                  </div>
+                  <div class="p-3 d-flex justify-content-between"><a class="btn btn-link p-0 text-decoration-none"
+                      href="#!">Details </a><a class="btn btn-link p-0 text-decoration-none text-danger"
+                      href="#!">Unassign </a></div>
+                </div>
+              </div>
+              <div class="dropdown"><a class="dropdown-toggle dropdown-caret-none d-inline-block outline-none" href="#"
+                  role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+                  <div class="avatar avatar-xl  me-1">
+                    <img class="rounded-circle " src="../../assets/img//team/30.webp" alt="" />
+
+                  </div>
+                </a>
+                <div class="dropdown-menu avatar-dropdown-menu p-0 overflow-hidden" style="width: 320px;">
+                  <div class="position-relative">
+                    <div class="bg-holder z-n1"
+                      style="background-image:url(../../assets/img/bg/bg-32.png);background-size: auto;">
+                    </div>
+                    <!--/.bg-holder-->
+
+                    <div class="p-3">
+                      <div class="text-end">
+                        <button class="btn p-0 me-2"><span class="fa-solid fa-user-plus text-white"></span></button>
+                        <button class="btn p-0"><span class="fa-solid fa-ellipsis text-white"></span></button>
+                      </div>
+                      <div class="text-center">
+                        <div class="avatar avatar-xl status-online position-relative me-2 me-sm-0 me-xl-2 mb-2"><img
+                            class="rounded-circle border border-light-subtle" src="../../assets/img//team/30.webp"
+                            alt="" /></div>
+                        <h6 class="text-white">Milind Mikuja</h6>
+                        <p class="text-light text-opacity-50 fw-semibold fs-10 mb-2">@tyrion222</p>
+                        <div class="d-flex flex-center mb-3">
+                          <h6 class="text-white mb-0">224 <span
+                              class="fw-normal text-light text-opacity-75">connections</span></h6><span
+                            class="fa-solid fa-circle text-body-tertiary mx-1"
+                            data-fa-transform="shrink-10 up-2"></span>
+                          <h6 class="text-white mb-0">23 <span
+                              class="fw-normal text-light text-opacity-75">mutual</span></h6>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="bg-body-emphasis">
+                    <div class="p-3 border-bottom border-translucent">
+                      <div class="d-flex justify-content-between">
+                        <div class="d-flex">
+                          <button class="btn btn-phoenix-secondary btn-icon btn-icon-lg me-2"><span
+                              class="fa-solid fa-phone"></span></button>
+                          <button class="btn btn-phoenix-secondary btn-icon btn-icon-lg me-2"><span
+                              class="fa-solid fa-message"></span></button>
+                          <button class="btn btn-phoenix-secondary btn-icon btn-icon-lg"><span
+                              class="fa-solid fa-video"></span></button>
+                        </div>
+                        <button class="btn btn-phoenix-primary"><span class="fa-solid fa-envelope me-2"></span>Send
+                          Email</button>
+                      </div>
+                    </div>
+                    <ul class="nav d-flex flex-column py-3 border-bottom">
+                      <li class="nav-item"><a class="nav-link px-3 d-flex flex-between-center" href="#!"> <span
+                            class="me-2 text-body d-inline-block" data-feather="clipboard"></span><span
+                            class="text-body-highlight flex-1">Assigned Projects</span><span
+                            class="fa-solid fa-chevron-right fs-11"></span></a></li>
+                      <li class="nav-item"><a class="nav-link px-3 d-flex flex-between-center" href="#!"> <span
+                            class="me-2 text-body" data-feather="pie-chart"></span><span
+                            class="text-body-highlight flex-1">View activiy</span><span
+                            class="fa-solid fa-chevron-right fs-11"></span></a></li>
+                    </ul>
+                  </div>
+                  <div class="p-3 d-flex justify-content-between"><a class="btn btn-link p-0 text-decoration-none"
+                      href="#!">Details </a><a class="btn btn-link p-0 text-decoration-none text-danger"
+                      href="#!">Unassign </a></div>
+                </div>
+              </div>
+              <div class="dropdown"><a class="dropdown-toggle dropdown-caret-none d-inline-block outline-none" href="#"
+                  role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+                  <div class="avatar avatar-xl  me-1">
+                    <img class="rounded-circle " src="../../assets/img//team/31.webp" alt="" />
+
+                  </div>
+                </a>
+                <div class="dropdown-menu avatar-dropdown-menu p-0 overflow-hidden" style="width: 320px;">
+                  <div class="position-relative">
+                    <div class="bg-holder z-n1"
+                      style="background-image:url(../../assets/img/bg/bg-32.png);background-size: auto;">
+                    </div>
+                    <!--/.bg-holder-->
+
+                    <div class="p-3">
+                      <div class="text-end">
+                        <button class="btn p-0 me-2"><span class="fa-solid fa-user-plus text-white"></span></button>
+                        <button class="btn p-0"><span class="fa-solid fa-ellipsis text-white"></span></button>
+                      </div>
+                      <div class="text-center">
+                        <div class="avatar avatar-xl status-online position-relative me-2 me-sm-0 me-xl-2 mb-2"><img
+                            class="rounded-circle border border-light-subtle" src="../../assets/img//team/31.webp"
+                            alt="" /></div>
+                        <h6 class="text-white">Stanly Drinkwater</h6>
+                        <p class="text-light text-opacity-50 fw-semibold fs-10 mb-2">@tyrion222</p>
+                        <div class="d-flex flex-center mb-3">
+                          <h6 class="text-white mb-0">224 <span
+                              class="fw-normal text-light text-opacity-75">connections</span></h6><span
+                            class="fa-solid fa-circle text-body-tertiary mx-1"
+                            data-fa-transform="shrink-10 up-2"></span>
+                          <h6 class="text-white mb-0">23 <span
+                              class="fw-normal text-light text-opacity-75">mutual</span></h6>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="bg-body-emphasis">
+                    <div class="p-3 border-bottom border-translucent">
+                      <div class="d-flex justify-content-between">
+                        <div class="d-flex">
+                          <button class="btn btn-phoenix-secondary btn-icon btn-icon-lg me-2"><span
+                              class="fa-solid fa-phone"></span></button>
+                          <button class="btn btn-phoenix-secondary btn-icon btn-icon-lg me-2"><span
+                              class="fa-solid fa-message"></span></button>
+                          <button class="btn btn-phoenix-secondary btn-icon btn-icon-lg"><span
+                              class="fa-solid fa-video"></span></button>
+                        </div>
+                        <button class="btn btn-phoenix-primary"><span class="fa-solid fa-envelope me-2"></span>Send
+                          Email</button>
+                      </div>
+                    </div>
+                    <ul class="nav d-flex flex-column py-3 border-bottom">
+                      <li class="nav-item"><a class="nav-link px-3 d-flex flex-between-center" href="#!"> <span
+                            class="me-2 text-body d-inline-block" data-feather="clipboard"></span><span
+                            class="text-body-highlight flex-1">Assigned Projects</span><span
+                            class="fa-solid fa-chevron-right fs-11"></span></a></li>
+                      <li class="nav-item"><a class="nav-link px-3 d-flex flex-between-center" href="#!"> <span
+                            class="me-2 text-body" data-feather="pie-chart"></span><span
+                            class="text-body-highlight flex-1">View activiy</span><span
+                            class="fa-solid fa-chevron-right fs-11"></span></a></li>
+                    </ul>
+                  </div>
+                  <div class="p-3 d-flex justify-content-between"><a class="btn btn-link p-0 text-decoration-none"
+                      href="#!">Details </a><a class="btn btn-link p-0 text-decoration-none text-danger"
+                      href="#!">Unassign </a></div>
+                </div>
+              </div>
+              <div class="dropdown"><a class="dropdown-toggle dropdown-caret-none d-inline-block outline-none" href="#"
+                  role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+                  <div class="avatar avatar-xl  me-1">
+                    <img class="rounded-circle " src="../../assets/img//team/60.webp" alt="" />
+
+                  </div>
+                </a>
+                <div class="dropdown-menu avatar-dropdown-menu p-0 overflow-hidden" style="width: 320px;">
+                  <div class="position-relative">
+                    <div class="bg-holder z-n1"
+                      style="background-image:url(../../assets/img/bg/bg-32.png);background-size: auto;">
+                    </div>
+                    <!--/.bg-holder-->
+
+                    <div class="p-3">
+                      <div class="text-end">
+                        <button class="btn p-0 me-2"><span class="fa-solid fa-user-plus text-white"></span></button>
+                        <button class="btn p-0"><span class="fa-solid fa-ellipsis text-white"></span></button>
+                      </div>
+                      <div class="text-center">
+                        <div class="avatar avatar-xl status-online position-relative me-2 me-sm-0 me-xl-2 mb-2"><img
+                            class="rounded-circle border border-light-subtle" src="../../assets/img//team/60.webp"
+                            alt="" /></div>
+                        <h6 class="text-white">Josef Stravinsky</h6>
+                        <p class="text-light text-opacity-50 fw-semibold fs-10 mb-2">@tyrion222</p>
+                        <div class="d-flex flex-center mb-3">
+                          <h6 class="text-white mb-0">224 <span
+                              class="fw-normal text-light text-opacity-75">connections</span></h6><span
+                            class="fa-solid fa-circle text-body-tertiary mx-1"
+                            data-fa-transform="shrink-10 up-2"></span>
+                          <h6 class="text-white mb-0">23 <span
+                              class="fw-normal text-light text-opacity-75">mutual</span></h6>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="bg-body-emphasis">
+                    <div class="p-3 border-bottom border-translucent">
+                      <div class="d-flex justify-content-between">
+                        <div class="d-flex">
+                          <button class="btn btn-phoenix-secondary btn-icon btn-icon-lg me-2"><span
+                              class="fa-solid fa-phone"></span></button>
+                          <button class="btn btn-phoenix-secondary btn-icon btn-icon-lg me-2"><span
+                              class="fa-solid fa-message"></span></button>
+                          <button class="btn btn-phoenix-secondary btn-icon btn-icon-lg"><span
+                              class="fa-solid fa-video"></span></button>
+                        </div>
+                        <button class="btn btn-phoenix-primary"><span class="fa-solid fa-envelope me-2"></span>Send
+                          Email</button>
+                      </div>
+                    </div>
+                    <ul class="nav d-flex flex-column py-3 border-bottom">
+                      <li class="nav-item"><a class="nav-link px-3 d-flex flex-between-center" href="#!"> <span
+                            class="me-2 text-body d-inline-block" data-feather="clipboard"></span><span
+                            class="text-body-highlight flex-1">Assigned Projects</span><span
+                            class="fa-solid fa-chevron-right fs-11"></span></a></li>
+                      <li class="nav-item"><a class="nav-link px-3 d-flex flex-between-center" href="#!"> <span
+                            class="me-2 text-body" data-feather="pie-chart"></span><span
+                            class="text-body-highlight flex-1">View activiy</span><span
+                            class="fa-solid fa-chevron-right fs-11"></span></a></li>
+                    </ul>
+                  </div>
+                  <div class="p-3 d-flex justify-content-between"><a class="btn btn-link p-0 text-decoration-none"
+                      href="#!">Details </a><a class="btn btn-link p-0 text-decoration-none text-danger"
+                      href="#!">Unassign </a></div>
+                </div>
+              </div>
+              <div class="dropdown"><a class="dropdown-toggle dropdown-caret-none d-inline-block outline-none" href="#"
+                  role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+                  <div class="avatar avatar-xl  me-1">
+                    <img class="rounded-circle " src="../../assets/img//team/65.webp" alt="" />
+
+                  </div>
+                </a>
+                <div class="dropdown-menu avatar-dropdown-menu p-0 overflow-hidden" style="width: 320px;">
+                  <div class="position-relative">
+                    <div class="bg-holder z-n1"
+                      style="background-image:url(../../assets/img/bg/bg-32.png);background-size: auto;">
+                    </div>
+                    <!--/.bg-holder-->
+
+                    <div class="p-3">
+                      <div class="text-end">
+                        <button class="btn p-0 me-2"><span class="fa-solid fa-user-plus text-white"></span></button>
+                        <button class="btn p-0"><span class="fa-solid fa-ellipsis text-white"></span></button>
+                      </div>
+                      <div class="text-center">
+                        <div class="avatar avatar-xl status-online position-relative me-2 me-sm-0 me-xl-2 mb-2"><img
+                            class="rounded-circle border border-light-subtle" src="../../assets/img//team/65.webp"
+                            alt="" /></div>
+                        <h6 class="text-white">Igor Borvibson</h6>
+                        <p class="text-light text-opacity-50 fw-semibold fs-10 mb-2">@tyrion222</p>
+                        <div class="d-flex flex-center mb-3">
+                          <h6 class="text-white mb-0">224 <span
+                              class="fw-normal text-light text-opacity-75">connections</span></h6><span
+                            class="fa-solid fa-circle text-body-tertiary mx-1"
+                            data-fa-transform="shrink-10 up-2"></span>
+                          <h6 class="text-white mb-0">23 <span
+                              class="fw-normal text-light text-opacity-75">mutual</span></h6>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="bg-body-emphasis">
+                    <div class="p-3 border-bottom border-translucent">
+                      <div class="d-flex justify-content-between">
+                        <div class="d-flex">
+                          <button class="btn btn-phoenix-secondary btn-icon btn-icon-lg me-2"><span
+                              class="fa-solid fa-phone"></span></button>
+                          <button class="btn btn-phoenix-secondary btn-icon btn-icon-lg me-2"><span
+                              class="fa-solid fa-message"></span></button>
+                          <button class="btn btn-phoenix-secondary btn-icon btn-icon-lg"><span
+                              class="fa-solid fa-video"></span></button>
+                        </div>
+                        <button class="btn btn-phoenix-primary"><span class="fa-solid fa-envelope me-2"></span>Send
+                          Email</button>
+                      </div>
+                    </div>
+                    <ul class="nav d-flex flex-column py-3 border-bottom">
+                      <li class="nav-item"><a class="nav-link px-3 d-flex flex-between-center" href="#!"> <span
+                            class="me-2 text-body d-inline-block" data-feather="clipboard"></span><span
+                            class="text-body-highlight flex-1">Assigned Projects</span><span
+                            class="fa-solid fa-chevron-right fs-11"></span></a></li>
+                      <li class="nav-item"><a class="nav-link px-3 d-flex flex-between-center" href="#!"> <span
+                            class="me-2 text-body" data-feather="pie-chart"></span><span
+                            class="text-body-highlight flex-1">View activiy</span><span
+                            class="fa-solid fa-chevron-right fs-11"></span></a></li>
+                    </ul>
+                  </div>
+                  <div class="p-3 d-flex justify-content-between"><a class="btn btn-link p-0 text-decoration-none"
+                      href="#!">Details </a><a class="btn btn-link p-0 text-decoration-none text-danger"
+                      href="#!">Unassign </a></div>
+                </div>
+              </div>
+            </div>
+            <h4 class="text-body-emphasis mb-4">Tags</h4><span
+              class="badge badge-tag me-2 mb-1">Unused_brain</span><span
+              class="badge badge-tag me-2 mb-1">Machine</span><span class="badge badge-tag me-2 mb-1">Coding</span><span
+              class="badge badge-tag me-2 mb-1">Meseeks</span><span
+              class="badge badge-tag me-2 mb-1">Smithpeople</span><span
+              class="badge badge-tag me-2 mb-1">Rick</span><span class="badge badge-tag me-2 mb-1">Biology</span><span
+              class="badge badge-tag me-2 mb-1">Neurology</span><span
+              class="badge badge-tag me-2 mb-1">Brainlessness</span><span
+              class="badge badge-tag me-2 mb-1">Stupidity</span><span
+              class="badge badge-tag me-2 mb-1">Jerry</span><span class="badge badge-tag me-2 mb-1">Not
+              _the_mouse</span>
+          </div>
+        </div>
+        <!-- <h3 class="text-body-emphasis mb-4">Project overview</h3>
+          <p class="text-body-secondary mb-4">The new redirection team is happy to announce that we’ve fixed all our
+            unresponsive URLs and redirected them to new URLs. The tremendous assistance from our support team and the
+            dev team, as well as that of the team lead’s, this team has made an impossible possible within a week. They
+            didn’t stop for a moment, and we got our pages working again for all the valuable users. </p>
+          <p class="text-body-secondary mb-0">Join us in celebrating the massive success of data transferring and
+            getting us a huge revenue by eating out. Free public viewing and a buffet is offered for the great team as
+            well as for the other teams working with us. We’ll be checking out places for the best option available at
+            hands and we’ll let you know the schedule once we decide on one.<a class="fw-semibold" href="#!">read more
+            </a></p> -->
+      </div>
+    </div>
+  </div>
+
+
+  <script>
+    var contractobject = {};
+    contractobject.model = JSON.parse('<%- JSON.stringify(model) %>');
+    contractobject.container = document.getElementById("contractmanagement-section");//khu vực chứa form nghiệp vụ
+    contractobject.bodycontainer = document.getElementById("contractmanagement-body-section");//khu vực chứa nghiệp vụ nhỏ
+    contractobject.chartcontainer = document.getElementById("contractmanagement-chart-001");//khu vực chứa biểu đồ
+    contractobject.keyfield = 'ContractId';
+    contractobject.contractid = contractobject.model.url.query.ContractId || 0;
+    contractobject.urldata = {
+      getworkdiagramdata: '/contract/get-work-diagram-data',
+      // update: '/api/update-contract-info'
+    };
+
+    //#region chart
+    contractobject.loadchart001 = async function () {
+      senapp.window.loading.show(this.chartcontainer);
+      //lấy dữ liệu cho chart
+      const workdiagramdata = await senapp.data.getMeta({ url: `${contractobject.urldata.getworkdiagramdata}?ContractId=${contractobject.contractid}` });
+      console.log('Work Diagram Data:', workdiagramdata);
+
+      let chartdata = { source: [['Date'], ['Planned Amount'], ['Performed Amount']], series: [], selected: {} };
+
+      chartdata.series.push({
+        type: 'line',
+        // tooltip: { valueFormatter: value => $.acc.apphomewcashflow.convert.formatvalue(value, "decimal") },
+        yAxisIndex: 1,
+        // markPoint: {
+        //   // itemStyle: {
+        //   //   normal: {
+        //   //     //color:'#1e90ff',
+        //   //     label: {
+        //   //       //show:true,
+        //   //       //position:'top',
+        //   //       formatter: function (param) { return $.acc.apphomewcashflow.convert.formatvalue(param.value, "decimal") }
+        //   //     }
+        //   //   }
+        //   // },
+        //   data: [
+        //     { type: 'max', name: 'max', itemStyle: { color: 'green' } },
+        //     { type: 'min', name: 'min', itemStyle: { color: 'red' } },
+        //   ]
+        // }, 
+        selectedMode: false, smooth: false, seriesLayoutBy: 'row', emphasis: { focus: 'series' }
+      });
+      chartdata.series.push({
+        type: 'line',
+        // tooltip: { valueFormatter: value => $.acc.apphomewcashflow.convert.formatvalue(value, "decimal") },
+        yAxisIndex: 1,
+        // markPoint: {
+        //   // itemStyle: {
+        //   //   normal: {
+        //   //     //color:'#1e90ff',
+        //   //     label: {
+        //   //       //show:true,
+        //   //       //position:'top',
+        //   //       formatter: function (param) { return $.acc.apphomewcashflow.convert.formatvalue(param.value, "decimal") }
+        //   //     }
+        //   //   }
+        //   // },
+        //   data: [
+        //     { type: 'max', name: 'max', itemStyle: { color: 'green' } },
+        //     { type: 'min', name: 'min', itemStyle: { color: 'red' } },
+        //   ]
+        // }, 
+        selectedMode: false, smooth: false, seriesLayoutBy: 'row', emphasis: { focus: 'series' }
+      });
+
+
+      workdiagramdata.datas.forEach(function (item) {
+        let D01 = "";
+        D01 = senapp.ext.moment(item.DateIs).format('ll');
+
+        //$.acc.apphomewcashflow.data.source[0].push(apputils.str2date(item.D01).toDateString());
+        chartdata.source[0].push(D01);
+        chartdata.source[1].push(item.PlannedAmount);
+        chartdata.source[2].push(item.PerformedAmount);
+
+      })
+
+      //let startzoom =0;
+      ////muốn set 1 năm
+      //if ($.acc.apphomewcashflow.datauser.length>12) {startzoom=Math.floor(($.acc.apphomewcashflow.datauser.length-12)*100/$.acc.apphomewcashflow.datauser.length);}
+      // //ẩn hết
+      // Object.values($.acc.apphomewcashflow.localmessage4chart).forEach(val => { if (true) { chartdata.selected[val] = false; } });
+      // ////ngầm định hiển thị
+      // const shows = ["Tiền vào", "Tiền ra", "Lũy kế Tồn quỹ"];
+      // Object.values($.acc.apphomewcashflow.localmessage4chart).forEach(val => { if (shows.includes(val.toString())) { chartdata.selected[val] = true; } });
+
+      const option = {
+        legend: { type: 'scroll', selected: chartdata.selected },
+        dataset: { source: chartdata.source },
+        series: chartdata.series
+      };
+
+      console.log('chartdata:', chartdata);
+      // contractobject.chart001 = senapp.ext.echarts.show(this.chartcontainer, option, $($.acc.apphomewcashflow.containermainid + " select[name='chartlegendfilter'] "));
+      contractobject.chart001 = senapp.ext.echarts.show(this.chartcontainer, option, null);
+
+      senapp.window.loading.hide(this.chartcontainer);
+    };
+    //#endregion chart
+
+    $(async function () {
+      //hủy footer
+      document.querySelectorAll('footer.footer').forEach(footer => footer.remove());
+      //load chart 001
+      await contractobject.loadchart001();
+
+      console.log('Contract Management Object:', contractobject.model);
+    });
+
+  </script>
+
+</div>

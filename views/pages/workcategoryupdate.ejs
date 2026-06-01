@@ -1,0 +1,78 @@
+<div id="workcategoryupdate-section" class="" style="margin: 0 auto;">
+  <form id="workcategoryupdate-form">
+
+    <div class="card">
+      <div class="card-header"><h4 class="mb-0"><%= title %></h4></div>
+      <div class="card-body">
+        <!-- Thông báo tổng -->
+        <div class="message-all callout d-none" workcategory="alert"></div>
+
+        <div class="row g-3 align-items-center mb-1">
+          <div class="col-md-6">
+            <label for="workcategoryupdate-Code" field-name="Code" class="control-label">Code:</label>
+            <input type="text" id="workcategoryupdate-Code" name="Code" class="form-control" >
+          </div>
+          <div class="col-md-6">
+            <label for="workcategoryupdate-Alias" field-name="Alias" class="control-label">Alias:</label>
+            <input type="text" id="workcategoryupdate-Alias" name="Alias" class="form-control">
+          </div>
+        </div>
+        <div class="row g-3 align-items-center mb-1">
+          <div class="col-md-12">
+            <label for="workcategoryupdate-Description" field-name="Description" class="control-label">Description:</label>
+            <input type="text" id="workcategoryupdate-Description" name="Description" class="form-control" >
+          </div>
+        </div>
+        <div class="row g-3 align-items-center mb-1">
+          <div class="col-md-12">
+            <label for="workcategoryupdate-Type" field-name="Type" class="control-label">Type:</label>
+            <input type="text" id="workcategoryupdate-Type" name="Type" class="form-control" >
+          </div>
+        </div>        
+        <div class="row g-3 align-items-center mb-1">
+          <div class="col-md-6">
+            <label for="workcategoryupdate-IsActive" field-name="IsActive" class="control-label">Active:</label>
+            <select id="workcategoryupdate-IsActive" name="IsActive" class="form-control" >
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
+          </div>
+        </div>
+        <div class="row g-3 align-items-center d-none">
+          <div class="col-md-6">
+            <label for="workcategoryupdate-WorkCatId" field-name="WorkCatId" class="control-label">WorkCat Id:</label>
+            <input type="text" id="workcategoryupdate-WorkCatId" name="WorkCatId" class="form-control" readonly>
+          </div>
+
+        </div>
+      </div>
+
+
+
+      <div class="card-footer">
+        <button type="submit" class="btn btn-subtle-primary">Save & Close</button>
+        <button type="button" class="btn btn-subtle-secondary"
+          onclick="workcategoryupdateobject.form.cancel()">Cancel</button>
+      </div>
+    </div>
+  </form>
+
+  <script>
+    var workcategoryupdateobject = {};
+    workcategoryupdateobject.model = JSON.parse('<%- JSON.stringify(model) %>');
+    workcategoryupdateobject.container = document.getElementById("workcategoryupdate-section");//khu vực chứa form nghiệp vụ
+    console.log(workcategoryupdateobject.model);
+    // Khởi tạo bảng
+    workcategoryupdateobject.form = new senapp.utils.form({
+      meta: workcategoryupdateobject.model.meta,
+      data: workcategoryupdateobject.model.data,
+      urldata: workcategoryupdateobject.model.url,
+      container: workcategoryupdateobject.container,
+      mode: (workcategoryupdateobject.model.url.path == '/workcategory/edit') ? 'edit' : 'create',
+    });
+
+    $(function () { workcategoryupdateobject.form.initForm(); });
+
+  </script>
+
+</div>

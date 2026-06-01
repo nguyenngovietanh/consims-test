@@ -1,0 +1,154 @@
+<div id="senobjectupdate-section" class="" style="margin: 0 auto;">
+  <form id="senobjectupdate-form">
+    <div class="card">
+      <div class="card-header">
+        <h4 class="mb-0">
+          <%= title %>
+        </h4>
+      </div>
+      <div class="card-body">
+        <!-- Thông báo tổng -->
+        <div class="message-all callout d-none" role="alert"></div>
+
+        <div class="row g-3 align-items-center mb-1">
+          <div class="col-md-6">
+            <label for="senobjectupdate-GId" field-name="GId" class="control-label">GId:</label>
+            <input type="text" id="senobjectupdate-GId" name="GId" class="form-control">
+          </div>
+          <div class="col-md-6">
+            <label for="senobjectupdate-Id" field-name="Id" class="control-label">Id:</label>
+            <input type="number" id="senobjectupdate-Id" name="Id" class="form-control">
+          </div>
+        </div>
+        <div class="row g-3 align-items-center mb-1">
+          <div class="col-md-6">
+            <label for="senobjectupdate-Bigint" field-name="Bigint" class="control-label">Bigint:</label>
+            <input type="number" id="senobjectupdate-Bigint" name="Bigint" class="form-control">
+          </div>
+          <div class="col-md-6">
+            <label for="senobjectupdate-Numeric" field-name="Numeric" class="control-label">Numeric:</label>
+            <input type="number" step="any" id="senobjectupdate-Numeric" name="Numeric" class="form-control">
+          </div>
+        </div>
+        <div class="row g-3 align-items-center mb-1">
+          <div class="col-md-6">
+            <label for="senobjectupdate-String" field-name="String" class="control-label">String:</label>
+            <input type="text" id="senobjectupdate-String" name="String" class="form-control">
+          </div>
+
+          <div class="col-md-6">
+            <label for="senobjectupdate-Options" field-name="Options" class="control-label">Options:</label>
+            <select id="senobjectupdate-Options" name="Options" class="form-control">
+              <!-- <option value="">Select an option</option> -->
+            </select>
+          </div>
+        </div>
+
+        <div class="row g-3 align-items-center mb-1">
+          <div class="col-md-6">
+            <label for="senobjectupdate-Lookup" field-name="Lookup" class="control-label">Lookup:</label>
+            <select id="senobjectupdate-Lookup" name="Lookup" class="form-control"></select>
+          </div>
+          <div class="col-md-6">
+            <label for="senobjectupdate-LookupMulti" field-name="LookupMulti" class="control-label">LookupMulti:</label>
+            <select id="senobjectupdate-LookupMulti" name="LookupMulti" class="form-control" multiple></select>
+          </div>
+
+        </div>
+
+        <div class="row g-3 align-items-center mb-1">
+
+          <div class="col-md-6">
+            <label for="senobjectupdate-DateTime" field-name="DateTime" class="control-label">DateTime:</label>
+            <input type="datetime-local" id="senobjectupdate-DateTime" name="DateTime" class="form-control">
+          </div>
+          <div class="col-md-6">
+            <label for="senobjectupdate-Date" field-name="Date" class="control-label">Date:</label>
+            <input type="date" id="senobjectupdate-Date" name="Date" class="form-control">
+          </div>
+        </div>
+        <div class="row g-3 align-items-center mb-1">
+          <div class="col-md-6">
+            <!-- <label for="senobjectupdate-Boolean" field-name="Boolean" class="control-label">Boolean:</label>
+            <select id="senobjectupdate-Boolean" name="Boolean" class="form-control">
+              <option value="true">True</option>
+              <option value="false">False</option>
+            </select> -->
+
+            <div class="form-check">
+              <input class="form-check-input" id="senobjectupdate-Boolean" name="Boolean" type="checkbox" value=""
+                checked="" />
+              <label for="senobjectupdate-Boolean" field-name="Boolean" class="control-label">Boolean:</label>
+            </div>
+
+          </div>
+        </div>
+        <div class="row g-3 align-items-center mb-1">
+          <div class="col-md-12">
+            <label for="senobjectupdate-Text" field-name="Text" class="control-label">Text:</label>
+            <textarea id="senobjectupdate-Text" name="Text" class="form-control" rows="4"></textarea>
+          </div>
+        </div>
+
+      </div>
+      <div class="card-footer">
+        <button type="submit" class="btn btn-subtle-primary"><span class="sen-label">Save & Close</span></button>
+        <button type="button" class="btn btn-subtle-secondary" onclick="senobjectupdateobject.form.cancel()"><span
+            class="sen-label">Cancel</span></button>
+      </div>
+    </div>
+  </form>
+
+  <script>
+    var senobjectupdateobject = {};
+    // senobjectupdateobject.model = <%- JSON.stringify(model) %>;// dùng cách này là ok nhất không bị các trường hợp rớt dòng nhưng bị cảnh báo
+    senobjectupdateobject.model = JSON.parse(('<%- JSON.stringify(model) %>').replace(/\r?\n|\r/g, "\\n"));//xử lí xuống dòng trong chuỗi json
+    senobjectupdateobject.container = document.getElementById("senobjectupdate-section");//khu vực chứa form nghiệp vụ
+
+    // Khởi tạo bảng
+    senobjectupdateobject.form = new senapp.utils.form({
+      meta: senobjectupdateobject.model.meta,
+      data: senobjectupdateobject.model.data,
+      urldata: senobjectupdateobject.model.url,
+      container: senobjectupdateobject.container,
+      mode: (senobjectupdateobject.model.url.path == '/senobject/edit') ? 'edit' : 'create',
+    });
+
+    senobjectupdateobject.form.onInputChange = async function ({ input, fieldmeta }) {
+      // console.log(`Input changed: ${fieldmeta}, ${input.value}`);
+      senapp.utils.input2data({ fieldmeta: fieldmeta, data: this.data, input: input });
+      switch (fieldmeta.field) {
+        case 'Bigint':
+          if (this.data.Bigint !== 0) {
+            senapp.window.toast({ message: `Bigint must be ${this.data.Bigint}`, type: 'info' });
+            this.data.Numeric = this.data.Bigint;
+            // this.refreshCellDisplayByData({ data: this.data, fields: ['Numeric'] });
+            //map các trường nội dung vào input
+            // console.log('1',this.data);
+            senapp.utils.data2inputs({ meta: this.meta, data: this.data, container: this.container });
+            // console.log('2',this.data);
+          }
+          break;
+      }
+      // console.log(this.data);
+
+
+      // //trường hợp input là select có nhiều lựa chọn
+      // if (input.tagName.toLowerCase() === 'select' && input.multiple) {
+      //   //nếu là select nhiều lựa chọn thì lấy tất cả các lựa chọn đã chọn
+      //   const selectedOptions = Array.from(input.selectedOptions);
+      //   this.data[field] = selectedOptions.map(option => option.value);
+      // } else {
+      //   this.data[field] = input.value;
+      // }
+
+      //console.log(`Input changed: ${field}, ${input.value}`);
+
+    };
+
+    $(function () { senobjectupdateobject.form.initForm(); });
+
+  </script>
+
+
+</div>

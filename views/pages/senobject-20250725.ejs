@@ -1,0 +1,1460 @@
+<div id="senobject-section">
+  <div class="mb-9">
+    <h2 class="mb-4"><%- title %></h2>
+    <div id="senobject-filter" class="mb-3">
+      <!-- Filter form will be rendered here -->
+
+    </div>
+    <div class="mb-1">
+      <div class="">
+        <a onclick="senobjectobject.create()" class="btn btn-primary">Create New</a>
+      </div>
+    </div>
+
+
+    <div class="row-fluid">
+      <div class="card">
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-sm fs-9 mb-0">
+              <tbody class="list">
+                <!-- Table datas will be added here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <script>
+    var senobjectobject = {};
+    senobjectobject.model = JSON.parse('<%- JSON.stringify(model) %>');
+    senobjectobject.container = document.getElementById("senobject-section");//khu vực chứa danh sách
+    senobjectobject.keyfield = senobjectobject.model.meta.find(m => m.key == true).field;//gán trường khóa để thuận tiện xử lý
+
+    senobjectobject.model.meta.find(m => m.field == 'Bigint').sortorder = 1;//trình tự sắp xếp của trường Bigint
+    senobjectobject.model.meta.find(m => m.field == 'Bigint').sorttype = 'asc';//loại sắp xếp của trường Bigint
+
+    // senobjectobject.model.meta.find(m => m.field == 'Numeric').sortorder = 2;//trình tự sắp xếp của trường Numeric
+    // senobjectobject.model.meta.find(m => m.field == 'Numeric').sorttype = 'asc';//loại sắp xếp của trường Numeric
+    // senobjectobject.model.meta.find(m => m.field == 'String').sortorder = 3;//trình tự sắp xếp của trường String
+    // senobjectobject.model.meta.find(m => m.field == 'String').sorttype = 'desc';//loại sắp xếp của trường String
+
+    console.log(senobjectobject.model);
+    senobjectobject.urldata = {
+      lists: '/senobject/list/sorted',
+      item: '/senobject/item',
+      create: '/senobject/create',
+      edit: '/senobject/edit',
+      delete: '/senobject/delete'
+    };
+    // Khởi tạo filter mặc định
+    senobjectobject.filter = {
+      //not: true,
+      logic: "and",
+      conditions: [
+        { field: "String", op: "includes", value: "1" },
+        { field: "Bigint", op: ">=", value: 3500 },
+        // {
+        //     logic: "or",
+        //     conditions: [
+        //         { field: "Boolean", op: "==", value: true },
+        //         //{ field: "Bigint", op: ">=", value: 3500 },
+        //         // { not: true, field: "Numeric", op: ">", value: 10 }
+        //     ]
+        // },
+        // // {
+        // //     logic: "and",
+        // //     conditions: [
+        // //         { field: "Boolean", op: "==", value: true },
+        // //         { not: true, field: "Numeric", op: ">", value: 10 }
+        // //     ]
+        // // }
+
+      ]
+    };
+    senobjectobject.filter = {};
+
+    senobjectobject.renderFilter = function () {
+      const filterContainer = document.getElementById('senobject-filter');
+      filterContainer.innerHTML = '';
+
+      // Tạo form filter
+      const form = document.createElement('form');
+      form.id = 'senobject-filter-form';
+
+      // Tạo nhóm điều kiện
+      const groupDiv = document.createElement('div');
+      groupDiv.className = 'filter-group mb-3';
+
+      // Logic chọn AND/OR
+      const logicLabel = document.createElement('label');
+      logicLabel.textContent = 'Logic: ';
+      const logicSelect = document.createElement('select');
+      logicSelect.name = 'logic';
+      logicSelect.className = 'form-select form-select-sm d-inline-block w-auto ms-1';
+      ['and', 'or'].forEach(val => {
+        const opt = document.createElement('option');
+        opt.value = val;
+        opt.textContent = val.toUpperCase();
+        logicSelect.appendChild(opt);
+      });
+      logicLabel.appendChild(logicSelect);
+      groupDiv.appendChild(logicLabel);
+
+      // Điều kiện NOT
+      const notLabel = document.createElement('label');
+      notLabel.textContent = ' NOT ';
+      const notCheckbox = document.createElement('input');
+      notCheckbox.type = 'checkbox';
+      notCheckbox.name = 'not';
+      notCheckbox.className = 'form-check-input ms-1';
+      notLabel.appendChild(notCheckbox);
+      groupDiv.appendChild(notLabel);
+
+      // Tạo các điều kiện cho từng trường
+      senobjectobject.model.meta.forEach(field => {
+        const condDiv = document.createElement('div');
+        condDiv.className = 'filter-condition mb-2';
+
+        // Field name
+        const fieldLabel = document.createElement('label');
+        fieldLabel.textContent = field.description || field.field;
+        fieldLabel.className = 'me-2';
+        condDiv.appendChild(fieldLabel);
+
+        // Operator
+        const opSelect = document.createElement('select');
+        opSelect.name = `op_${field.field}`;
+        opSelect.className = 'form-select form-select-sm d-inline-block w-auto me-2';
+        let ops = ['==', '!=', '>', '>=', '<', '<=', 'includes'];
+        if (field.type === 'bool' || field.type === 'boolean') ops = ['==', '!='];
+        if (field.type === 'string' || field.type === 'text') ops.push('includes');
+        ops.forEach(op => {
+          const opt = document.createElement('option');
+          opt.value = op;
+          opt.textContent = op;
+          opSelect.appendChild(opt);
+        });
+        condDiv.appendChild(opSelect);
+
+        // Value input
+        let valueInput;
+        if (field.type === 'bool' || field.type === 'boolean') {
+          valueInput = document.createElement('select');
+          valueInput.name = `value_${field.field}`;
+          valueInput.className = 'form-select form-select-sm d-inline-block w-auto';
+          ['true', 'false'].forEach(val => {
+            const opt = document.createElement('option');
+            opt.value = val;
+            opt.textContent = val.charAt(0).toUpperCase() + val.slice(1);
+            valueInput.appendChild(opt);
+          });
+        } else if (field.type === 'date' || field.type === 'datetime') {
+          valueInput = document.createElement('input');
+          valueInput.type = 'date';
+          valueInput.name = `value_${field.field}`;
+          valueInput.className = 'form-control form-control-sm d-inline-block w-auto';
+        } else {
+          valueInput = document.createElement('input');
+          valueInput.type = 'text';
+          valueInput.name = `value_${field.field}`;
+          valueInput.className = 'form-control form-control-sm d-inline-block w-auto';
+        }
+        condDiv.appendChild(valueInput);
+
+        groupDiv.appendChild(condDiv);
+      });
+
+      // Nút Apply
+      const applyBtn = document.createElement('button');
+      applyBtn.type = 'button';
+      applyBtn.className = 'btn btn-primary btn-sm mt-2';
+      applyBtn.textContent = 'Apply';
+      applyBtn.onclick = function () {
+        const filter = {};
+        const formData = new FormData(form);
+        filter.logic = formData.get('logic') || 'and';
+        filter.not = formData.get('not') === 'on';
+        filter.conditions = [];
+        senobjectobject.model.meta.forEach(field => {
+          const op = formData.get(`op_${field.field}`);
+          const value = formData.get(`value_${field.field}`);
+          if (value !== '' && value !== null) {
+            let val = value;
+            if (
+              field.type === 'number' ||
+              field.type === 'numeric' ||
+              field.type === 'bigint'
+            ) {
+              if (!isNaN(value)) val = Number(value);
+              else return;
+            } else if (field.type === 'bool' || field.type === 'boolean') {
+              if (value === '') return;
+              val = value === 'true';
+            } else if (field.type === 'date' || field.type === 'datetime') {
+              // Chuyển thành đối tượng Date hoặc chuỗi ISO
+              const dateObj = new Date(value);
+              if (!isNaN(dateObj.getTime())) {
+                val = dateObj.toISOString();
+              } else {
+                return;
+              }
+            }
+            filter.conditions.push({
+              field: field.field,
+              op: op,
+              value: val
+            });
+          }
+        });
+        senobjectobject.filter = filter;
+        senobjectobject.inittable();
+        senobjectobject.lists();
+      };
+
+      form.appendChild(groupDiv);
+      form.appendChild(applyBtn);
+      filterContainer.appendChild(form);
+    };
+    senobjectobject.renderFilter1 = function () {
+      const filterContainer = document.getElementById('senobject-filter');
+      filterContainer.innerHTML = '';
+
+      const form = document.createElement('form');
+      form.id = 'senobject-filter-form1';
+
+      const groupDiv = document.createElement('div');
+      groupDiv.className = 'filter-group mb-3';
+
+      const logicLabel = document.createElement('label');
+      logicLabel.textContent = 'Logic: ';
+      const logicSelect = document.createElement('select');
+      logicSelect.name = 'logic';
+      logicSelect.className = 'form-select form-select-sm d-inline-block w-auto ms-1';
+      ['and', 'or'].forEach(val => {
+        const opt = document.createElement('option');
+        opt.value = val;
+        opt.textContent = val.toUpperCase();
+        logicSelect.appendChild(opt);
+      });
+      logicLabel.appendChild(logicSelect);
+      groupDiv.appendChild(logicLabel);
+
+      const notLabel = document.createElement('label');
+      notLabel.textContent = ' NOT ';
+      const notCheckbox = document.createElement('input');
+      notCheckbox.type = 'checkbox';
+      notCheckbox.name = 'not';
+      notCheckbox.className = 'form-check-input ms-1';
+      notLabel.appendChild(notCheckbox);
+      groupDiv.appendChild(notLabel);
+
+      senobjectobject.model.meta.forEach(field => {
+        const condDiv = document.createElement('div');
+        condDiv.className = 'filter-condition mb-2';
+
+        const fieldLabel = document.createElement('label');
+        fieldLabel.textContent = field.description || field.field;
+        fieldLabel.className = 'me-2';
+        condDiv.appendChild(fieldLabel);
+
+        const opSelect = document.createElement('select');
+        opSelect.name = `op_${field.field}`;
+        opSelect.className = 'form-select form-select-sm d-inline-block w-auto me-2';
+
+        // Định nghĩa operators theo kiểu dữ liệu
+        let ops = [];
+        if (field.type === 'bool' || field.type === 'boolean') {
+          ops = ['==', '!='];
+        } else if (field.type === 'date') {
+          ops = ['dateEquals', 'dateGreaterThanOrEquals', 'dateLessThanOrEquals'];
+        } else if (field.type === 'datetime') {
+          ops = ['dateTimeEquals', 'dateTimeGreaterThanOrEquals', 'dateTimeLessThanOrEquals'];
+        } else if (field.type === 'string' || field.type === 'text') {
+          ops = ['==', '!=', 'includes', 'ilike'];
+        } else {
+          ops = ['==', '!=', '>', '>=', '<', '<='];
+        }
+
+        ops.forEach(op => {
+          const opt = document.createElement('option');
+          opt.value = op;
+          // Hiển thị tên operator thân thiện hơn
+          const opLabels = {
+            'dateEquals': 'Date Equals',
+            'dateGreaterThanOrEquals': 'Date >=',
+            'dateLessThanOrEquals': 'Date <=',
+            'dateTimeEquals': 'DateTime Equals',
+            'dateTimeGreaterThanOrEquals': 'DateTime >=',
+            'dateTimeLessThanOrEquals': 'DateTime <=',
+            'includes': 'Contains',
+            'ilike': 'Contains (ignore case)'
+          };
+          opt.textContent = opLabels[op] || op;
+          opSelect.appendChild(opt);
+        });
+        condDiv.appendChild(opSelect);
+
+        let valueInput;
+        if (field.type === 'bool' || field.type === 'boolean') {
+          valueInput = document.createElement('select');
+          valueInput.name = `value_${field.field}`;
+          valueInput.className = 'form-select form-select-sm d-inline-block w-auto';
+          const optEmpty = document.createElement('option');
+          optEmpty.value = '';
+          optEmpty.textContent = '--';
+          valueInput.appendChild(optEmpty);
+          ['true', 'false'].forEach(val => {
+            const opt = document.createElement('option');
+            opt.value = val;
+            opt.textContent = val.charAt(0).toUpperCase() + val.slice(1);
+            valueInput.appendChild(opt);
+          });
+        } else if (field.type === 'date') {
+          valueInput = document.createElement('input');
+          valueInput.type = 'date';
+          valueInput.name = `value_${field.field}`;
+          valueInput.className = 'form-control form-control-sm d-inline-block w-auto';
+        } else if (field.type === 'datetime') {
+          valueInput = document.createElement('input');
+          valueInput.type = 'datetime-local';
+          valueInput.name = `value_${field.field}`;
+          valueInput.className = 'form-control form-control-sm d-inline-block w-auto';
+        } else {
+          valueInput = document.createElement('input');
+          valueInput.type = 'text';
+          valueInput.name = `value_${field.field}`;
+          valueInput.className = 'form-control form-control-sm d-inline-block w-auto';
+        }
+        condDiv.appendChild(valueInput);
+
+        groupDiv.appendChild(condDiv);
+      });
+
+      const applyBtn = document.createElement('button');
+      applyBtn.type = 'button';
+      applyBtn.className = 'btn btn-primary btn-sm mt-2';
+      applyBtn.textContent = 'Apply';
+      applyBtn.onclick = function () {
+        const filter = {};
+        const formData = new FormData(form);
+        filter.logic = formData.get('logic') || 'and';
+        filter.not = formData.get('not') === 'on';
+        filter.conditions = [];
+
+        senobjectobject.model.meta.forEach(field => {
+          const op = formData.get(`op_${field.field}`);
+          const value = formData.get(`value_${field.field}`);
+          if (value !== '' && value !== null) {
+            let val = value;
+            if (
+              field.type === 'number' ||
+              field.type === 'numeric' ||
+              field.type === 'bigint'
+            ) {
+              if (!isNaN(value)) val = Number(value);
+              else return;
+            } else if (field.type === 'bool' || field.type === 'boolean') {
+              if (value === '') return;
+              val = value === 'true';
+            } else if (field.type === 'date') {
+              // Chuyển thành đối tượng Date cho kiểu date
+              const dateObj = new Date(value + 'T00:00:00.000Z'); // Thêm time để tránh timezone issue
+              if (!isNaN(dateObj.getTime())) {
+                val = value;
+              } else {
+                return;
+              }
+            } else if (field.type === 'datetime') {
+              // Chuyển thành đối tượng Date cho kiểu datetime
+              const dateObj = new Date(value);
+              if (!isNaN(dateObj.getTime())) {
+                //nếu dùng dateObj.toISOString() thì sẽ bị lỗi khi so sánh với chuỗi ISO
+                val = value;
+              } else {
+                return;
+              }
+            }
+            filter.conditions.push({
+              field: field.field,
+              op: op,
+              value: val
+            });
+          }
+        });
+
+        senobjectobject.filter = filter;
+        senobjectobject.inittable();
+        senobjectobject.lists();
+      };
+
+
+
+      form.appendChild(groupDiv);
+      form.appendChild(applyBtn);
+      filterContainer.appendChild(form);
+    };
+    // Gọi hàm render filter khi khởi tạo
+    //senobjectobject.renderFilter1();//tạm khóa
+
+    //hàm tạo header row trong bảng
+    senobjectobject.genRowHeader = function () {
+      //xóa theader nếu có
+      const existingThead = senobjectobject.container.querySelector('table thead');
+      if (existingThead) { existingThead.remove(); }
+      //tạo tr thead của table căn cứ meta
+      const thead = document.createElement('thead');
+      const tr = document.createElement('tr');
+      //tạo cột số thứ tự
+      const thnumber = document.createElement('th');
+      thnumber.textContent = '#';
+      tr.appendChild(thnumber);
+
+      senobjectobject.model.meta.forEach(field => {
+        const th = document.createElement('th');
+        th.innerHTML = (field.description || field.field) + '<span class="me-1"></span>';
+        th.setAttribute('data-field', field.field);
+        th.onclick = function () { senobjectobject.changeSortFields({ field: this.getAttribute('data-field') }); };
+        tr.appendChild(th);
+      });
+      const th = document.createElement('th');
+      th.textContent = 'Actions';
+      tr.appendChild(th);
+      thead.appendChild(tr);
+      senobjectobject.container.querySelector('table').appendChild(thead);
+    };
+    //hàm map label sort trong meta sang biểu tượng sort trong header row
+    senobjectobject.mapSortLabelToRowHeader = function () {
+      const thead = senobjectobject.container.querySelector('table thead');
+      if (!thead) return;
+
+      // Lấy tất cả các th trong thead
+      const ths = thead.querySelectorAll('th[data-field]');
+      ths.forEach(th => {
+        const field = th.getAttribute('data-field');
+        const metaField = senobjectobject.model.meta.find(m => m.field === field);
+        if (metaField) {
+          //Gán lại label và thêm biểu tượng sort tương ứng 
+          th.innerHTML = (metaField.description || metaField.field) + '<span class="me-1"></span>';
+          //nếu có sorttype thì thêm biểu tượng sort
+          if (metaField.sorttype) {
+            const icon = document.createElement('i');
+            icon.classList.add('fas', metaField.sorttype === 'asc' ? 'fa-arrow-up' : 'fa-arrow-down');
+            th.appendChild(icon);
+          }
+        }
+
+      });
+    };
+
+    //tạo hàm căn cứ vào meta và sortorder và sorttype để trả về biến sortfield và sortorder theo thứ tự sortorder và trả về dạng sortfield='Bigint,Numeric' và sortorder='asc,desc'
+    senobjectobject.getSortFields = function () {
+      const sortedFields = senobjectobject.model.meta
+        .filter(m => m.sortorder)
+        .sort((a, b) => a.sortorder - b.sortorder);
+
+      return {
+        sortfield: sortedFields.map(m => m.field).join(','),
+        sorttype: sortedFields.map(m => m.sorttype || 'asc').join(',')
+      };
+    };
+
+    // hàm để xóa các trường sortorder và sorttype trong meta
+    senobjectobject.clearSortFields = function ({ excludeSortFields } = {}) {
+      senobjectobject.model.meta.forEach(m => {
+        if (!excludeSortFields || !excludeSortFields.includes(m.field)) {
+          delete m.sortorder;
+          delete m.sorttype;
+        }
+      });
+    };
+
+    senobjectobject.addSortFields = function ({ sortFields } = {}) {
+      //thêm các trường sortorder và sorttype vào meta
+      const fields = sortFields.split(',');
+      fields.forEach((field, index) => {
+        const metaField = senobjectobject.model.meta.find(m => m.field === field);
+        if (metaField) {
+          //nếu đã có sorttype thì đảo ngược lại giữ nguyên sortorder
+          if (metaField.sorttype) {
+            metaField.sorttype = metaField.sorttype === 'asc' ? 'desc' : 'asc';
+          } else {
+            metaField.sortorder = Math.max(...senobjectobject.model.meta.map(m => m.sortorder || 0)) + 1;
+            metaField.sorttype = 'asc'; // nếu chưa có thì mặc định là asc
+          }
+        }
+      });
+    };
+
+    //hàm changeSortFields để thay đổi các trường sortorder và sorttype trong meta
+    senobjectobject.changeSortFields = function ({ field }) {
+      senobjectobject.clearSortFields({ excludeSortFields: field });
+      senobjectobject.addSortFields({ sortFields: field });
+      senobjectobject.mapSortLabelToRowHeader();
+      senobjectobject.clearRowData();
+      senobjectobject.lists();
+    };
+
+    //xóa các filter đang lưu trữ trong trường field của meta
+    senobjectobject.metaClearFilter = function ({ meta }) {
+      //xóa tòn bộ filter trong senobjectobject.meta
+      meta.forEach(m => { delete m.filter; });
+    };
+
+    //thêm filter vào trường field trong senobjectobject.meta
+    senobjectobject.metaAddFilter = function ({ meta, field, op, value }) {
+      //thêm filter vào trường field trong senobjectobject.meta
+      const metaField = meta.find(m => m.field === field);
+      if (metaField) {
+        if (!metaField.filter) { metaField.filter = []; }
+        //kiểm tra nếu đã có filter với op thì cập nhật value
+        const existingFilter = metaField.filter.find(f => f.op === op);
+        if (existingFilter) {
+          //nếu value là null hoặc undefined thì xóa filter
+          if (value === null || value === undefined) {
+            metaField.filter = metaField.filter.filter(f => f.op !== op);
+          } else {
+            //nếu đã có filter với op thì cập nhật value
+            existingFilter.value = value;
+          }
+        } else {
+          metaField.filter.push({ op: op, value: value });
+        }
+      }
+    };
+
+    //trả về đối tượng filter của trường field trong senobjectobject.meta
+    senobjectobject.metaGetFilter = function ({ meta, field }) {
+      const metaField = meta.find(m => m.field === field);
+      return metaField ? metaField.filter : [];
+    };
+
+    //trả về tất cả đối tượng filter trong senobjectobject.meta 
+    senobjectobject.metaGetAllFilters = function ({ meta }) {
+      const filters = { logic: "and", conditions: [] };
+
+      meta.forEach(m => {
+        if (m.filter && Array.isArray(m.filter) && m.filter.length > 0) {
+          m.filter.forEach(f => {
+            //nếu giá trị là null hoặc undefined thì không thêm vào filter
+            if (f.value === null || f.value === undefined) return;
+            filters.conditions.push({ field: m.field, op: f.op, value: f.value });
+          });
+        }
+      });
+      return filters;
+    };
+
+    //hàm changeRowFilter
+    senobjectobject.changeRowFilter = function ({ meta, condition } = {}) {
+      //điều kiện chỉ là đối tượng condition={field: 'fieldname', op: 'operator', value: 'value'}
+      if (condition && condition.field && condition.op) {
+        //nếu trường condition.value không có thì set là null
+        if (condition.value === undefined || condition.value === null) { condition.value = null; }
+        senobjectobject.metaAddFilter({ meta: meta, field: condition.field, op: condition.op, value: condition.value });
+      }
+      else {
+        //nếu không có điều kiện thì xóa tất cả filter
+        senobjectobject.metaClearFilter({ meta: meta });
+        //map giá trị filter trong meta sang input điều kiện lọc của rowfilter
+        senobjectobject.mapMetaFilterToRowFilter();
+      }
+      senobjectobject.filter = senobjectobject.metaGetAllFilters({ meta: meta });
+      //senobjectobject.inittable();
+      senobjectobject.clearRowData();
+      senobjectobject.lists();
+    };
+
+    //hàm map giá trị filter trong meta sang input  điều kiện lọc của rowfilter
+    senobjectobject.mapMetaFilterToRowFilter = function () {
+      const thead = senobjectobject.container.querySelector('table thead');
+      if (!thead) return;
+
+      // Lấy tr filter nếu có
+      const filterRow = thead.querySelector('tr.row-filter');
+      if (!filterRow) return;
+
+      // Duyệt qua các ô trong tr filter
+      const tds = filterRow.querySelectorAll('td');
+      tds.forEach(td => {
+        //phải lấy input, select trong td   
+
+        //trong td có nhiều input, select 
+        const tdInputs = td.querySelectorAll('input, select');
+        //quét từng input, select
+        tdInputs.forEach(input => {
+          if (input) {
+            // Lấy field từ thuộc tính data-field
+            const field = input.getAttribute('data-field');
+            const metaField = senobjectobject.model.meta.find(m => m.field === field);
+            if (metaField && metaField.filter && Array.isArray(metaField.filter)) {
+              // Tìm toán tử và giá trị tương ứng
+              const filterItem = metaField.filter.find(f => f.op === input.getAttribute('data-operator'));
+              if (filterItem) {
+                input.value = filterItem.value || '';
+              } else {
+                input.value = '';
+              }
+            } else {
+              input.value = '';
+            }
+          }
+        });
+      });
+    };
+    //hàm tạo filter row trong bảng
+    senobjectobject.genRowFilter = function () {
+      const thead = senobjectobject.container.querySelector('table thead');
+      if (!thead) return;
+      // Xóa tr filter cũ nếu có
+      const oldFilterRow = thead.querySelector('tr.row-filter');
+      if (oldFilterRow) oldFilterRow.remove();
+
+      const tr = document.createElement('tr');
+      tr.className = 'row-filter';
+
+      // Cột số thứ tự
+      const tdnumber = document.createElement('td');
+      tdnumber.innerHTML = '<i class="fa fa-filter text-muted"></i>';
+      tr.appendChild(tdnumber);
+
+      senobjectobject.model.meta.forEach(field => {
+        const td = document.createElement('td');
+        td.style.minWidth = '120px';
+
+        if (field.type === 'string' || field.type === 'text') {
+          // Ngầm định toán tử chứa
+          const input = document.createElement('input');
+          input.type = 'text';
+          input.className = 'form-control form-control-sm';
+          input.placeholder = 'Contains...';
+          //set attribute data-operator="includes" vào input
+          input.setAttribute('data-operator', 'includes');
+          //set attribute data-field vào input
+          input.setAttribute('data-field', field.field);
+
+          // Gán giá trị từ meta.filter nếu có
+          if (field.filter && Array.isArray(field.filter)) {
+            const includesFilter = field.filter.find(f => f.op === 'includes');
+            if (includesFilter && includesFilter.value) { input.value = includesFilter.value; }
+          }
+          input.onchange = function () {
+            senobjectobject.changeRowFilter({ meta: senobjectobject.model.meta, condition: { field: input.getAttribute('data-field'), op: input.getAttribute('data-operator'), value: input.value } });
+          };
+          td.appendChild(input);
+        } else if (
+          field.type === 'number' ||
+          field.type === 'numeric' ||
+          field.type === 'bigint'
+        ) {
+          // 3 input cho =, >=, <=
+          const operators = ['==', '>=', '<='];
+          const placeholders = ['=', '>=', '<='];
+
+          operators.forEach((op, idx) => {
+            const input = document.createElement('input');
+            input.type = 'number';
+            input.className = 'form-control form-control-sm d-inline-block me-1';
+            input.placeholder = placeholders[idx];
+            // Gán giá trị từ meta.filter nếu có
+            if (field.filter && Array.isArray(field.filter)) {
+              const filterItem = field.filter.find(f => f.op === op);
+              if (filterItem && filterItem.value !== undefined) { input.value = filterItem.value; }
+            }
+
+            //set attribute data-operator="includes" vào input
+            input.setAttribute('data-operator', op);
+            //set attribute data-field vào input
+            input.setAttribute('data-field', field.field);
+
+            input.onchange = function () {
+              //nếu giá trị input khác rỗng thì thêm điều kiện vào filter
+              if (input.value !== '') {
+                senobjectobject.changeRowFilter({ meta: senobjectobject.model.meta, condition: { field: this.getAttribute('data-field'), op: this.getAttribute('data-operator'), value: Number(this.value) } });
+              } else {
+                senobjectobject.changeRowFilter({ meta: senobjectobject.model.meta, condition: { field: this.getAttribute('data-field'), op: this.getAttribute('data-operator'), value: null } });
+              }
+            };
+            td.appendChild(input);
+          });
+        } else if (field.type === 'date' || field.type === 'datetime') {
+          // 3 input cho =, >=, <=
+          const operators = field.type === 'date'
+            ? ['dateEquals', 'dateGreaterThanOrEquals', 'dateLessThanOrEquals']
+            : ['dateTimeEquals', 'dateTimeGreaterThanOrEquals', 'dateTimeLessThanOrEquals'];
+          const placeholders = ['=', '>=', '<='];
+
+          operators.forEach((op, idx) => {
+            const input = document.createElement('input');
+            input.type = field.type === 'date' ? 'date' : 'datetime-local';
+            input.className = 'form-control form-control-sm d-inline-block me-1';
+            input.placeholder = placeholders[idx];
+            // Gán giá trị từ meta.filter nếu có
+            if (field.filter && Array.isArray(field.filter)) {
+              const filterItem = field.filter.find(f => f.op === op);
+              if (filterItem && filterItem.value !== undefined) {
+                // Chuyển đổi giá trị date/datetime về định dạng input
+                let inputValue = filterItem.value;
+                if (filterItem.value instanceof Date) {
+                  if (field.type === 'date') {
+                    inputValue = filterItem.value.toISOString().split('T')[0];
+                  } else {
+                    inputValue = filterItem.value.toISOString().slice(0, 16);
+                  }
+                } else if (typeof filterItem.value === 'string') {
+                  if (field.type === 'date') {
+                    inputValue = filterItem.value.split('T')[0];
+                  } else {
+                    inputValue = filterItem.value.slice(0, 16);
+                  }
+                }
+                input.value = inputValue;
+              }
+            }
+            //set attribute data-operator="includes" vào input
+            input.setAttribute('data-operator', op);
+            //set attribute data-field vào input
+            input.setAttribute('data-field', field.field);
+
+            input.onchange = function () {
+              //nếu giá trị input khác rỗng thì thêm điều kiện vào filter
+              if (this.value !== '') {
+                senobjectobject.changeRowFilter({ meta: senobjectobject.model.meta, condition: { field: this.getAttribute('data-field'), op: this.getAttribute('data-operator'), value: this.value } });
+              } else {
+                senobjectobject.changeRowFilter({ meta: senobjectobject.model.meta, condition: { field: this.getAttribute('data-field'), op: this.getAttribute('data-operator'), value: null } });
+              }
+            };
+            td.appendChild(input);
+          });
+        } else if (field.type === 'bool' || field.type === 'boolean') {
+          // Dropdown cho boolean
+          const select = document.createElement('select');
+          select.className = 'form-select form-select-sm';
+
+          // Thêm option rỗng
+          const emptyOption = document.createElement('option');
+          emptyOption.value = '';
+          emptyOption.textContent = 'All';
+          select.appendChild(emptyOption);
+
+          // Thêm option true/false
+          ['true', 'false'].forEach(val => {
+            const option = document.createElement('option');
+            option.value = val;
+            option.textContent = val === 'true' ? 'True' : 'False';
+            select.appendChild(option);
+          });
+
+          // Gán giá trị từ meta.filter nếu có
+          if (field.filter && Array.isArray(field.filter)) {
+            const eqFilter = field.filter.find(f => f.op === '==');
+            if (eqFilter && eqFilter.value !== undefined) {
+              select.value = eqFilter.value.toString();
+            }
+          }
+
+          //set attribute data-operator="includes" vào input
+          select.setAttribute('data-operator', '==');
+          //set attribute data-field vào input
+          select.setAttribute('data-field', field.field);
+
+          select.onchange = function () {
+            if (this.value !== '') {
+              senobjectobject.changeRowFilter({ meta: senobjectobject.model.meta, condition: { field: field.field, op: this.getAttribute('data-operator'), value: this.value === 'true' } });
+            } else {
+              senobjectobject.changeRowFilter({ meta: senobjectobject.model.meta, condition: { field: field.field, op: this.getAttribute('data-operator'), value: null } });
+            }
+          };
+          td.appendChild(select);
+        } else {
+          td.innerHTML = '';
+        }
+
+        tr.appendChild(td);
+      });
+
+      // Cột actions
+      const tdaction = document.createElement('td');
+      tdaction.innerHTML = '';
+      //tạo nút Clear Filter
+      const clearFilterBtn = document.createElement('button');
+      //gán biểu tượng cho nút Clear Filter gán thêm biểu tượng hình phiễu kết hợp với biểu tượng xóa
+      clearFilterBtn.innerHTML = '<i class="fas fa-times"></i>';
+      clearFilterBtn.classList.add('btn', 'btn-sm', 'btn-subtle-secondary', 'me-1');
+      //gán onclick cho nút Clear Filter
+      clearFilterBtn.onclick = function () {
+        senobjectobject.changeRowFilter({ meta: senobjectobject.model.meta });
+      };
+      tdaction.appendChild(clearFilterBtn);
+
+
+      tr.appendChild(tdaction);
+
+      thead.appendChild(tr);
+    };
+
+
+    //hàm clearrowdata để xóa dữ liệu trong bảng
+    senobjectobject.clearRowData = function () {
+      const tbody = senobjectobject.container.querySelector('table tbody');
+      if (tbody) {
+        tbody.innerHTML = '';
+      }
+    };
+
+
+    senobjectobject.initTable = function () {
+      senobjectobject.genRowHeader(); // Gọi hàm genRowHeader để tạo header row
+      senobjectobject.mapSortLabelToRowHeader(); // Gọi hàm mapSortLabelToRowHeader để cập nhật biểu tượng sort
+      senobjectobject.genRowFilter(); // Gọi hàm genRowFilter để tạo hàng filter
+      senobjectobject.clearRowData(); // Xóa dữ liệu trong tbody trước khi tải lại
+    };
+
+    senobjectobject.lists = function ({ page = 1 } = {}) {
+      //tạo biến và lấy giá trị từ hàm senobjectobject.getSortFields()
+      const sortFields = senobjectobject.getSortFields();
+      const filter = senobjectobject.filter;
+
+      console.log('Filter applied:', filter);
+
+      fetch(`${this.urldata.lists}?page=${page}&sortfield=${sortFields.sortfield}&sorttype=${sortFields.sorttype}&filter=${JSON.stringify(filter)}`, { method: 'GET' })
+        .then(response => response.json())
+        .then(resdata => {
+          const tbody = senobjectobject.container.querySelector('table tbody');
+          //lấy số dòng tr hiện hành chứa trong tbody
+          const currentRows = tbody.querySelectorAll('tr').length;
+          resdata.datas.forEach((senobject, index) => {
+            const tr = document.createElement('tr');
+            //số thứ tự
+            const tdnumber = document.createElement('td');
+            tdnumber.innerHTML = `${(index + 1) + (currentRows)}`;
+            tr.appendChild(tdnumber);
+            //tạo các ô td cho từng trường trong meta
+            senobjectobject.model.meta.forEach(field => {
+              const td = document.createElement('td');
+              // Gán giá trị cho ô td
+              if (field.type === 'bool') {
+                td.textContent = senobject[field.field] ? 'Yes' : 'No';
+              } else if (field.type === 'boolean') {
+                td.textContent = senobject[field.field] ? 'True' : 'False';
+              } else if (field.type === 'date') {
+                td.textContent = new Date(senobject[field.field]).toLocaleDateString();
+              } else if (field.type === 'datetime') {
+                td.textContent = new Date(senobject[field.field]).toLocaleString();
+              } else if (field.type === 'number' || field.type === 'numeric') {
+                // Định dạng số với dấu phân cách phần nghìn và 2 chữ số thập phân
+                td.textContent = senobject[field.field] ? parseFloat(senobject[field.field]).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '';
+              } else if (field.type === 'bigint') {
+                // Bỏ qua phân cách phần nghìn, chỉ hiển thị số nguyên
+                td.textContent = senobject[field.field] ? senobject[field.field].toString() : '';
+              } else {
+                td.textContent = senobject[field.field] || '';
+              }
+
+              tr.appendChild(td);
+            });
+            const tdaction = document.createElement('td');
+            tdaction.innerHTML = `
+            <div class="btn-reveal-trigger position-static">
+              <button class="btn btn-sm dropdown-toggle dropdown-caret-none transition-none btn-reveal fs-10" type="button" data-bs-toggle="dropdown" data-boundary="window" data-bs-reference="parent"><span class="fas fa-ellipsis-h fs-10"></span></button>
+              <div class="dropdown-menu dropdown-menu-end py-2" data-popper-placement="bottom-end">
+                <a data-id="${senobject[senobjectobject.keyfield]}" href="javascript:;" onclick="senobjectobject.edit(this)" class="dropdown-item">Edit</a>
+                <div class="dropdown-divider"></div>
+                <a data-id="${senobject[senobjectobject.keyfield]}" href="javascript:;" onclick="senobjectobject.delete(this)" class="dropdown-item text-danger">Delete</a>
+              </div>
+            </div>
+            `;
+            tr.appendChild(tdaction);
+            tbody.appendChild(tr);
+          });
+
+          if (resdata.page < resdata.totalpages) {
+            const tr = document.createElement('tr');
+            const td = document.createElement('td');
+            td.colSpan = senobjectobject.model.meta.length + 1; // +1 for actions column
+            const a = document.createElement('a');
+
+            td.style.textAlign = "center";
+
+            a.href = "#";
+            a.className = "btn btn-link";
+            a.textContent = "Load More";
+            a.onclick = function (e) {
+              e.preventDefault();
+              tr.remove();
+              senobjectobject.lists({ page: resdata.page + 1 });
+            };
+            td.appendChild(a);
+            tr.appendChild(td);
+            tbody.appendChild(tr);
+          }
+
+        })
+        .catch(err => {
+          alert('Error loading senobjects');
+          console.error(err);
+        });
+    };
+
+    senobjectobject.create = function (el) {
+      $('#senobject-section').load(`${this.urldata.create}`);
+    };
+
+    senobjectobject.edit = function (el) {
+      const id = $(el).attr('data-id');
+      if (!id) {
+        alert('ID is required');
+        return;
+      }
+      $('#senobject-section').load(`${this.urldata.edit}?id=${encodeURIComponent(id)}`);
+    };
+
+    senobjectobject.delete = function (el) {
+      const id = $(el).attr('data-id');
+      if (!id) {
+        alert('ID is required');
+        return;
+      }
+
+      $.post(`${this.urldata.delete}/${encodeURIComponent(id)}`, function (response) {
+        if (response.status == 0) {
+          alert(response.message);
+        } else {
+          //alert(response.message);
+          // khi xóa thành công thì tìm tr chứa el và xóa nó
+          $(el).closest('tr').remove();
+
+        }
+      })
+    };
+
+    senobjectobject.table = function table(defaults) {
+      //khai báo đối tượng bảng
+      this.tableelement = senobjectobject.container.querySelector('table');
+      this.urldata = senobjectobject.urldata;
+      this.meta = senobjectobject.model.meta;
+      this.keyfield = this.meta.find(m => m.key == true).field;//gán trường khóa để thuận tiện xử lý
+      this.filter = senobjectobject.filter || {}; // Khởi tạo filter nếu chưa có
+
+      //hàm tạo header row trong bảng
+      this.genRowHeader = function () {
+        const tableobject = this;
+        //xóa theader nếu có
+        const existingThead = this.tableelement.querySelector('thead');
+        if (existingThead) { existingThead.remove(); }
+        //tạo tr thead của table căn cứ meta
+        const thead = document.createElement('thead');
+        const tr = document.createElement('tr');
+        //tạo cột số thứ tự
+        const thnumber = document.createElement('th');
+        thnumber.textContent = '#';
+        tr.appendChild(thnumber);
+
+        this.meta.forEach(field => {
+          const th = document.createElement('th');
+          th.innerHTML = (field.description || field.field) + '<span class="me-1"></span>';
+          th.setAttribute('data-field', field.field);
+          th.onclick = function () { tableobject.changeSortFields({ field: this.getAttribute('data-field') }); };
+          tr.appendChild(th);
+        });
+        const th = document.createElement('th');
+        th.textContent = 'Actions';
+        tr.appendChild(th);
+        thead.appendChild(tr);
+        this.tableelement.appendChild(thead);
+      };
+
+      //hàm map label sort trong meta sang biểu tượng sort trong header row
+      this.mapSortLabelToRowHeader = function () {
+        const tableobject = this;
+        const thead = this.tableelement.querySelector('thead');
+        if (!thead) return;
+
+        // Lấy tất cả các th trong thead
+        const ths = thead.querySelectorAll('th[data-field]');
+        ths.forEach(th => {
+          const field = th.getAttribute('data-field');
+          const metaField = tableobject.meta.find(m => m.field === field);
+          if (metaField) {
+            //Gán lại label và thêm biểu tượng sort tương ứng 
+            th.innerHTML = (metaField.description || metaField.field) + '<span class="me-1"></span>';
+            //nếu có sorttype thì thêm biểu tượng sort
+            if (metaField.sorttype) {
+              const icon = document.createElement('i');
+              icon.classList.add('fas', metaField.sorttype === 'asc' ? 'fa-arrow-up' : 'fa-arrow-down');
+              th.appendChild(icon);
+            }
+          }
+
+        });
+      };
+
+      //tạo hàm căn cứ vào meta và sortorder và sorttype để trả về biến sortfield và sortorder theo thứ tự sortorder và trả về dạng sortfield='Bigint,Numeric' và sortorder='asc,desc'
+      this.getSortFields = function () {
+        const sortedFields = this.meta
+          .filter(m => m.sortorder)
+          .sort((a, b) => a.sortorder - b.sortorder);
+
+        return {
+          sortfield: sortedFields.map(m => m.field).join(','),
+          sorttype: sortedFields.map(m => m.sorttype || 'asc').join(',')
+        };
+      };
+
+      // hàm để xóa các trường sortorder và sorttype trong meta
+      this.clearSortFields = function ({ excludeSortFields } = {}) {
+        this.meta.forEach(m => {
+          if (!excludeSortFields || !excludeSortFields.includes(m.field)) {
+            delete m.sortorder;
+            delete m.sorttype;
+          }
+        });
+      };
+
+      this.addSortFields = function ({ sortFields } = {}) {
+        //thêm các trường sortorder và sorttype vào meta
+        const tableobject = this;
+        const fields = sortFields.split(',');
+        fields.forEach((field, index) => {
+          const metaField = tableobject.meta.find(m => m.field === field);
+          if (metaField) {
+            //nếu đã có sorttype thì đảo ngược lại giữ nguyên sortorder
+            if (metaField.sorttype) {
+              metaField.sorttype = metaField.sorttype === 'asc' ? 'desc' : 'asc';
+            } else {
+              metaField.sortorder = Math.max(...tableobject.meta.map(m => m.sortorder || 0)) + 1;
+              metaField.sorttype = 'asc'; // nếu chưa có thì mặc định là asc
+            }
+          }
+        });
+      };
+
+      //hàm changeSortFields để thay đổi các trường sortorder và sorttype trong meta
+      this.changeSortFields = function ({ field }) {
+        this.clearSortFields({ excludeSortFields: field });
+        this.addSortFields({ sortFields: field });
+        this.mapSortLabelToRowHeader();
+        this.clearRowData();
+        this.loadData();
+      };
+
+
+      //xóa các filter đang lưu trữ trong trường field của meta
+      this.metaClearFilter = function ({ meta }) {
+        //xóa tòn bộ filter trong senobjectobject.meta
+        meta.forEach(m => { delete m.filter; });
+      };
+
+      //thêm filter vào trường field trong senobjectobject.meta
+      this.metaAddFilter = function ({ meta, field, op, value }) {
+        //thêm filter vào trường field trong senobjectobject.meta
+        const metaField = meta.find(m => m.field === field);
+        if (metaField) {
+          if (!metaField.filter) { metaField.filter = []; }
+          //kiểm tra nếu đã có filter với op thì cập nhật value
+          const existingFilter = metaField.filter.find(f => f.op === op);
+          if (existingFilter) {
+            //nếu value là null hoặc undefined thì xóa filter
+            if (value === null || value === undefined) {
+              metaField.filter = metaField.filter.filter(f => f.op !== op);
+            } else {
+              //nếu đã có filter với op thì cập nhật value
+              existingFilter.value = value;
+            }
+          } else {
+            metaField.filter.push({ op: op, value: value });
+          }
+        }
+      };
+
+      //trả về đối tượng filter của trường field trong senobjectobject.meta
+      this.metaGetFilter = function ({ meta, field }) {
+        const metaField = meta.find(m => m.field === field);
+        return metaField ? metaField.filter : [];
+      };
+
+      //trả về tất cả đối tượng filter trong senobjectobject.meta 
+      this.metaGetAllFilters = function ({ meta }) {
+        const filters = { logic: "and", conditions: [] };
+
+        meta.forEach(m => {
+          if (m.filter && Array.isArray(m.filter) && m.filter.length > 0) {
+            m.filter.forEach(f => {
+              //nếu giá trị là null hoặc undefined thì không thêm vào filter
+              if (f.value === null || f.value === undefined) return;
+              filters.conditions.push({ field: m.field, op: f.op, value: f.value });
+            });
+          }
+        });
+        return filters;
+      };
+
+      //hàm changeRowFilter
+      this.changeRowFilter = function ({ meta, condition } = {}) {
+        //điều kiện chỉ là đối tượng condition={field: 'fieldname', op: 'operator', value: 'value'}
+        if (condition && condition.field && condition.op) {
+          //nếu trường condition.value không có thì set là null
+          if (condition.value === undefined || condition.value === null) { condition.value = null; }
+          this.metaAddFilter({ meta: meta, field: condition.field, op: condition.op, value: condition.value });
+        }
+        else {
+          //nếu không có điều kiện thì xóa tất cả filter
+          this.metaClearFilter({ meta: meta });
+          //map giá trị filter trong meta sang input điều kiện lọc của rowfilter
+          this.mapMetaFilterToRowFilter();
+        }
+        this.filter = this.metaGetAllFilters({ meta: meta });
+        //this.inittable();
+        this.clearRowData();
+        this.loadData();
+      };
+
+      //hàm map giá trị filter trong meta sang input  điều kiện lọc của rowfilter
+      this.mapMetaFilterToRowFilter = function () {
+        const tableobject = this;
+        const thead = this.tableelement.querySelector('thead');
+        if (!thead) return;
+
+        // Lấy tr filter nếu có
+        const filterRow = thead.querySelector('tr.row-filter');
+        if (!filterRow) return;
+
+        // Duyệt qua các ô trong tr filter
+        const tds = filterRow.querySelectorAll('td');
+        tds.forEach(td => {
+          //phải lấy input, select trong td   
+
+          //trong td có nhiều input, select 
+          const tdInputs = td.querySelectorAll('input, select');
+          //quét từng input, select
+          tdInputs.forEach(input => {
+            if (input) {
+              // Lấy field từ thuộc tính data-field
+              const field = input.getAttribute('data-field');
+              const metaField = tableobject.meta.find(m => m.field === field);
+              if (metaField && metaField.filter && Array.isArray(metaField.filter)) {
+                // Tìm toán tử và giá trị tương ứng
+                const filterItem = metaField.filter.find(f => f.op === input.getAttribute('data-operator'));
+                if (filterItem) {
+                  input.value = filterItem.value || '';
+                } else {
+                  input.value = '';
+                }
+              } else {
+                input.value = '';
+              }
+            }
+          });
+        });
+      };
+      //hàm tạo filter row trong bảng
+      this.genRowFilter = function () {
+        const tableobject = this;
+        const thead = this.tableelement.querySelector('thead');
+        if (!thead) return;
+        // Xóa tr filter cũ nếu có
+        const oldFilterRow = thead.querySelector('tr.row-filter');
+        if (oldFilterRow) oldFilterRow.remove();
+
+        const tr = document.createElement('tr');
+        tr.className = 'row-filter';
+
+        // Cột số thứ tự
+        const tdnumber = document.createElement('td');
+        tdnumber.innerHTML = '<i class="fa fa-filter text-muted"></i>';
+        tr.appendChild(tdnumber);
+
+        this.meta.forEach(field => {
+          const td = document.createElement('td');
+          td.style.minWidth = '120px';
+
+          if (field.type === 'string' || field.type === 'text') {
+            // Ngầm định toán tử chứa
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'form-control form-control-sm';
+            input.placeholder = 'Contains...';
+            //set attribute data-operator="includes" vào input
+            input.setAttribute('data-operator', 'includes');
+            //set attribute data-field vào input
+            input.setAttribute('data-field', field.field);
+
+            // Gán giá trị từ meta.filter nếu có
+            if (field.filter && Array.isArray(field.filter)) {
+              const includesFilter = field.filter.find(f => f.op === 'includes');
+              if (includesFilter && includesFilter.value) { input.value = includesFilter.value; }
+            }
+            input.onchange = function () {
+              tableobject.changeRowFilter({ meta: tableobject.meta, condition: { field: input.getAttribute('data-field'), op: input.getAttribute('data-operator'), value: input.value } });
+            };
+            td.appendChild(input);
+          } else if (
+            field.type === 'number' ||
+            field.type === 'numeric' ||
+            field.type === 'bigint'
+          ) {
+            // 3 input cho =, >=, <=
+            const operators = ['==', '>=', '<='];
+            const placeholders = ['=', '>=', '<='];
+
+            operators.forEach((op, idx) => {
+              const input = document.createElement('input');
+              input.type = 'number';
+              input.className = 'form-control form-control-sm d-inline-block me-1';
+              input.placeholder = placeholders[idx];
+              // Gán giá trị từ meta.filter nếu có
+              if (field.filter && Array.isArray(field.filter)) {
+                const filterItem = field.filter.find(f => f.op === op);
+                if (filterItem && filterItem.value !== undefined) { input.value = filterItem.value; }
+              }
+
+              //set attribute data-operator="includes" vào input
+              input.setAttribute('data-operator', op);
+              //set attribute data-field vào input
+              input.setAttribute('data-field', field.field);
+
+              input.onchange = function () {
+                //nếu giá trị input khác rỗng thì thêm điều kiện vào filter
+                if (input.value !== '') {
+                  tableobject.changeRowFilter({ meta: tableobject.meta, condition: { field: this.getAttribute('data-field'), op: this.getAttribute('data-operator'), value: Number(this.value) } });
+                } else {
+                  tableobject.changeRowFilter({ meta: tableobject.meta, condition: { field: this.getAttribute('data-field'), op: this.getAttribute('data-operator'), value: null } });
+                }
+              };
+              td.appendChild(input);
+            });
+          } else if (field.type === 'date' || field.type === 'datetime') {
+            // 3 input cho =, >=, <=
+            const operators = field.type === 'date'
+              ? ['dateEquals', 'dateGreaterThanOrEquals', 'dateLessThanOrEquals']
+              : ['dateTimeEquals', 'dateTimeGreaterThanOrEquals', 'dateTimeLessThanOrEquals'];
+            const placeholders = ['=', '>=', '<='];
+
+            operators.forEach((op, idx) => {
+              const input = document.createElement('input');
+              input.type = field.type === 'date' ? 'date' : 'datetime-local';
+              input.className = 'form-control form-control-sm d-inline-block me-1';
+              input.placeholder = placeholders[idx];
+              // Gán giá trị từ meta.filter nếu có
+              if (field.filter && Array.isArray(field.filter)) {
+                const filterItem = field.filter.find(f => f.op === op);
+                if (filterItem && filterItem.value !== undefined) {
+                  // Chuyển đổi giá trị date/datetime về định dạng input
+                  let inputValue = filterItem.value;
+                  if (filterItem.value instanceof Date) {
+                    if (field.type === 'date') {
+                      inputValue = filterItem.value.toISOString().split('T')[0];
+                    } else {
+                      inputValue = filterItem.value.toISOString().slice(0, 16);
+                    }
+                  } else if (typeof filterItem.value === 'string') {
+                    if (field.type === 'date') {
+                      inputValue = filterItem.value.split('T')[0];
+                    } else {
+                      inputValue = filterItem.value.slice(0, 16);
+                    }
+                  }
+                  input.value = inputValue;
+                }
+              }
+              //set attribute data-operator="includes" vào input
+              input.setAttribute('data-operator', op);
+              //set attribute data-field vào input
+              input.setAttribute('data-field', field.field);
+
+              input.onchange = function () {
+                //nếu giá trị input khác rỗng thì thêm điều kiện vào filter
+                if (this.value !== '') {
+                  tableobject.changeRowFilter({ meta: tableobject.meta, condition: { field: this.getAttribute('data-field'), op: this.getAttribute('data-operator'), value: this.value } });
+                } else {
+                  tableobject.changeRowFilter({ meta: tableobject.meta, condition: { field: this.getAttribute('data-field'), op: this.getAttribute('data-operator'), value: null } });
+                }
+              };
+              td.appendChild(input);
+            });
+          } else if (field.type === 'bool' || field.type === 'boolean') {
+            // Dropdown cho boolean
+            const select = document.createElement('select');
+            select.className = 'form-select form-select-sm';
+
+            // Thêm option rỗng
+            const emptyOption = document.createElement('option');
+            emptyOption.value = '';
+            emptyOption.textContent = 'All';
+            select.appendChild(emptyOption);
+
+            // Thêm option true/false
+            ['true', 'false'].forEach(val => {
+              const option = document.createElement('option');
+              option.value = val;
+              option.textContent = val === 'true' ? 'True' : 'False';
+              select.appendChild(option);
+            });
+
+            // Gán giá trị từ meta.filter nếu có
+            if (field.filter && Array.isArray(field.filter)) {
+              const eqFilter = field.filter.find(f => f.op === '==');
+              if (eqFilter && eqFilter.value !== undefined) {
+                select.value = eqFilter.value.toString();
+              }
+            }
+
+            //set attribute data-operator="includes" vào input
+            select.setAttribute('data-operator', '==');
+            //set attribute data-field vào input
+            select.setAttribute('data-field', field.field);
+
+            select.onchange = function () {
+              if (this.value !== '') {
+                tableobject.changeRowFilter({ meta: tableobject.meta, condition: { field: field.field, op: this.getAttribute('data-operator'), value: this.value === 'true' } });
+              } else {
+                tableobject.changeRowFilter({ meta: tableobject.meta, condition: { field: field.field, op: this.getAttribute('data-operator'), value: null } });
+              }
+            };
+            td.appendChild(select);
+          } else {
+            td.innerHTML = '';
+          }
+
+          tr.appendChild(td);
+        });
+
+        // Cột actions
+        const tdaction = document.createElement('td');
+        tdaction.innerHTML = '';
+        //tạo nút Clear Filter
+        const clearFilterBtn = document.createElement('button');
+        //gán biểu tượng cho nút Clear Filter gán thêm biểu tượng hình phiễu kết hợp với biểu tượng xóa
+        clearFilterBtn.innerHTML = '<i class="fas fa-times"></i>';
+        clearFilterBtn.classList.add('btn', 'btn-sm', 'btn-subtle-secondary', 'me-1');
+        //gán onclick cho nút Clear Filter
+        clearFilterBtn.onclick = function () {
+          tableobject.changeRowFilter({ meta: tableobject.meta });
+        };
+        tdaction.appendChild(clearFilterBtn);
+
+
+        tr.appendChild(tdaction);
+
+        thead.appendChild(tr);
+      };
+
+      //viết hàm clearrowdata để xóa dữ liệu trong bảng
+      this.clearRowData = function () {
+        const tbody = this.tableelement.querySelector('tbody');
+        if (tbody) { tbody.innerHTML = ''; }
+      };
+
+      this.loadData = function ({ page = 1 } = {}) {
+        const tableobject = this;
+        const sort = this.getSortFields();
+        const filter = this.filter;
+
+        console.log('Filter applied:', filter, sort);
+
+        fetch(`${this.urldata.lists}?page=${page}&sortfield=${sort.sortfield}&sorttype=${sort.sorttype}&filter=${JSON.stringify(filter)}`, { method: 'GET' })
+          .then(response => response.json())
+          .then(resdata => {
+            const tbody = tableobject.tableelement.querySelector('tbody');
+            //lấy số dòng tr hiện hành chứa trong tbody
+            const currentRows = tbody.querySelectorAll('tr').length;
+            resdata.datas.forEach((senobject, index) => {
+              const tr = document.createElement('tr');
+              //số thứ tự
+              const tdnumber = document.createElement('td');
+              tdnumber.innerHTML = `${(index + 1) + (currentRows)}`;
+              tr.appendChild(tdnumber);
+              //tạo các ô td cho từng trường trong meta
+              tableobject.meta.forEach(field => {
+                const td = document.createElement('td');
+                // Gán giá trị cho ô td
+                if (field.type === 'bool') {
+                  td.textContent = senobject[field.field] ? 'Yes' : 'No';
+                } else if (field.type === 'boolean') {
+                  td.textContent = senobject[field.field] ? 'True' : 'False';
+                } else if (field.type === 'date') {
+                  td.textContent = new Date(senobject[field.field]).toLocaleDateString();
+                } else if (field.type === 'datetime') {
+                  td.textContent = new Date(senobject[field.field]).toLocaleString();
+                } else if (field.type === 'number' || field.type === 'numeric') {
+                  // Định dạng số với dấu phân cách phần nghìn và 2 chữ số thập phân
+                  td.textContent = senobject[field.field] ? parseFloat(senobject[field.field]).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '';
+                } else if (field.type === 'bigint') {
+                  // Bỏ qua phân cách phần nghìn, chỉ hiển thị số nguyên
+                  td.textContent = senobject[field.field] ? senobject[field.field].toString() : '';
+                } else {
+                  td.textContent = senobject[field.field] || '';
+                }
+
+                tr.appendChild(td);
+              });
+              const tdaction = document.createElement('td');
+              tdaction.innerHTML = `
+            <div class="btn-reveal-trigger position-static">
+              <button class="btn btn-sm dropdown-toggle dropdown-caret-none transition-none btn-reveal fs-10" type="button" data-bs-toggle="dropdown" data-boundary="window" data-bs-reference="parent"><span class="fas fa-ellipsis-h fs-10"></span></button>
+              <div class="dropdown-menu dropdown-menu-end py-2" data-popper-placement="bottom-end">
+                <a data-id="${senobject[tableobject.keyfield]}" href="javascript:;" onclick="tableobject.edit(this)" class="dropdown-item">Edit</a>
+                <div class="dropdown-divider"></div>
+                <a data-id="${senobject[tableobject.keyfield]}" href="javascript:;" onclick="tableobject.delete(this)" class="dropdown-item text-danger">Delete</a>
+              </div>
+            </div>
+            `;
+              tr.appendChild(tdaction);
+              tbody.appendChild(tr);
+            });
+
+            if (resdata.page < resdata.totalpages) {
+              const tr = document.createElement('tr');
+              const td = document.createElement('td');
+              td.colSpan = tableobject.meta.length + 1; // +1 for actions column
+              const a = document.createElement('a');
+
+              td.style.textAlign = "center";
+
+              a.href = "#";
+              a.className = "btn btn-link";
+              a.textContent = "Load More";
+              a.onclick = function (e) {
+                e.preventDefault();
+                tr.remove();
+                tableobject.loadData({ page: resdata.page + 1 });
+              };
+              td.appendChild(a);
+              tr.appendChild(td);
+              tbody.appendChild(tr);
+            }
+
+          })
+          .catch(err => {
+            alert('Error loading');
+            console.error(err);
+          });
+      };
+
+      this.initTable = function () {
+        this.genRowHeader(); // Gọi hàm genRowHeader để tạo header row
+        this.mapSortLabelToRowHeader(); // Gọi hàm mapSortLabelToRowHeader để cập nhật biểu tượng sort
+        this.genRowFilter(); // Gọi hàm genRowFilter để tạo hàng filter
+        this.clearRowData(); // Xóa dữ liệu trong tbody trước khi tải lại
+        this.loadData(); // Gọi hàm loadData để tải dữ liệu
+      };
+
+    }
+
+
+    $(function () {
+      //senobjectobject.clearSortFields();
+      // senobjectobject.initTable();
+      // senobjectobject.lists();
+      var tbl = new senobjectobject.table();
+      tbl.initTable();
+
+    });
+
+
+  </script>
+
+</div>

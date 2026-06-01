@@ -1,0 +1,1935 @@
+<div id="paymentorder-section">
+  <div class="mb-9">
+    <h2 class="mb-4"><%- title %></h2>
+    <!-- <div class="mb-1">
+      <div class="">
+        <div class="btn-group me-1">
+          <a onclick="contractobject.paymentorderobject.tbl.savechanged()" class="btn btn-subtle-primary">Save
+            changed</a>
+          <a onclick="contractobject.paymentorderobject.tbl.quickapprove()" class="btn btn-subtle-primary ms-1">Quick
+            approval</a>
+        </div>
+      </div>
+    </div> -->
+    <div class="row-fluid">
+      <div class="card">
+        <div class="card-body">
+          <div class="search-box mb-3 mx-auto d-none">
+            <div class="position-relative">
+              <input class="form-control search-input search form-control-sm" type="search" placeholder="Search"
+                aria-label="Search" />
+              <span class="fas fa-search search-box-icon"></span>
+            </div>
+          </div>
+          <div id="paymentorder-table-filter" class="mb-2 text-muted fs-9">
+            <!-- Filter controls will be added here -->
+          </div>
+          <div id="paymentorder-table-command" class="mb-2 text-muted fs-9">
+            <!-- Command controls will be added here -->
+            <div class="mb-1 text-end">
+              <div class="btn-group me-1">
+                <a onclick="contractobject.paymentorderobject.createDraftIPC(this)"
+                  class="btn btn-subtle-secondary btn-sm">Create Draft IPC</a>
+                <a onclick="contractobject.paymentorderobject.viewDraftIPC(this)"
+                  class="btn btn-subtle-secondary btn-sm ms-1">View Draft IPC</a>
+                <a onclick="contractobject.paymentorderobject.removeDraftIPC(this)"
+                  class="btn btn-subtle-secondary btn-sm ms-1 d-none">Remove Draft IPC</a>
+                <!-- <a onclick="contractobject.paymentorderobject.createIPCfromDraft(this)"
+                  class="btn btn-subtle-secondary btn-sm ms-1">Create IPC from Draft</a> -->
+                <a onclick="contractobject.paymentorderobject.memberRACI(this)"
+                  class="btn btn-subtle-secondary btn-sm ms-1">Members</a>
+              </div>
+            </div>
+          </div>
+          <div id="paymentorder-table-info" class="mb-2 d-none">
+            <!-- Command controls will be added here -->
+            <div class="col-12 text-end" style="font-weight:bold;">
+              <label for="paymentorder-draft-ipc" class="form-label me-2">Payable Amount:</label>
+              <span id="paymentorder-draft-ipc"></span>
+            </div>
+
+          </div>
+
+          <ul class="nav nav-underline fs-9" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#paymentorder-tab-1" type="button"
+                role="tab" aria-controls="paymentorder-tab-1" aria-selected="true">Payment Preparation</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" data-bs-toggle="tab" data-bs-target="#paymentorder-tab-2" type="button"
+                role="tab" aria-controls="paymentorder-tab-2" aria-selected="false">IPC</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" data-bs-toggle="tab" data-bs-target="#paymentorder-tab-3" type="button"
+                role="tab" aria-controls="paymentorder-tab-3" aria-selected="false">IPC Management</button>
+            </li>
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane fade show active" id="paymentorder-tab-1" role="tabpanel"
+              aria-labelledby="paymentorder-tab-1" tabindex="0">
+              <div class="table-responsive">
+                <table class="table table-sm fs-9 mb-5" id="paymentorder-table">
+                  <tbody class="list">
+                    <!-- Table datas will be added here -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="tab-pane fade" id="paymentorder-tab-2" role="tabpanel" aria-labelledby="paymentorder-tab-2"
+              tabindex="0">
+              <div class="table-responsive">
+                <table class="table table-sm fs-9 mb-5" id="paymentorder-ipc-table">
+                  <tbody class="list">
+                    <!-- Table datas will be added here -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="tab-pane fade" id="paymentorder-tab-3" role="tabpanel" aria-labelledby="paymentorder-tab-3"
+              tabindex="0">
+              <div id="paymentorder-ipcmanagement-filter" class="mb-2 text-muted fs-9">
+                <!-- Filter controls will be added here -->
+              </div>
+
+              <div class="table-responsive" id="paymentorder-section-ipc-management">
+                <table class="table table-sm fs-9 mb-5" id="paymentorder-ipc-management-table">
+                  <tbody class="list">
+                    <!-- Table datas will be added here -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var contractobject = {};
+    contractobject.model = JSON.parse('<%- JSON.stringify(model) %>');
+    contractobject.container = document.getElementById("paymentorder-section");//khu vực chứa danh sách
+    contractobject.containeripcmanagement = document.getElementById("paymentorder-section-ipc-management");//khu vực chứa danh sách IPC management
+
+    contractobject.urldata = {
+      lists: '/contract/list',
+      item: '/contract/item',
+      // create: '/contract/create?viewname=paymentorderupdate&callback=' + encodeURIComponent('contractobject.createcallback'),
+      // edit: '/contract/edit?viewname=paymentorderupdate&callback=' + encodeURIComponent('contractobject.editcallback'),
+      // delete: '/contract/delete',
+      // update: '/contract/edit'
+      assignToUser: '/contractmember/create',
+      assignToSubmission: '/contractlinemember/create',
+      memberbycontract: '/contractmember/memberbycontract',
+      management: '/contract/management',
+      removedraftipc: '/paymentorder/removedraftipc',
+      createdraftipc: '/paymentorder/createdraftipc',
+      getdraftipc: '/paymentorder/getdraftipc',
+      createipcfromdraft: '/paymentorder/createipcfromdraft',
+      memberbypaymentorder: '/contractmember/memberbypaymentorder',
+    };
+
+    //#region IPC
+    contractobject.ipcobject = { model: {}, tbls: [] };
+    contractobject.ipcobject.urldata = {
+      lists0: '/paymentorderipc/list',
+      lists: '/paymentorderipc/list',
+      listsall0: '/paymentorderipc/listall',
+      listsall: '/paymentorderipc/listall',
+      create0: '/paymentorderipc/create?callback=' + encodeURIComponent('contractobject.ipcobject.createcallback'),
+      create: '/paymentorderipc/create?callback=' + encodeURIComponent('contractobject.ipcobject.createcallback'),
+      delete: '/paymentorderipc/delete',
+      meta: '/paymentorderipc/meta',
+    };
+    contractobject.ipcobject.createcallback = function (response) {
+      //nếu response[0] tồn tại thì hiển thị thông báo lỗi
+      if (response[0]) {
+        if (response[0].status == 0) {
+          alert(response[0].message);
+          return;
+        }
+        contractobject.paymentorderobject.mapDraftIPC();
+        // contractobject.ipcobject.tbl.onAddRowData({ data: response[0].data });
+        //senapp.sidebar.menuclickbydatalink('/senobject');
+      }
+    };
+
+    contractobject.ipcobject.tbl = new senapp.utils.table({
+      // datanew: datanew,
+      // meta: this.model.meta,
+      urldata: contractobject.ipcobject.urldata,
+      container: contractobject.container,
+      tableelement: contractobject.container.querySelector('#paymentorder-ipc-table'),
+      selectcolumn: false, // có hiển thị cột chọn hay không
+      filterrow: false, // có hiển thị filter row hay không
+      addrow: false, // cho phép thêm mới
+      editrow: false, // cho phép sửa
+      deleterow: true, // cho phép xóa
+      addnewfirst: false, //thêm mới vào đầu danh sách
+      // loadmoreonvisible: true, // tự động tải thêm dữ liệu khi cuộn đến cuối danh sách  
+      metacolumns: [
+        { field: 'SysAction', visible: true, colorder: -20 },
+        // { field: 'Ext02', description: 'Apply Tax', colorder: -18, visible: true, show: true, gridwidth: 80, readonly: true },
+        { field: 'Ext01', description: '<i class="fas fa-print" title="Print IPC"></i>', colorder: -1, visible: true, show: true, width: 32 },
+        { field: 'Ext03', description: 'View', colorder: -7, visible: true, show: true, width: 48 },
+        { field: 'Ext04', description: 'Review', colorder: -8, visible: true, show: true, width: 64 },
+
+      ],
+      customcolumns: ['Ext01', 'Ext03', 'Ext04'], // Danh sách các cột tùy chỉnh khi render cell
+      allowloaddataininit: false,//không tự động load data khi khởi tạo
+      modal: true,
+      actionbuttons: { edit: false },
+      allowpinheader: true, //cho phép cố định header khi cuộn trang
+    });
+
+    contractobject.ipcobject.tbl.genCellDataCustom = function ({ data, metacolumn }) {
+      if (!metacolumn || !metacolumn.field) {
+        return null; // Trả về null nếu không có metacolumn hoặc field
+      }
+      // Hàm này sẽ được sử dụng để tạo dữ liệu cho các cột tùy chỉnh
+      const tableobject = this;
+      const td = document.createElement('td');
+      td.setAttribute('data-field', metacolumn.field);
+      //nếu field.visible là false hoặc field.show là false thì không hiển thị cột này  gán class d-none
+      if (!metacolumn.show || !metacolumn.visible) { td.classList.add('d-none'); }
+      switch (metacolumn.field) {
+        case 'Ext02':
+          //<i class="uil-file-check" style="font-size: 18px;"></i>
+          td.innerHTML = `<a href="javascript:;" onclick="contractobject.ipcobject.validateapplytax({ el: this })" title="Apply Tax">Apply Tax</a>`;
+          break;
+        case 'Ext04':
+          if (data.IsAssigned == 'No') {
+            td.innerHTML = `<a class="text-muted" href="javascript:;" onclick="contractobject.ipcobject.showapproval({ el: this,edit:true })" title="Approval"><i class="fa fa-edit"></i></a>`;
+          }
+          else {
+            td.innerHTML = `<a class="text-muted" href="javascript:;" onclick="contractobject.ipcobject.showapproval({ el: this,edit:false })" title="Review"><i class="fas fa-list"></i></a>`;
+          }
+          // td.innerHTML = `<a href="javascript:;" onclick="contractobject.ipcobject.showapproval({ el: this })" title="Approval">Approval</a>`;
+          break;
+        case 'Ext01':
+          td.innerHTML = `<a href="javascript:;" onclick="contractobject.ipcobject.print({ el: this })" title="Print IPC"><i class="fas fa-print text-muted"></i></a> <a class="d-none" href="javascript:;" onclick="contractobject.ipcobject.printcumulative({ el: this })" title="Print IPC"><i class="fas fa-print text-muted"></i></a>`;
+          break;
+        case 'Ext03':
+          td.innerHTML = `<a class="text-muted" href="javascript:;" onclick="contractobject.ipcobject.showipcline({ el: this })" title="View IPC"><i class="fa fa-eye"></i></a>`;
+          break;
+
+        default:
+          //nếu không phải là cột tùy chỉnh thì trả về giá trị của trường đó
+          td.innerHTML = data[metacolumn.field] || '';
+          break;
+      }
+      return td;
+    }
+
+    contractobject.ipcobject.tbl.genCellDataActionCheck = function ({ data, metacolumn, actionbuttons } = {}) {
+      actionbuttons.delete = (data.IsAssigned === "No");
+    }
+
+    //#region IPC functions
+    contractobject.ipcobject.validateapplytax = async function ({ el }) {
+      //hàm này dùng để validate trước khi apply tax
+      // console.log('Validate before apply tax for element:', el);
+      senapp.window.loading.show();
+      try {
+        const datapost = {
+          //lấy id từ thuộc tính data-id của thẻ cha tr của el
+          paymentid: parseInt(el.closest('tr').getAttribute('data-id')),
+        };
+        const url = '/paymentorderipc/validateapplytax';
+        const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(datapost) });
+        resdata = await response.json();
+        senapp.window.loading.hide();
+        if (senapp.window.confirm({ message: `${resdata.message}` })) {
+          await contractobject.ipcobject.acceptapplytax({ el: el });
+        }
+        else {
+          await contractobject.ipcobject.rejectapplytax({ el: el });
+        }
+
+        // senapp.window.toast({ message: resdata.message, type: resdata.status == 1 ? 'success' : 'error' });
+        // tableobject.refreshDataDisplay();
+        // await contractobject.paymentorderobject.mapDraftIPC();
+
+      } catch (error) {
+        console.error(`Error in synServer: ${error}`);
+        resdata = { status: 0, message: error.message || 'Error in synServer', data: {}, errors: {} };
+        senapp.window.loading.hide();
+      }
+
+    }
+    contractobject.ipcobject.acceptapplytax = async function ({ el }) {
+      //hàm này dùng để accept apply tax
+      // console.log('Accept apply tax for element:', el);
+      senapp.window.loading.show();
+      try {
+        //lấy id từ thuộc tính data-id của thẻ cha tr của el
+        const datapost = { paymentid: parseInt(el.closest('tr').getAttribute('data-id')) };
+        const url = '/paymentorderipc/acceptapplytax';
+        const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(datapost) });
+        resdata = await response.json();
+        if (resdata.status == 1) {
+          this.showipcline({ el: el });
+        }
+        else {
+          senapp.window.toast({ message: resdata.message, type: 'error' });
+        }
+
+        // console.log('Apply tax response:', resdata);
+        // senapp.window.toast({ message: resdata.message, type: resdata.status == 1 ? 'success' : 'error' });
+        // tableobject.refreshDataDisplay();
+        // await contractobject.paymentorderobject.mapDraftIPC();
+
+      } catch (error) {
+        console.error(`Error in synServer: ${error}`);
+        resdata = { status: 0, message: error.message || 'Error in synServer', data: {}, errors: {} };
+      }
+      senapp.window.loading.hide();
+
+    }
+    contractobject.ipcobject.rejectapplytax = async function ({ el }) {
+      //hàm này dùng để reject apply tax
+      this.showipcline({ el: el });
+    }
+    contractobject.ipcobject.showipcline = async function ({ el }) {
+      //hàm này dùng để show IPC line
+      const url = '/paymentorderipc/ipcline?paymentid=' + parseInt(el.closest('tr').getAttribute('data-id'));
+      senapp.window.modal({ title: `IPC detail`, url, size: 'xl', maximizebutton: true });
+    }
+
+    contractobject.ipcobject.print = async function ({ el }) {
+      //hàm này dùng để show IPC line
+      const url = '/paymentorderipc/ipcprint?paymentid=' + parseInt(el.closest('tr').getAttribute('data-id'));
+      senapp.window.modal({ title: `IPC Print`, url, size: 'xl', maximizebutton: true });
+    }
+    
+    contractobject.ipcobject.printcumulative = async function ({ el }) {
+      //hàm này dùng để show IPC line
+      const url = '/paymentorderipc/ipcprintcumulative?paymentid=' + parseInt(el.closest('tr').getAttribute('data-id'));
+      senapp.window.modal({ title: `IPC Print Cumulative`, url, size: 'xl', maximizebutton: true });
+    }
+
+    contractobject.ipcobject.showapprovalcallback = function (response) {
+      //nếu response[0] tồn tại thì hiển thị thông báo lỗi
+      // console.log('Show approval callback response:', response);
+      // console.log('Current payment ID:', contractobject.ipcobject.currentpaymentid);
+      if (response[0]) {
+        if (response[0].status == 0) {
+          alert(response[0].message);
+          return;
+        }
+        //lấy data
+        const data = response[0].data;
+
+
+        //cập nhật lại dòng dữ liệu trong bảng IPC
+        contractobject.ipcobject.tbl.onChangeRowData({ data: data });
+        // senobjectobject.tbl.onChangeRowData({ data: response[0].data });
+        //senapp.sidebar.menuclickbydatalink('/senobject');
+      }
+    }
+
+    contractobject.ipcobject.currentpaymentid = null;
+    contractobject.ipcobject.showapproval = async function ({ el, edit }) {
+      //hàm này dùng để show IPC approval
+      const selectcontract = contractobject.container.querySelector('#paymentorder-contract-select');
+      const contractid = selectcontract.value;
+      const filtercontainer = contractobject.container; //element.closest('table');// element.closest('.mb-1');
+      const filterworktype = "payment_order";//filtercontainer.querySelector('select[name="filter-worktype"]').value;
+      contractobject.ipcobject.currentpaymentid = parseInt(el.closest('tr').getAttribute('data-id'));
+      if (edit == true) {
+        const url = `/paymentorderipc/ipcapproval?callback=contractobject.ipcobject.showapprovalcallback&contractid=${contractid}&paymentid=${parseInt(el.closest('tr').getAttribute('data-id'))}&worktype=${filterworktype}&edit=${edit}`;
+        senapp.window.modal({ title: `IPC Approval`, url, size: 'lg', maximizebutton: true });
+      }
+      else {
+        contractobject.ipcobject.loadreviewall(el);
+      }
+    }
+
+    contractobject.ipcobject.loadreviewall = function (element) {
+      const tableobject = contractobject.ipcobject.tbl;
+      const id = parseInt(element.closest('tr').getAttribute('data-id'));
+      const data = tableobject.datas.find(item => item[tableobject.keyfield] === id);
+
+      const itemworktype = 'payment_order';
+      let url = `/contractlineperform/review?submissionid=${data.PaymentId}&worktype=${encodeURIComponent(itemworktype)}&itemworktype=${encodeURIComponent(itemworktype)}`;
+      if (['payment_order'].includes(itemworktype)) {
+        url += `&viewname=contractlineperformreview4paymentorder`;
+      }
+
+      senapp.window.modal({
+        title: `Review of ${data["POCode"] || ''} - ${data["POName"] || ''}`,
+        url: url,
+        size: 'xl'
+      });
+    };
+
+    contractobject.ipcobject.filterchange = async function () {
+      const filtercontainer = contractobject.container;
+      const selectcontract = contractobject.container.querySelector('#paymentorder-contract-select');
+      const contractid = selectcontract.value;
+
+      const tableipcbject = contractobject.ipcobject.tbl;
+      tableipcbject.clearRowData();
+
+      if (!contractid) {
+        //nếu chưa chọn hợp đồng nào thì không làm gì cả
+        return;
+      }
+      //ipc 
+      tableipcbject.urldata.lists = `${tableipcbject.urldata.lists0}?filtercontractid=${encodeURIComponent(contractid)}`;
+      tableipcbject.refreshDataDisplay();
+
+    };
+    //#endregion IPC functions
+
+    //#endregion IPC
+
+    //#region IPC All
+    contractobject.ipcallobject = { model: {}, tbls: [] };
+    contractobject.ipcallobject.urldata = {
+      lists0: '/paymentorderipc/listall',
+      lists: '/paymentorderipc/listall',
+      create0: '/paymentorderipc/create?callback=' + encodeURIComponent('contractobject.ipcallobject.createcallback'),
+      create: '/paymentorderipc/create?callback=' + encodeURIComponent('contractobject.ipcallobject.createcallback'),
+      delete: '/paymentorderipc/delete',
+      meta: '/paymentorderipc/meta',
+    };
+    contractobject.ipcallobject.createcallback = function (response) {
+      //nếu response[0] tồn tại thì hiển thị thông báo lỗi
+      if (response[0]) {
+        if (response[0].status == 0) {
+          alert(response[0].message);
+          return;
+        }
+        contractobject.paymentorderobject.mapDraftIPC();
+        // contractobject.ipcallobject.tbl.onAddRowData({ data: response[0].data });
+        //senapp.sidebar.menuclickbydatalink('/senobject');
+      }
+    };
+
+    contractobject.ipcallobject.tbl = new senapp.utils.table({
+      // datanew: datanew,
+      // meta: this.model.meta,
+      urldata: contractobject.ipcallobject.urldata,
+      container: contractobject.containeripcmanagement,
+      tableelement: contractobject.container.querySelector('#paymentorder-ipc-management-table'),
+      selectcolumn: false, // có hiển thị cột chọn hay không
+      filterrow: false, // có hiển thị filter row hay không
+      addrow: false, // cho phép thêm mới
+      editrow: false, // cho phép sửa
+      deleterow: true, // cho phép xóa
+      addnewfirst: false, //thêm mới vào đầu danh sách
+      // loadmoreonvisible: true, // tự động tải thêm dữ liệu khi cuộn đến cuối danh sách  
+      metacolumns: [
+        { field: 'SysAction', visible: false, colorder: -20 },
+        // // { field: 'Ext02', description: 'Apply Tax', colorder: -18, visible: true, show: true, gridwidth: 80, readonly: true },
+        // { field: 'Ext01', description: '<i class="fas fa-print" title="Print IPC"></i>', colorder: -1, visible: true, show: true, width: 32 },
+        { field: 'Ext03', description: 'View', colorder: -7, visible: true, show: true, width: 48 },
+        { field: 'Ext04', description: 'Review', colorder: -8, visible: true, show: true, width: 64 },
+
+        { field: 'ContractCode', show: true, visible: true },
+        { field: 'ContractName', show: true, visible: true },
+        { field: 'CreatedBy', show: true, visible: true, colorder: 999 },
+
+      ],
+      customcolumns: ['Ext04', 'Ext03'], // Danh sách các cột tùy chỉnh khi render cell
+      allowloaddataininit: false,//không tự động load data khi khởi tạo
+      modal: true,
+      actionbuttons: { edit: false },
+      allowpinheader: true, //cho phép cố định header khi cuộn trang
+    });
+
+    contractobject.ipcallobject.tbl.genCellDataCustom = function ({ data, metacolumn }) {
+      if (!metacolumn || !metacolumn.field) {
+        return null; // Trả về null nếu không có metacolumn hoặc field
+      }
+      // Hàm này sẽ được sử dụng để tạo dữ liệu cho các cột tùy chỉnh
+      const tableobject = this;
+      const td = document.createElement('td');
+      td.setAttribute('data-field', metacolumn.field);
+      //nếu field.visible là false hoặc field.show là false thì không hiển thị cột này  gán class d-none
+      if (!metacolumn.show || !metacolumn.visible) { td.classList.add('d-none'); }
+      switch (metacolumn.field) {
+        case 'Ext02':
+          //<i class="uil-file-check" style="font-size: 18px;"></i>
+          td.innerHTML = `<a href="javascript:;" onclick="contractobject.ipcobject.validateapplytax({ el: this })" title="Apply Tax">Apply Tax</a>`;
+          break;
+        case 'Ext04':
+          if (data.IsAssigned == 'No') {
+            td.innerHTML = '';
+            // td.innerHTML = `<a class="text-muted" href="javascript:;" onclick="contractobject.ipcobject.showapproval({ el: this,edit:true })" title="Approval"><i class="fa fa-edit"></i></a>`;
+          }
+          else {
+            td.innerHTML = `<a class="text-muted" href="javascript:;" onclick="contractobject.ipcallobject.showapproval({ el: this,edit:false })" title="Review"><i class="fas fa-list"></i></a>`;
+          }
+          // td.innerHTML = `<a href="javascript:;" onclick="contractobject.ipcobject.showapproval({ el: this })" title="Approval">Approval</a>`;
+          break;
+        case 'Ext01':
+          td.innerHTML = `<a href="javascript:;" onclick="contractobject.ipcobject.print({ el: this })" title="Print IPC"><i class="fas fa-print text-muted"></i></a>`;
+          break;
+        case 'Ext03':
+          td.innerHTML = `<a class="text-muted" href="javascript:;" onclick="contractobject.ipcallobject.showipcline({ el: this })" title="View IPC"><i class="fa fa-eye"></i></a>`;
+          break;
+
+        default:
+          //nếu không phải là cột tùy chỉnh thì trả về giá trị của trường đó
+          td.innerHTML = data[metacolumn.field] || '';
+          break;
+      }
+      return td;
+    }
+
+    contractobject.ipcallobject.tbl.genCellDataActionCheck = function ({ data, metacolumn, actionbuttons } = {}) {
+      actionbuttons.delete = (data.IsAssigned === "No");
+    }
+
+    //#region IPC management functions
+    contractobject.ipcallobject.filter = function () {
+      const status = contractobject.itemstatus;
+
+      return `
+    <div class="table-responsive mb-1">
+        <table class="table-sm">
+          <tr>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+          </tr>
+
+          <tr>
+            <td class="text-end">
+              <label class="col-form-label mb-0 text-nowrap">Keyword:</label>
+            </td>
+            <td colspan="3">
+              <input type="text" name="ipcmanagement-filter-keyword" class="form-control form-control-sm" placeholder="Enter keyword" onchange="contractobject.ipcallobject.filterchange(this)">
+            </td>
+            <td><label class="col-form-label mb-0 text-nowrap">Approval Status:</label></td>
+            <td>
+              <select class="form-select form-select-sme" name="ipcmanagement-filter-status" onchange="contractobject.ipcallobject.filterchange(this)">
+                ${status.map(s => `<option value="${s.id}">${s.label}</option>`).join('')}
+              </select>
+            </td>
+
+            <td class="text-end"><label class="col-form-label mb-0 text-nowrap">From date:</label></td>
+            <td> <input type="date" class="form-control form-control-sm" name="ipcmanagement-filter-fromdate" onchange="contractobject.ipcallobject.filterchange(this)"> </td>
+
+            <td class="text-end"><label class="col-form-label mb-0 text-nowrap">To date:</label></td>
+            <td><input type="date" class="form-control form-control-sm" name="ipcmanagement-filter-todate" onchange="contractobject.ipcallobject.filterchange(this)"></td>
+            <td class="text-end"></td>
+            <td></td>
+          </tr>
+        </table>
+      </div>
+    `;
+    };
+
+    contractobject.ipcallobject.filterchange = async function (element) {
+      const filtercontainer = contractobject.container;
+
+      const selectcontract = contractobject.container.querySelector('#paymentorder-contract-select');
+      const contractid = selectcontract.value;
+      const ipcmanagementfilterstatus = filtercontainer.querySelector('select[name="ipcmanagement-filter-status"]').value;
+      const ipcmanagementfilterkeyword = filtercontainer.querySelector('input[name="ipcmanagement-filter-keyword"]').value.trim();
+      const ipcmanagementfilterfromdate = filtercontainer.querySelector('input[name="ipcmanagement-filter-fromdate"]').value;
+      const ipcmanagementfiltertodate = filtercontainer.querySelector('input[name="ipcmanagement-filter-todate"]').value;
+
+      const tableipcalloobject = contractobject.ipcallobject.tbl;
+      tableipcalloobject.clearRowData();
+
+      if (!contractid) {
+        //nếu chưa chọn hợp đồng nào thì không làm gì cả
+        //ipc all
+        tableipcalloobject.urldata.lists = `${tableipcalloobject.urldata.lists0}?filterfromdate=${encodeURIComponent(ipcmanagementfilterfromdate)}&filtertodate=${encodeURIComponent(ipcmanagementfiltertodate)}&filterkeyword=${encodeURIComponent(ipcmanagementfilterkeyword)}&filterstatus=${encodeURIComponent(ipcmanagementfilterstatus)}`;
+        tableipcalloobject.refreshDataDisplay();
+        return;
+      }
+
+      //ipc all
+      tableipcalloobject.urldata.lists = `${tableipcalloobject.urldata.lists0}?filtercontractid=${encodeURIComponent(contractid)}&filterfromdate=${encodeURIComponent(ipcmanagementfilterfromdate)}&filtertodate=${encodeURIComponent(ipcmanagementfiltertodate)}&filterkeyword=${encodeURIComponent(ipcmanagementfilterkeyword)}&filterstatus=${encodeURIComponent(ipcmanagementfilterstatus)}`;
+      tableipcalloobject.refreshDataDisplay();
+
+    };
+    //#endregion IPC management functions
+
+
+    //#region IPC functions
+    contractobject.ipcallobject.validateapplytax = async function ({ el }) {
+      //hàm này dùng để validate trước khi apply tax
+      // console.log('Validate before apply tax for element:', el);
+      senapp.window.loading.show();
+      try {
+        const datapost = {
+          //lấy id từ thuộc tính data-id của thẻ cha tr của el
+          paymentid: parseInt(el.closest('tr').getAttribute('data-id')),
+        };
+        const url = '/paymentorderipc/validateapplytax';
+        const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(datapost) });
+        resdata = await response.json();
+        senapp.window.loading.hide();
+        if (senapp.window.confirm({ message: `${resdata.message}` })) {
+          await contractobject.ipcallobject.acceptapplytax({ el: el });
+        }
+        else {
+          await contractobject.ipcallobject.rejectapplytax({ el: el });
+        }
+
+        // senapp.window.toast({ message: resdata.message, type: resdata.status == 1 ? 'success' : 'error' });
+        // tableobject.refreshDataDisplay();
+        // await contractobject.paymentorderobject.mapDraftIPC();
+
+      } catch (error) {
+        console.error(`Error in synServer: ${error}`);
+        resdata = { status: 0, message: error.message || 'Error in synServer', data: {}, errors: {} };
+        senapp.window.loading.hide();
+      }
+
+    }
+    contractobject.ipcallobject.acceptapplytax = async function ({ el }) {
+      //hàm này dùng để accept apply tax
+      // console.log('Accept apply tax for element:', el);
+      senapp.window.loading.show();
+      try {
+        //lấy id từ thuộc tính data-id của thẻ cha tr của el
+        const datapost = { paymentid: parseInt(el.closest('tr').getAttribute('data-id')) };
+        const url = '/paymentorderipc/acceptapplytax';
+        const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(datapost) });
+        resdata = await response.json();
+        if (resdata.status == 1) {
+          this.showipcline({ el: el });
+        }
+        else {
+          senapp.window.toast({ message: resdata.message, type: 'error' });
+        }
+
+        // console.log('Apply tax response:', resdata);
+        // senapp.window.toast({ message: resdata.message, type: resdata.status == 1 ? 'success' : 'error' });
+        // tableobject.refreshDataDisplay();
+        // await contractobject.paymentorderobject.mapDraftIPC();
+
+      } catch (error) {
+        console.error(`Error in synServer: ${error}`);
+        resdata = { status: 0, message: error.message || 'Error in synServer', data: {}, errors: {} };
+      }
+      senapp.window.loading.hide();
+
+    }
+    contractobject.ipcallobject.rejectapplytax = async function ({ el }) {
+      //hàm này dùng để reject apply tax
+      this.showipcline({ el: el });
+    }
+    contractobject.ipcallobject.showipcline = async function ({ el }) {
+      //hàm này dùng để show IPC line
+      const url = '/paymentorderipc/ipcline?paymentid=' + parseInt(el.closest('tr').getAttribute('data-id'));
+      senapp.window.modal({ title: `IPC detail`, url, size: 'xl', maximizebutton: true });
+    }
+
+    contractobject.ipcallobject.print = async function ({ el }) {
+      //hàm này dùng để show IPC line
+      const url = '/paymentorderipc/ipcprint?paymentid=' + parseInt(el.closest('tr').getAttribute('data-id'));
+      senapp.window.modal({ title: `IPC Print`, url, size: 'xl', maximizebutton: true });
+    }
+
+    contractobject.ipcallobject.showapproval = async function ({ el, edit }) {
+      //hàm này dùng để show IPC approval
+      const selectcontract = contractobject.container.querySelector('#paymentorder-contract-select');
+      const contractid = selectcontract.value;
+      const filtercontainer = contractobject.container; //element.closest('table');// element.closest('.mb-1');
+      const filterworktype = "payment_order";//filtercontainer.querySelector('select[name="filter-worktype"]').value;
+
+      if (edit == true) {
+        const url = `/paymentorderipc/ipcapproval?contractid=${contractid}&paymentid=${parseInt(el.closest('tr').getAttribute('data-id'))}&worktype=${filterworktype}&edit=${edit}`;
+        senapp.window.modal({ title: `IPC Approval`, url, size: 'lg', maximizebutton: true });
+      }
+      else {
+        contractobject.ipcallobject.loadreviewall(el);
+      }
+    }
+
+    contractobject.ipcallobject.loadreviewall = function (element) {
+      const tableobject = contractobject.ipcallobject.tbl;
+      const id = parseInt(element.closest('tr').getAttribute('data-id'));
+      const data = tableobject.datas.find(item => item[tableobject.keyfield] === id);
+
+      const itemworktype = 'payment_order';
+      let url = `/contractlineperform/review?submissionid=${data.PaymentId}&worktype=${encodeURIComponent(itemworktype)}&itemworktype=${encodeURIComponent(itemworktype)}`;
+      if (['payment_order'].includes(itemworktype)) {
+        url += `&viewname=contractlineperformreview4paymentorder`;
+      }
+
+      senapp.window.modal({
+        title: `Review of ${data["POCode"] || ''} - ${data["POName"] || ''}`,
+        url: url,
+        size: 'xl'
+      });
+    };
+    //#endregion IPC functions
+
+    //#endregion IPC All
+
+    //#region payment order
+    contractobject.paymentorderobject = { model: {}, tbls: [] };
+    contractobject.paymentorderobject.urldata = {
+      lists0: '/paymentorder/list',
+      lists: '/paymentorder/list',
+      // item: '/paymentorder/item',
+      // create: '/paymentorder/create',
+      // edit: '/paymentorder/edit',
+      // delete: '/paymentorder/delete',
+      // update: '/paymentorder/edit',
+      update: '/paymentorder/edit',
+      meta: '/paymentorder/meta',
+      review: '/paymentorder/review',
+      files: '/common/files?viewname=paymentorderfiles'
+    };
+
+    //chỉnh sửa table payment order
+    contractobject.paymentorderobject.tbl = new senapp.utils.table({
+      // datanew: datanew,
+      // meta: this.model.meta,
+      urldata: contractobject.paymentorderobject.urldata,
+      container: contractobject.container,
+      tableelement: contractobject.container.querySelector('#paymentorder-table'),
+      selectcolumn: true, // có hiển thị cột chọn hay không
+      filterrow: false, // có hiển thị filter row hay không        
+      addrow: false, // cho phép thêm mới
+      editrow: true, // cho phép sửa
+      deleterow: false, // cho phép xóa
+      addnewfirst: false, //thêm mới vào đầu danh sách
+      // loadmoreonvisible: true, // tự động tải thêm dữ liệu khi cuộn đến cuối danh sách  
+      metacolumns: [
+        { field: 'SysAction', visible: false, colorder: -9 },
+        // { field: 'Ext02', description: 'Review', colorder: -8, visible: true, show: true, gridwidth: 80, readonly: true },
+        // { field: 'Ext01', description: '<i class="fa-solid fa-file" title="Files"></i>', colorder: -1, visible: false, show: true, gridwidth: 32 },
+
+        // { field: 'Ext03', description: ' ', colorder: 800, visible: true, show: true, gridwidth: 132 },
+      ],
+      customcolumns: ['Ext01', 'Ext02', 'Ext03'], // Danh sách các cột tùy chỉnh khi render cell
+      allowloaddataininit: false,//không tự động load data khi khởi tạo
+      allowpinheader: true, //cho phép cố định header khi cuộn trang
+    });
+
+    contractobject.paymentorderobject.tbl.genCellDataCustom = function ({ data, metacolumn }) {
+      if (!metacolumn || !metacolumn.field) {
+        return null; // Trả về null nếu không có metacolumn hoặc field
+      }
+      // Hàm này sẽ được sử dụng để tạo dữ liệu cho các cột tùy chỉnh
+      const tableobject = this;
+      const td = document.createElement('td');
+      td.setAttribute('data-field', metacolumn.field);
+      //nếu field.visible là false hoặc field.show là false thì không hiển thị cột này  gán class d-none
+      if (!metacolumn.show || !metacolumn.visible) { td.classList.add('d-none'); }
+      switch (metacolumn.field) {
+        case 'Ext03':
+          //tạo link quick approval
+          const alink = document.createElement('a');
+          //tạo sự kiện onclick gọi hàm accept của contractobject.paymentorderobject
+          //thêm class
+          alink.className = 'btn btn-subtle-secondary btn-sm';
+          alink.href = 'javascript:;';
+          alink.title = 'Quick approval';
+          alink.textContent = 'Quick approval';
+          alink.onclick = function () {
+            console.log('Quick approval clicked for Submission ID:', data['SubmissionId']);
+
+            data['ReviewedWorkCat'] = data['SubmittedWorkCat'];
+
+            data['ReviewedQnty'] = data['SubmittedQnty'];
+            data['ReviewedUnitPrice'] = data['SubmittedUnitPrice'];
+            data['ReviewedAmount'] = data['SubmittedAmount'];
+            data['RemarksOnApproval'] = data['SubmittedRemarks'];
+            data.SysDataStatus = 'Update';
+            tableobject.updateRowData({ data });
+
+
+            //contractobject.paymentorderobject.accept(this);
+          };
+          td.appendChild(alink);
+          // td.innerHTML = `<a href="javascript:;" onclick="contractobject.paymentorderobject.accept(this)" title="Quick approval">Quick approval</a>`;
+          break;
+        // case 'Ext01':
+        //   td.innerHTML = `<a href="javascript:;" onclick="paymentorderreviewobject.lineobject.accept(this)" title="Accept">Accept</a>`;
+        //   break;
+        case 'Ext02':
+          td.innerHTML = `<a class="text-muted" href="javascript:;" onclick="contractobject.paymentorderobject.loadreviewall(this)" title="Review"><i class="fa fa-list"></i></a>`;
+
+          // if (data.IsAssigned == 'No') {
+          //   td.innerHTML = `<a class="text-muted me-2" href="javascript:;" onclick="contractobject.paymentorderobject.lineeditperformall(this)" title="Edit Submission"><i class="fa fa-edit"></i></a>`;
+          // }
+          // else {
+          //   td.innerHTML = `<a class="text-muted" href="javascript:;" onclick="contractobject.paymentorderobject.loadreviewall(this)" title="Review"><i class="fa fa-list"></i></a>`;
+          // }
+          break;
+        default:
+          //nếu không phải là cột tùy chỉnh thì trả về giá trị của trường đó
+          td.innerHTML = data[metacolumn.field] || '';
+          break;
+      }
+      return td;
+    }
+
+    //tạm khóa không cần lưu khi thay đổi dòng
+    contractobject.paymentorderobject.tbl.synData = async function ({ data, type, mode } = {}) {
+      data.SysDataStatus = 'Update';
+      return { status: 1, message: '', data: {}, errors: {} };
+    };
+    //hàm map quyền editable cho cell dùng cho override
+    contractobject.paymentorderobject.tbl.mapCellEditableExt = function ({ td, data, metacolumn }) {
+      return data.ApprovalStatus !== 'Approved' || data.SysDataStatus === 'Update';
+    }
+    //hàm genCellData để tạo dữ liệu cho bảng
+    contractobject.paymentorderobject.tbl.genCellData = function ({ data, metacolumn }) {
+      //nếu metacolumn.field chứa trong customcolumns thì gọi hàm genCellDataCustom
+      if (this.customcolumns && this.customcolumns.includes(metacolumn.field)) {
+        return this.genCellDataCustom({ data, metacolumn });
+      }
+
+      //nếu metacolumn.field là 'SysNo' thì nội dung bằng số dòng trong tbody tr trong bảng
+      if (metacolumn.field === 'SysNo') {
+        return this.genCellDataNo({ data: data, metacolumn: metacolumn });
+      }
+
+      //nếu metacolumn.field là 'SysSelect' thì trả về tdselect
+      if (metacolumn.field === 'SysSelect') {
+        return this.genCellDataSelect({ data: data, metacolumn: metacolumn });
+      }
+
+      //nếu metacolumn.field là 'SysAction' thì trả về tdaction
+      if (metacolumn.field === 'SysAction') {
+        return this.genCellDataAction({ data: data, metacolumn: metacolumn });
+      }
+      if (metacolumn.visible === false) { return null; }
+      const td = document.createElement('td');
+      td.setAttribute('data-field', metacolumn.field);
+      //set tabindex
+      td.setAttribute('tabindex', '0');
+      //nếu field.show là false thì không hiển thị cột này  gán class d-none
+      if (!metacolumn.show) { td.classList.add('d-none'); }
+
+      //nếu trường có tồn tại data thì map giá trị với data 
+      if (metacolumn.data) {
+        const mappedValue = metacolumn.data.find(item => item.id === data[metacolumn.field]);
+        td.textContent = mappedValue ? mappedValue.label : '';
+        //gán quyền chỉnh sửa cho cell
+        this.mapCellEditable({ td: td, data: data, metacolumn: metacolumn });
+        return td;
+      }
+
+      //nếu có inputtype== 'checkbox' 
+      if (metacolumn.inputtype && metacolumn.inputtype === 'checkbox' && (metacolumn.type === 'bool' || metacolumn.type === 'boolean')) {
+        // check của fontawesome  nếu data[metacolumn.field] là true thì checked nếu false thì unchecked
+        // td.innerHTML = `<div class="form-check"> <input style="opacity:1;" class="form-check-input" type="checkbox" disabled ${data[metacolumn.field] ? 'checked' : ''}></div>`;
+        // td.innerHTML = `<div class="form-check form-switch"> <input class="form-check-input" type="checkbox" disabled ${data[metacolumn.field] ? 'checked' : ''}></div>`;
+        // td.innerHTML = `<i class="fa-regular ${data[metacolumn.field] ? 'fa-square-check' : 'fa-square'}"></i>`;
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.className = 'form-check-input';
+        checkbox.classList.add('cell-editor');
+        checkbox.value = data[metacolumn.field];
+        checkbox.style.opacity = '1';
+        //nếu data[metacolumn.field]==true thì checkbox chọn
+        if (data[metacolumn.field] == true) { checkbox.checked = true; }
+        //khi thay đổi thì gọi hàm updateData của  tableobject
+        checkbox.onchange = function () {
+          data[metacolumn.field] = this.checked;
+          // phát sự kiện nếu thay đổi
+          td.dispatchEvent(new CustomEvent("cellchange", {
+            bubbles: true,
+            detail: { oldValue: !data[metacolumn.field], newValue: this.checked, cell: td }
+          }));
+          //tableobject.updateByKey(data[tableobject.keyfield]);
+        };
+        td.appendChild(checkbox);
+        //gán quyền chỉnh sửa cho cell
+        this.mapCellEditable({ td: td, data: data, metacolumn: metacolumn });
+        return td;
+      }
+
+      td.innerHTML = senapp.data.stringifyValue(data[metacolumn.field], metacolumn);
+      //gán quyền chỉnh sửa cho cell
+      this.mapCellEditable({ td: td, data: data, metacolumn: metacolumn });
+      return td;
+    };
+
+    contractobject.paymentorderobject.tbl.genRowDataExtClass = function ({ tr, data }) {
+      //nếu data.ApprovalStatus == 'Accepted' thì gán class row-accepted
+      if (data.ApprovalStatus === 'Approved' && data.SysDataStatus !== 'Update') {
+        tr.classList.add('bg-light');
+      }
+    }
+
+    //hàm genRowData để tạo dữ liệu cho bảng
+    contractobject.paymentorderobject.tbl.genRowData = function ({ data }) {
+      const tableobject = this;
+      const tr = document.createElement('tr');
+      //gán giá trị keyfield vào thuộc tính data-id của tr
+      tr.setAttribute('data-id', data[tableobject.keyfield]);
+      tr.className = 'row-data';
+
+      this.metacolumns.forEach(column => {
+        const td = tableobject.genCellData({ data: data, metacolumn: column });
+        // Bắt event trực tiếp ở chính cell
+        if (td) {
+          td.addEventListener("cellchange", async (e) => {
+            // //console.log("Old:", e.detail.oldValue, "New:", e.detail.newValue);
+            if (e.detail.oldValue === e.detail.newValue) return;
+            //nếu giá trị cũ khác giá trị mới thì mới thì đánh dấu dòng thay đổi
+            tr.classList.add('edited');
+            await tableobject.onChangeCell({ td: td, data: data });
+          });
+          //gán class kiểu dữ liệu
+          td.classList.add('type-' + (column.type || 'string').toLowerCase());
+          tr.appendChild(td);
+        }
+
+      });
+
+      tr.addEventListener("focusin", () => {
+        // tr.classList.add("table-active");
+        // //console.log("focus in row", tr.rowIndex);
+      });
+
+      tr.addEventListener("focusout", async (e) => {
+        // e.relatedTarget = phần tử chuẩn bị được focus tiếp theo
+        // nếu phần tử đó vẫn nằm trong cùng tr thì KHÔNG xoá active
+        if (!tr.contains(e.relatedTarget)) {
+          // tr.classList.remove("table-active");
+          await tableobject.onChangeRow({ tr: tr, data: data });
+        }
+      });
+
+      this.genRowDataExtClass({ tr: tr, data: data });
+
+      return tr;
+    }
+
+    //hàm tạo lookupparam để gửi lên server
+    contractobject.paymentorderobject.tbl.lookupparam = function ({ lookup, data }) {
+      //console.log('lookupparam:', lookup, data);
+      return `lookupType=paymentorderreviewstatusupdate&role=${data.Role}&pagesize=${lookup.pagesize || 0}&filter=${encodeURIComponent(JSON.stringify(lookup.filter))}`;
+    }
+
+    contractobject.paymentorderobject.tbl.updateparaext = function (data) {
+      //dùng cho override
+      const paraext = `?itemworktype=${encodeURIComponent(data.WorkType || '')}`
+      return ``;
+    }
+
+    //hàm lưu dữ liệu đã chỉnh sửa
+    contractobject.paymentorderobject.tbl.savechanged = async function () {
+      //confirm trước khi lưu
+      if (senapp.window.confirm({ message: `${await senapp.utils.text.t('Are you sure you want to save changes?')}` }) === false) {
+        return;
+      }
+
+      const tableobject = this;
+      // const changedRows = paymentorderreviewobject.lineobject.tblline.datas.filter(row => row.SysDataStatus === 'Update' || row.SysDataStatus === 'Create' || row.SysDataStatus === 'Delete');
+      const changedRows = tableobject.datas.filter(row => row.SysDataStatus === 'Update');
+      senapp.window.loading.show();
+      const promises = changedRows.map(row =>
+        tableobject.updateByKey(row[tableobject.keyfield])
+          //cập nhật trạng thái về null sau khi lưu
+          .then(() => { row.SysDataStatus = null; })
+      );
+      try {
+        await Promise.all(promises);
+        senapp.window.loading.hide();
+        console.log("Tất cả đã lưu xong!");
+
+      } catch (err) {
+        senapp.window.alert({ message: `⚠️ ${await senapp.utils.text.t('Có lỗi khi lưu:')}`, type: 'danger' });
+        console.error("Có lỗi khi lưu:", err);
+      }
+    };
+
+    contractobject.paymentorderobject.tbl.quickapprove = async function () {
+      const tableobject = this;
+      //lấy dòng được chọn
+      const unapprovedRows = tableobject.getDataSelected();
+      const promises = unapprovedRows.map(data => {
+        if (data.ApprovalStatus !== 'Approved') {
+          data['ReviewedWorkCat'] = data['SubmittedWorkCat'];
+
+          data['ReviewedQnty'] = data['SubmittedQnty'];
+          data['ReviewedUnitPrice'] = data['SubmittedUnitPrice'];
+          data['ReviewedAmount'] = data['SubmittedAmount'];
+          data['RemarksOnApproval'] = data['SubmittedRemarks'];
+          data['ApprovalStatus'] = 'Approved';
+
+
+          data.SysDataStatus = 'Update';
+          tableobject.updateRowData({ data });
+        }
+      });
+
+    };
+
+    //danh sách role raci
+    contractobject.paymentorderobject.roles = async function () {
+      const url = `/common/lookup?lookupType=raci_list`;
+      const response = await fetch(url, { method: 'GET', });
+      const resjson = await response.json();
+      if (resjson.datas) {
+        //map trường trước khi return
+        const mappedData = resjson.datas.map(item => ({
+          id: item.Role,
+          value: item.Role,
+          label: item.RoleName
+        }));
+        return mappedData;
+      }
+      return [];
+    };
+
+    //danh sách status
+    contractobject.paymentorderobject.statuses = async function () {
+      const url = `/common/lookup?lookupType=paymentorderreviewstatus`;
+      const response = await fetch(url, { method: 'GET', });
+      const resjson = await response.json();
+      if (resjson.datas) {
+        //map trường trước khi return
+        const mappedData = resjson.datas.map(item => ({
+          id: item.Description,
+          value: item.Description,
+          label: item.Description
+        }));
+        return mappedData;
+      }
+      return [];
+    };
+
+    //danh sách worktype
+    contractobject.paymentorderobject.getWorkType = async function () {
+      const url = `/common/lookup?lookupType=workcategory`;
+      const response = await fetch(url, { method: 'GET', });
+      const resjson = await response.json();
+      if (resjson.datas) {
+        //map trường trước khi return
+        const mappedData = resjson.datas.map(item => ({
+          id: item.Alias,
+          value: item.Alias,
+          label: item.Alias
+        }));
+        return mappedData;
+      }
+      return [];
+    };
+
+    contractobject.paymentorderobject.loadreviewall = function (element) {
+      const tableobject = contractobject.paymentorderobject.tbl;
+      const id = parseInt(element.closest('tr').getAttribute('data-id'));
+      const data = tableobject.datas.find(item => item[tableobject.keyfield] === id);
+      // const url = `${this.urldata.review}?submissionid=${data.SubmissionId}&itemworktype=${encodeURIComponent(data.WorkType || '')}`;
+
+      const itemworktype = data.WorkType || '';
+      let url = `${this.urldata.review}?submissionid=${data.SubmissionId}&worktype=${encodeURIComponent(itemworktype)}&itemworktype=${encodeURIComponent(itemworktype)}`;
+      if (['add', 'deduction'].includes(itemworktype)) {
+        url += `&viewname=paymentorderreview4deduction`;
+      }
+
+
+      senapp.window.modal({
+        title: `Review of ${data["SubmissionName"] || ''}`,
+        url: url,
+        size: 'xl'
+      });
+    };
+
+    //end chỉnh sửa table payment order
+
+
+    contractobject.paymentorderobject.linecreatePerformcallback = function (response) {
+      //nếu response[0] tồn tại thì hiển thị thông báo lỗi
+      if (response[0]) {
+        if (response[0].status == 0) {
+          alert(response[0].message);
+          return;
+        }
+        const data = response[0].data;
+        const tableobject = this.tbls[data.ItemId];
+        if (tableobject) {
+          tableobject.refreshDataDisplay();
+        }
+
+        const NSubmission = contractobject.paymentorderobject.elementcurrent.closest('tr').querySelector('a[title="View Submission"] span').getAttribute('data-nsubmission') || '0';
+        const nsubmissionnew = parseInt(NSubmission) + 1;
+        contractobject.paymentorderobject.elementcurrent.closest('tr').querySelector('a[title="View Submission"] span').setAttribute('data-nsubmission', nsubmissionnew);
+        contractobject.paymentorderobject.elementcurrent.closest('tr').querySelector('a[title="View Submission"] span').innerText = `(${nsubmissionnew || 0})`;
+
+        console.log('Created Perform:', response[0]);
+        // senobjectobject.tbl.onAddRowData({ data: response[0].data });
+      }
+    };
+    contractobject.paymentorderobject.elementcurrent = null;
+    contractobject.paymentorderobject.linecreatePerform = function (element) {
+      contractobject.paymentorderobject.elementcurrent = element;
+      const worktype = element.getAttribute('data-itemworktype') || '';
+      const id = parseInt(element.closest('tr').getAttribute('data-id'));
+      // const parentid = parseInt(contractobject.contractid);//dùng cho contractmanagement
+      const parentid = element.closest('.extline-container').getAttribute('data-id');
+      const tableobject = contractobject.paymentorderobject.tbls[parentid];
+      const data = tableobject.datas.find(item => item[tableobject.keyfield] === id);
+
+      // console.log('Create Perform for Contract Line ID:', id, 'Parent Contract ID:', parentid);
+      const url = `/paymentorder/create?contractid=${encodeURIComponent(parentid)}&worktype=${encodeURIComponent(worktype)}&itemid=${encodeURIComponent(id)}&callback=${encodeURIComponent('contractobject.paymentorderobject.linecreatePerformcallback')}`;
+      senapp.window.modal({ url: url, title: 'Create Submission' });
+
+    };
+    contractobject.paymentorderobject.loadfiles = function (element) {
+      const id = parseInt(element.closest('tr').getAttribute('data-id'));
+      const parentid = element.closest('.extline-container').getAttribute('data-id');
+      const tableobject = this.tbls[parentid];
+      const data = tableobject.datas.find(item => item[tableobject.keyfield] === id);
+
+      const url = `${this.urldata.files}&submissionid=${id}`;
+      senapp.window.offcanvas({
+        title: `Files of ${data["SubmissionName"] || ''}`,
+        url: url,
+        size: 'md'
+      });
+    };
+
+    contractobject.paymentorderobject.loadreview = function (element) {
+      const id = parseInt(element.closest('tr').getAttribute('data-id'));
+      const parentid = element.closest('.extline-container').getAttribute('data-id');
+      const tableobject = this.tbls[parentid];
+      const data = tableobject.datas.find(item => item[tableobject.keyfield] === id);
+      const itemworktype = element.getAttribute('data-itemworktype') || '';
+      const url = `${this.urldata.review}?submissionid=${id}&itemworktype=${encodeURIComponent(itemworktype)}`;
+      senapp.window.modal({
+        title: `Review of ${data["SubmissionName"] || ''}`,
+        url: url,
+        size: 'xl'
+      });
+    };
+
+    contractobject.paymentorderobject.lineeditPerformcallback = function (response) {
+      //nếu response[0] tồn tại thì hiển thị thông báo lỗi
+      if (response[0]) {
+        if (response[0].status == 0) {
+          alert(response[0].message);
+          return;
+        }
+        const data = response[0].data;
+        const tableobject = this.tbls[data.ItemId];
+        if (tableobject) { tableobject.refreshDataDisplay(); }
+        console.log('Edited Submission:', response[0]);
+        // senobjectobject.tbl.onAddRowData({ data: response[0].data });
+      }
+    };
+
+    contractobject.paymentorderobject.lineeditperform = function (element) {
+      const worktype = element.getAttribute('data-itemworktype') || '';
+      const id = parseInt(element.closest('tr').getAttribute('data-id'));
+      const url = `/paymentorder/edit?viewname=paymentorderedit&SubmissionId=${encodeURIComponent(id)}&worktype=${encodeURIComponent(worktype)}&callback=${encodeURIComponent('contractobject.paymentorderobject.lineeditPerformcallback')}`;
+      senapp.window.modal({ url: url, title: 'Update Submission' });
+    }
+
+    contractobject.paymentorderobject.lineloadPerform = async function (element) {
+      const parentid = element.closest('.extline-container').getAttribute('data-id');
+      const tableobject = contractobject.paymentorderobject.tbls[parentid];
+      const tr = element.closest('tr');
+      const id = parseInt(tr.getAttribute('data-id'));
+      const data = tableobject.datas.find(item => item[tableobject.keyfield] === id);
+      const itemworktype = element.getAttribute('data-itemworktype') || '';
+
+
+      //nếu element có data-load=true thì collapse toggle tr extline và return không làm gì cả
+      if (element.getAttribute('data-load') === 'true') {
+        const extline = tr.nextElementSibling;
+        if (extline && extline.classList.contains('extline')) {
+          //ẩn hiện tr extline
+          if (extline.style.display === 'none') {
+            extline.style.display = '';
+          } else {
+            extline.style.display = 'none';
+          }
+        }
+        return;
+      }
+
+      // //tạo tr chèn vào dưới tr hiện tại
+      // if (tr.nextElementSibling && tr.nextElementSibling.classList.contains('extline')) {
+      //   //nếu đã có tr extline thì xóa đi
+      //   tr.nextElementSibling.remove();
+      //   return;
+      // }
+      // tạo id cho dòng chi tiết
+      element.setAttribute('data-load', 'true');
+      const containerlineid = `${contractobject.container.id}-line-${id}`;
+      //nếu tồn tại rồi thì không tạo nữa
+      if (document.querySelector(`tr.extline[data-id='${containerlineid}']`)) {
+        const extline = tr.nextElementSibling;
+        if (extline && extline.classList.contains('extline')) {
+          //ẩn hiện tr extline
+          if (extline.style.display === 'none') {
+            extline.style.display = '';
+          } else {
+            extline.style.display = 'none';
+          }
+        }
+        return;
+      }
+
+      const extline = document.createElement('tr');
+      extline.classList.add('extline');
+      extline.setAttribute('data-id', containerlineid);
+      extline.innerHTML = `<td colspan="100%">Loading...</td>`;
+      tr.parentNode.insertBefore(extline, tr.nextSibling);
+      extline.innerHTML = `<td colspan="100%">
+          <div class="extline-container mb-3" data-id="${id}">
+                     
+            <div class="row-fluid">
+              <div class="card">
+                <div class="card-header">
+                  <h5 class="mb-0">Submission List of ${data["WorkName"] || ''}</h5>
+                </div>
+                <div class="card-body">
+                  <div class="table-responsive">
+                    <table class="table table-sm fs-9 mb-5">
+                      <tbody class="list"></tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </td>`;
+      const urldata = JSON.parse(JSON.stringify(this.urldata));
+      let datanew = JSON.parse(JSON.stringify(this.model.datanew));
+      datanew[tableobject.keyfield] = id;
+      urldata.lists += `?pagesize=50&id=${id}&parentid=${parentid}`;
+
+      //map điều kiện lọc từ tableobject sang urldata.lists tableobject.urldata.lists
+      let filterParams = tableobject.urldata.lists.split('?')[1];
+      if (filterParams) {
+        urldata.lists += `&${filterParams}`;
+      }
+
+
+      let tblline = new senapp.utils.table({
+        datanew: datanew,
+        meta: this.model.meta,
+        urldata: urldata,
+        container: extline,
+        selectcolumn: false, // có hiển thị cột chọn hay không
+        filterrow: false, // có hiển thị filter row hay không        
+        addrow: false, // cho phép thêm mới
+        editrow: false, // cho phép sửa
+        deleterow: false, // cho phép xóa
+        addnewfirst: false, //thêm mới vào đầu danh sách
+        // loadmoreonvisible: true, // tự động tải thêm dữ liệu khi cuộn đến cuối danh sách  
+        metacolumns: [
+          { field: 'SysAction', visible: false, colorder: -9 },
+          { field: 'Ext02', description: 'Review', colorder: -8, visible: true, show: true, gridwidth: 80 },
+          // { field: 'Ext01', description: '<i class="fa-solid fa-file" title="Files"></i>', colorder: -1, visible: false, show: true, gridwidth: 32 },
+        ],
+        customcolumns: ['Ext01', 'Ext02'], // Danh sách các cột tùy chỉnh khi render cell
+        allowpinheader: true, //cho phép cố định header khi cuộn trang
+      });
+
+
+      tblline.genCellDataCustom = function ({ data, metacolumn }) {
+        if (!metacolumn || !metacolumn.field) {
+          return null; // Trả về null nếu không có metacolumn hoặc field
+        }
+        // Hàm này sẽ được sử dụng để tạo dữ liệu cho các cột tùy chỉnh
+        const tableobject = this;
+        const td = document.createElement('td');
+        td.setAttribute('data-field', metacolumn.field);
+        //nếu field.visible là false hoặc field.show là false thì không hiển thị cột này  gán class d-none
+        if (!metacolumn.show || !metacolumn.visible) { td.classList.add('d-none'); }
+        switch (metacolumn.field) {
+          case 'Ext01':
+            td.innerHTML = `<a data-itemworktype="${itemworktype || ''}" class="text-muted" href="javascript:;" onclick="contractobject.paymentorderobject.loadfiles(this)" title="Files"><i class="fa fa-file"></i></a>`;
+            break;
+          case 'Ext02':
+            if (data.IsAssigned == 'No') {
+              td.innerHTML = `<a data-itemworktype="${itemworktype || ''}" class="text-muted me-2" href="javascript:;" onclick="contractobject.paymentorderobject.lineeditperform(this)" title="Edit Submission"><i class="fa fa-edit"></i></a>`;
+            }
+            else {
+              td.innerHTML = `<a data-itemworktype="${itemworktype || ''}" class="text-muted" href="javascript:;" onclick="contractobject.paymentorderobject.loadreview(this)" title="Review"><i class="fa fa-list"></i></a>`;
+            }
+            break;
+          default:
+            //nếu không phải là cột tùy chỉnh thì trả về giá trị của trường đó
+            td.innerHTML = data[metacolumn.field] || '';
+            break;
+        }
+        return td;
+      }
+
+
+      await tblline.initTable();
+      this.tbls[id] = tblline;
+
+
+    };
+    //#endregion payment order
+
+    //#region init filter data
+    contractobject.itemstage = [{ id: 'implement', label: 'Implement' }, { id: 'plan', label: 'Plan' }];
+    contractobject.itemworktype = [];
+    contractobject.getWorkType = async function () {
+      const url = `/common/lookup?lookupType=worktype4po`;
+      const response = await fetch(url, { method: 'GET', });
+      const data = await response.json();
+      //map data to itemworktype
+      contractobject.itemworktype = data.datas.map(item => ({ id: item.Alias, value: item.Alias, label: item.Alias }));
+      // return data;
+    };
+
+    contractobject.itemstatus = [];
+    contractobject.getStatus = async function () {
+      const url = `/common/lookup?lookupType=contractlinestatus`;
+      const response = await fetch(url, { method: 'GET', });
+      const data = await response.json();
+      //map data to itemworktype
+      contractobject.itemstatus = data.datas.map(item => ({ id: item.Alias, value: item.Alias, label: item.Description }));
+      // return data;
+    };
+
+    contractobject.itemworkcategory = [];
+    contractobject.getWorkCategory = async function () {
+      // const url = `/common/lookup?lookupType=workcategory&type=${contractobject.filterworktype || ''}`;
+      // const response = await fetch(url, { method: 'GET', });
+      // const data = await response.json();
+      // //map data to itemworkcategory
+      // contractobject.itemworkcategory = data.datas.map(item => ({ id: item.Alias, value: item.Alias, label: item.Alias }));
+      // // return data;
+
+      // if (contractobject.filterworktype === 'deduction') {
+      //   console.log('Set work category for deduction');
+      //   contractobject.paymentorderobject.tbl.metacolumns.find(item => item.field === 'ReviewedWorkCat').data = contractobject.itemworkcategory;
+      //   contractobject.paymentorderobject.tbl.meta.find(item => item.field === 'ReviewedWorkCat').data = contractobject.itemworkcategory;
+      // }
+      // else {
+      //   contractobject.paymentorderobject.tbl.metacolumns.find(item => item.field === 'ReviewedWorkCat').data = contractobject.itemworkcategory;// contractobject.itemworktype;
+      //   contractobject.paymentorderobject.tbl.meta.find(item => item.field === 'ReviewedWorkCat').data = contractobject.itemworkcategory;// contractobject.itemworktype;
+      // }
+    };
+
+    contractobject.itemworkrole = [];
+    contractobject.getRoles = async function () {
+      const url = `/common/lookup?lookupType=raci_list_opt&displaymode=full_list_opt`;
+      const response = await fetch(url, { method: 'GET', });
+      const resjson = await response.json();
+      if (resjson.datas) {
+        //map trường trước khi return
+        const mappedData = resjson.datas.map(item => ({
+          id: item.Alias,
+          value: item.Alias,
+          label: item.RoleName
+        }));
+        contractobject.itemworkrole = mappedData;
+      }
+    };
+    //#endregion init filter data
+
+    //#region filter
+    contractobject.paymentorderobject.lookupfiltercontract = {
+      url: '/common/lookup', fields: { id: '`${item.ContractId}`', value: '`${item.ContractId}`', label: '`${item.ContractCode} - ${item.ContractName}`' },
+      //filter: { logic: "and", conditions: [{ field: "Description", op: "includes", value: '' }] }
+      filter: { logic: "and", conditions: [{ field: "searchTerm", op: "includes", value: '' }] }
+    };
+
+    contractobject.paymentorderobject.filterline = function () {
+      const stage = contractobject.itemstage;
+      const worktype = contractobject.itemworktype;
+      const status = contractobject.itemstatus;
+      const workcategory = contractobject.itemworkcategory;
+      const role = contractobject.itemworkrole;
+      const level = ['All', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
+
+      // <td class="text-end">
+      //   <label class="col-form-label mb-0 text-nowrap">Work Category:</label>
+      // </td>
+      // <td>
+      //   <select class="form-select form-select-sm" name="filter-workcategory" onchange="contractobject.paymentorderobject.linefilterchange(this)">
+      //     ${workcategory.map(wc => `<option value="${wc.id}">${wc.label}</option>`).join('')}
+      //   </select>
+      // </td>
+
+      return `
+    <div class="">
+        <table class="table-sm">
+          <tr>
+            <th></th>
+            <th style="width: 100%"></th>
+          </tr>
+          <tr>
+            <td class="text-end">
+              <label class="col-form-label mb-0 text-nowrap">Contract:</label>
+            </td>
+            <td>
+              <select id="paymentorder-contract-select" class="form-select form-select-sm" name="filter-contract" onchange="contractobject.paymentorderobject.linefilterchange(this)">
+                <!-- Options will be added here -->
+              </select>
+            </td>
+          </tr>          
+        </table>
+    </div>            
+    <div class="table-responsive mb-1">
+        <table class="table-sm">
+          <tr>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+
+            <td></td>
+            <td></td>
+
+          </tr>
+
+          <tr>
+            <td class="text-end">
+              <label class="col-form-label mb-0 text-nowrap">Keyword:</label>
+            </td>
+            <td colspan="3">
+              <input type="text" name="filter-keyword" class="form-control form-control-sm" placeholder="Enter keyword" onchange="contractobject.paymentorderobject.linefilterchange(this)">
+
+              <select class="form-select form-select-sm d-none" name="filter-workcategory" onchange="contractobject.paymentorderobject.linefilterchange(this)">
+                ${workcategory.map(wc => `<option value="${wc.id}">${wc.label}</option>`).join('')}
+              </select>
+            </td>
+            <td><label class="col-form-label mb-0 text-nowrap">Work Type:</label></td>
+            <td>
+              <select class="form-select form-select-sm" name="filter-worktype" onchange="contractobject.paymentorderobject.linefilterchange(this)">
+                ${worktype.map(w => `<option value="${w.id}">${w.label}</option>`).join('')}
+              </select>
+            </td>
+
+            <td class="text-end"><label class="col-form-label mb-0 text-nowrap">From date:</label></td>
+            <td> <input type="date" class="form-control form-control-sm" name="filter-fromdate" onchange="contractobject.paymentorderobject.linefilterchange(this)"> </td>
+
+            <td class="text-end"><label class="col-form-label mb-0 text-nowrap">To date:</label></td>
+            <td><input type="date" class="form-control form-control-sm" name="filter-todate" onchange="contractobject.paymentorderobject.linefilterchange(this)"></td>
+            <td class="text-end"><label class="col-form-label mb-0 text-nowrap d-none">Status:</label></td>
+            <td>
+              <select class="form-select form-select-sm d-none" name="filter-status" onchange="contractobject.paymentorderobject.linefilterchange(this)">
+                ${status.map(s => `<option value="${s.id}">${s.label}</option>`).join('')}
+              </select>
+            </td>
+          </tr>
+
+          <tr>
+            <td class="text-end"><label class="col-form-label mb-0 text-nowrap">Payable:</label>
+              <label class="col-form-label mb-0 text-nowrap d-none">Stage:</label>
+            </td>
+            <td colspan="3">
+              <span field-name="ipc-payable"></span>
+              <select class="form-select form-select-sm d-none" name="filter-stage" onchange="contractobject.paymentorderobject.linefilterchange(this)">
+                ${stage.map(s => `<option value="${s.id}">${s.label}</option>`).join('')}
+              </select>
+            </td>
+
+            <td class="text-end"> <label class="col-form-label mb-0 text-nowrap">Performed:</label> </td>
+            <td>
+              <span field-name="ipc-performed"></span>
+            </td>
+            <td class="text-end">
+              <label class="col-form-label mb-0 text-nowrap">Deducted Amount:</label>
+              <label class="col-form-label mb-0 text-nowrap d-none">Role:</label>
+              <label class="col-form-label mb-0 text-nowrap d-none">Level:</label>
+            </td>
+            <td>
+              <span field-name="ipc-deducted"></span>
+              <select class="form-select form-select-sm d-none" name="filter-role" onchange="contractobject.paymentorderobject.linefilterchange(this)">
+                ${role.map(r => `<option value="${r.id}">${r.label}</option>`).join('')}
+              </select>              
+              <select class="form-select form-select-sm d-none" name="filter-level" onchange="contractobject.paymentorderobject.linefilterchange(this)">
+                ${level.map(l => `<option value="${l}">${l}</option>`).join('')}
+              </select>
+            </td>
+
+            <td class="text-end"><label class="col-form-label mb-0 text-nowrap">Added:</label></td>
+            <td><span field-name="ipc-added"></span></td>
+
+            <td class="text-end">
+              <label class="col-form-label mb-0 text-nowrap d-none">Filtered by Final Approval:</label>
+            </td>
+            <td><input class="form-check-input  d-none" type="checkbox" name="filter-overallapprovalstatus" onchange="contractobject.paymentorderobject.linefilterchange(this)"></td>
+
+            <td class="text-end">
+              <label class="col-form-label mb-0 text-nowrap d-none">Items w Submission:</label>
+            </td>
+            <td>
+              <input class="form-check-input d-none" type="checkbox" name="filter-havingsubmission" onchange="contractobject.paymentorderobject.linefilterchange(this)">
+            </td>
+          </tr>
+
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+
+            <td></td>
+            <td></td>
+
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+
+          <tr class="d-none">
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+
+
+            <td></td>
+            <td></td>
+
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+
+          <tr class="d-none">
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+
+            <td><label class="col-form-label mb-0 text-nowrap">#IPC</label></td>
+            <td><span field-name="ipc-number"></span></td>
+
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+
+        </table>
+      </div>
+    `;
+    };
+
+    contractobject.cachesessionid = '';
+
+    contractobject.paymentorderobject.linefilterchange = async function (element) {
+      const filtercontainer = contractobject.container; //element.closest('table');// element.closest('.mb-1');
+      const filterstage = filtercontainer.querySelector('select[name="filter-stage"]').value;
+      const filterworktype = filtercontainer.querySelector('select[name="filter-worktype"]').value;
+      const filterlevel = filtercontainer.querySelector('select[name="filter-level"]').value;
+      const filterstatus = filtercontainer.querySelector('select[name="filter-status"]').value;
+      const filterrole = filtercontainer.querySelector('select[name="filter-role"]').value;
+      const filterkeyword = filtercontainer.querySelector('input[name="filter-keyword"]').value.trim();
+      const filterfromdate = filtercontainer.querySelector('input[name="filter-fromdate"]').value;
+      const filtertodate = filtercontainer.querySelector('input[name="filter-todate"]').value;
+      const filterhavingsubmission = filtercontainer.querySelector('input[name="filter-havingsubmission"]').checked;
+      const filteroverallapprovalstatus = filtercontainer.querySelector('input[name="filter-overallapprovalstatus"]').checked;
+      const filterworkcat = filtercontainer.querySelector('select[name="filter-workcategory"]').value;
+      const filtercontract = filtercontainer.querySelector('select[name="filter-contract"]').value;
+
+      let filter = `filterworktype=${encodeURIComponent(filterworktype)}`;
+      filter += `&filterrole=${encodeURIComponent(filterrole)}`;
+      filter += `&filterfromdate=${encodeURIComponent(filterfromdate)}`;
+      filter += `&filtertodate=${encodeURIComponent(filtertodate)}`;
+      filter += `&filterkeyword=${encodeURIComponent(filterkeyword)}`;
+      filter += `&filterapprovalstatus=${encodeURIComponent(filterstatus)}`;
+      filter += `&filterstage=${encodeURIComponent(filterstage)}`;
+      filter += `&filtertolevel=${encodeURIComponent(filterlevel)}`;
+      filter += `&filterhavingsubmission=${filterhavingsubmission ? "Yes" : "No"}`;
+      filter += `&filteroverallapprovalstatus=${filteroverallapprovalstatus ? "Yes" : "No"}`;
+      // filter += `&filterworkcat=${encodeURIComponent(filterworkcat)}`;//yêu cầu chỉnh sau này
+      filter += `&filterworkcat=All`;//yêu cầu ngầm định All
+      filter += `&filtercontract=${encodeURIComponent(filtercontract)}`;
+
+      filter += `&pagesize=1000`;
+
+      // filter += `&cachesessionid=${encodeURIComponent(contractobject.cachesessionid)}`;
+
+      // if (contractobject.cachesessionid === '') {
+      //   senapp.window.loading.show();
+      //   const url = `${tableolinebject.urldata.lists0}?${filter}&pagesize=1`;
+      //   const res = await fetch(`${url}`, { method: 'GET', });
+      //   const resjson = await res.json();
+      //   contractobject.cachesessionid = resjson.cachesessionid || '';
+      //   senapp.window.loading.hide();
+      // }
+
+      // senapp.window.loading.show();
+      // const url = `${tableolinebject.urldata.lists0}?${filter}&pagesize=1`;
+      // const res = await fetch(`${url}`, { method: 'GET', });
+      // const resjson = await res.json();
+      // contractobject.cachesessionid = resjson.cachesessionid || '';
+      // senapp.window.loading.hide();
+
+
+      // filter += `&cachesessionid=${encodeURIComponent(contractobject.cachesessionid)}`;
+
+      const tableolinebject = contractobject.paymentorderobject.tbl;
+      tableolinebject.urldata.lists = `${tableolinebject.urldata.lists0}?${filter}`;
+      //fetch lại dữ liệu
+
+      contractobject.filterworktype = filterworktype;
+      await contractobject.getWorkCategory();
+
+      tableolinebject.refreshDataDisplay();
+
+    };
+
+    contractobject.filterworktype = '';
+    //#endregion filter
+
+    //#region payment order functions
+    contractobject.paymentorderobject.createDraftIPC = async function (element) {
+      const tableobject = contractobject.paymentorderobject.tbl;
+      // const contractid = element.closest('.extline-container').getAttribute('data-id');
+      // const url = `/paymentorder/create?contractid=${encodeURIComponent(contractid)}&worktype=implement&callback=${encodeURIComponent('contractobject.paymentorderobject.linecreatePerformcallback')}`;
+      const url = contractobject.urldata.createdraftipc;
+      //lấy giá trị select với id paymentorder-contract-select gán vào contractid
+      const selectcontract = contractobject.container.querySelector('#paymentorder-contract-select');
+      const contractid = selectcontract.value;
+      const filtercontainer = contractobject.container; //element.closest('table');// element.closest('.mb-1');
+      const filterworktype = filtercontainer.querySelector('select[name="filter-worktype"]').value;
+      //lấy dòng được chọn
+      const rows = tableobject.getDataSelected();
+
+      if (!contractid) {
+        senapp.window.alert({ message: `⚠️ ${await senapp.utils.text.t('Please select a contract to create draft IPC.')}`, type: 'warning' });
+        return;
+      }
+      if (rows.length == 0) {
+        senapp.window.alert({ message: `⚠️ ${await senapp.utils.text.t('Please select a line to create draft IPC.')}`, type: 'warning' });
+        return;
+      }
+
+      //chuẩn bị data để gửi lên server
+      const datapost = {
+        contractid: contractid,
+        // worktype: filterworktype,
+        selecteditems: rows.map(item => {
+          return {
+            WorkType: item.WorkType,
+            SubmissionId: item.SubmissionId
+          };
+        })
+      };
+
+      senapp.window.loading.show();
+      try {
+        const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(datapost) });
+        resdata = await response.json();
+        senapp.window.toast({ message: resdata.message, type: resdata.status == 1 ? 'success' : 'error' });
+        tableobject.refreshDataDisplay();
+        await contractobject.paymentorderobject.mapDraftIPC();
+
+      } catch (error) {
+        console.error(`Error in synServer: ${error}`);
+        resdata = { status: 0, message: error.message || 'Error in synServer', data: {}, errors: {} };
+      }
+
+      senapp.window.loading.hide();
+
+      // console.log('Create Draft IPC for Contract ID:', contractid);
+      // console.log('Selected Work Type for Draft IPC:', filterworktype);
+
+    };
+
+    contractobject.paymentorderobject.viewDraftIPC = async function (element) {
+      const selectcontract = contractobject.container.querySelector('#paymentorder-contract-select');
+      const contractid = selectcontract.value;
+      if (!contractid) {
+        senapp.window.alert({ message: `⚠️ ${await senapp.utils.text.t('Please select a contract to view draft IPC.')}`, type: 'warning' });
+        return;
+      }
+      const filtercontainer = contractobject.container; //element.closest('table');// element.closest('.mb-1');
+      const filterworktype = filtercontainer.querySelector('select[name="filter-worktype"]').value;
+      const filterfromdate = filtercontainer.querySelector('input[name="filter-fromdate"]').value;
+      const filtertodate = filtercontainer.querySelector('input[name="filter-todate"]').value;
+
+      const url = `/paymentorderipc/ipcdraft?viewname=paymentorderipcdraft&contractid=${contractid}&workgroup=${encodeURIComponent(filterworktype)}&fromdate=${encodeURIComponent(filterfromdate)}&todate=${encodeURIComponent(filtertodate)}`;
+      senapp.window.modal({ title: `Draft IPC`, url, size: 'xl', maximizebutton: true });
+      // senapp.window.offcanvas({
+      //   title: `Draft IPC`,
+      //   url: url,
+      //   size: 'lg'
+      // });
+
+    };
+
+    contractobject.paymentorderobject.createIPCfromDraft = async function (element) {
+      const tableobject = contractobject.paymentorderobject.tbl;
+      const selectcontract = contractobject.container.querySelector('#paymentorder-contract-select');
+      const contractid = selectcontract.value;
+
+      if (!contractid) {
+        senapp.window.alert({ message: `⚠️ ${await senapp.utils.text.t('Please select a contract to create IPC from draft.')}`, type: 'warning' });
+        return;
+      }
+      contractobject.ipcobject.tbl.urldata.create = `${contractobject.ipcobject.tbl.urldata.create0}&contractid=${encodeURIComponent(contractid)}`;
+      contractobject.ipcobject.tbl.create();
+      return;
+
+      const url = contractobject.urldata.createipcfromdraft;
+      //chuẩn bị data để gửi lên server
+      const datapost = {
+        contractid: contractid,
+        paymentdate: "",
+        poname: "",
+        remarks: ""
+      };
+
+      senapp.window.loading.show();
+      try {
+        const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(datapost) });
+        resdata = await response.json();
+        senapp.window.toast({ message: resdata.message, type: resdata.status == 1 ? 'success' : 'error' });
+        tableobject.refreshDataDisplay();
+        await contractobject.paymentorderobject.mapDraftIPC();
+      } catch (error) {
+        console.error(`Error in synServer: ${error}`);
+        resdata = { status: 0, message: error.message || 'Error in synServer', data: {}, errors: {} };
+      }
+
+      senapp.window.loading.hide();
+
+      // const contractid = element.closest('.extline-container').getAttribute('data-id');
+      // const url = `/paymentorder/create?contractid=${encodeURIComponent(contractid)}&worktype=implement&fromdraft=true&callback=${encodeURIComponent('contractobject.paymentorderobject.linecreatePerformcallback')}`;
+      // senapp.window.modal({ url: url, title: 'Create IPC from Draft' });
+
+
+    };
+
+    contractobject.paymentorderobject.removeDraftIPC = async function (element) {
+      const tableobject = contractobject.paymentorderobject.tbl;
+      const selectcontract = contractobject.container.querySelector('#paymentorder-contract-select');
+      const contractid = selectcontract.value;
+      const url = contractobject.urldata.removedraftipc;
+      //chuẩn bị data để gửi lên server
+      const datapost = { contractid: contractid };
+
+      senapp.window.loading.show();
+      try {
+        const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(datapost) });
+        resdata = await response.json();
+        senapp.window.toast({ message: resdata.message, type: resdata.status == 1 ? 'success' : 'error' });
+        tableobject.refreshDataDisplay();
+        await contractobject.paymentorderobject.mapDraftIPC();
+      } catch (error) {
+        console.error(`Error in synServer: ${error}`);
+        resdata = { status: 0, message: error.message || 'Error in synServer', data: {}, errors: {} };
+      }
+
+      senapp.window.loading.hide();
+
+    };
+
+    contractobject.paymentorderobject.mapDraftIPC = async function () {
+      const filtercontainer = contractobject.container;
+      const tableobject = contractobject.paymentorderobject.tbl;
+
+      const selectcontract = contractobject.container.querySelector('#paymentorder-contract-select');
+      const contractid = selectcontract.value;
+      const paymentorderDraftIPC = contractobject.container.querySelector('#paymentorder-draft-ipc');
+      paymentorderDraftIPC.innerHTML = '';
+
+      filtercontainer.querySelector('span[field-name="ipc-deducted"]').innerHTML = '';
+      filtercontainer.querySelector('span[field-name="ipc-payable"]').innerHTML = '';
+      filtercontainer.querySelector('span[field-name="ipc-performed"]').innerHTML = '';
+      filtercontainer.querySelector('span[field-name="ipc-added"]').innerHTML = '';
+      filtercontainer.querySelector('span[field-name="ipc-number"]').innerHTML = '';
+
+      // filtercontainer.querySelector('span[field-name="ipc-description"]').innerHTML = '';
+      // filtercontainer.querySelector('span[field-name="ipc-remarks"]').innerHTML = '';
+      const filterfromdate = filtercontainer.querySelector('input[name="filter-fromdate"]').value;
+      const filtertodate = filtercontainer.querySelector('input[name="filter-todate"]').value;
+
+
+      const ipcmanagementfilterstatus = filtercontainer.querySelector('select[name="ipcmanagement-filter-status"]').value;
+      const ipcmanagementfilterkeyword = filtercontainer.querySelector('input[name="ipcmanagement-filter-keyword"]').value.trim();
+      const ipcmanagementfilterfromdate = filtercontainer.querySelector('input[name="ipcmanagement-filter-fromdate"]').value;
+      const ipcmanagementfiltertodate = filtercontainer.querySelector('input[name="ipcmanagement-filter-todate"]').value;
+
+      const tableipcbject = contractobject.ipcobject.tbl;
+      const tableipcalloobject = contractobject.ipcallobject.tbl;
+      tableipcbject.clearRowData();
+      tableipcalloobject.clearRowData();
+      if (!contractid) {
+        //nếu chưa chọn hợp đồng nào thì không làm gì cả
+        //ipc all
+        tableipcalloobject.urldata.lists = `${tableipcalloobject.urldata.lists0}?filterfromdate=${encodeURIComponent(ipcmanagementfilterfromdate)}&filtertodate=${encodeURIComponent(ipcmanagementfiltertodate)}&filterkeyword=${encodeURIComponent(ipcmanagementfilterkeyword)}&filterstatus=${encodeURIComponent(ipcmanagementfilterstatus)}`;
+        tableipcalloobject.refreshDataDisplay();
+        return;
+      }
+      const url = `${contractobject.urldata.getdraftipc}?contractid=${encodeURIComponent(contractid)}`;
+      const response = await fetch(url, { method: 'GET', });
+      const resjson = await response.json();
+      if (resjson.datas) {
+        // console.log('Draft IPC data:', resjson.datas);
+        // console.log('Draft IPC Payable Amount:', resjson.datas.PayableAmount);
+        const metacolumn = tableobject.meta.find(col => col.field === 'ApprovedAmount');
+        paymentorderDraftIPC.innerHTML = senapp.data.stringifyValue(resjson.datas.PayableAmount, metacolumn ? metacolumn : {});
+
+
+        filtercontainer.querySelector('span[field-name="ipc-number"]').innerHTML = resjson.datas.POCode || '';
+        filtercontainer.querySelector('span[field-name="ipc-payable"]').innerHTML = senapp.data.stringifyValue(resjson.datas.PayableAmount, metacolumn ? metacolumn : {});
+        filtercontainer.querySelector('span[field-name="ipc-performed"]').innerHTML = senapp.data.stringifyValue(resjson.datas.PerformedAmount, metacolumn ? metacolumn : {});
+        filtercontainer.querySelector('span[field-name="ipc-added"]').innerHTML = senapp.data.stringifyValue(resjson.datas.AddedAmount, metacolumn ? metacolumn : {});
+        filtercontainer.querySelector('span[field-name="ipc-deducted"]').innerHTML = senapp.data.stringifyValue(resjson.datas.DeductedAmount, metacolumn ? metacolumn : {});
+
+        // filtercontainer.querySelector('span[field-name="ipc-description"]').innerHTML =  resjson.datas.IPCName || '';
+        // filtercontainer.querySelector('span[field-name="ipc-remarks"]').innerHTML = resjson.datas.Remarks || '';
+
+
+      }
+
+      //ipc 
+
+      tableipcbject.urldata.lists = `${tableipcbject.urldata.lists0}?filtercontractid=${encodeURIComponent(contractid)}&filterfromdate=${encodeURIComponent(filterfromdate)}&filtertodate=${encodeURIComponent(filtertodate)}`;
+      tableipcbject.refreshDataDisplay();
+
+      //ipc all
+      tableipcalloobject.urldata.lists = `${tableipcalloobject.urldata.lists0}?filtercontractid=${encodeURIComponent(contractid)}&filterfromdate=${encodeURIComponent(ipcmanagementfilterfromdate)}&filtertodate=${encodeURIComponent(ipcmanagementfiltertodate)}&filterkeyword=${encodeURIComponent(ipcmanagementfilterkeyword)}&filterstatus=${encodeURIComponent(ipcmanagementfilterstatus)}`;
+      tableipcalloobject.refreshDataDisplay();
+
+    };
+
+    contractobject.paymentorderobject.memberRACI = async function (element) {
+      const selectcontract = contractobject.container.querySelector('#paymentorder-contract-select');
+      const contractid = selectcontract.value;
+      if (!contractid) {
+        senapp.window.alert({ message: `⚠️ ${await senapp.utils.text.t('Please select a contract to view members.')}`, type: 'warning' });
+        return;
+      }
+      const url = `/contractmember?viewname=contractmemberbypaymentorder&id=${contractid}`;
+      senapp.window.offcanvas({
+        title: `Users`,
+        url: url,
+        size: 'lg'
+      });
+
+    };
+    //#endregion payment order functions
+
+
+
+    $(async function () {
+      // await contractobject.tbl.initTable();
+      // contractobject.paymentorderobject.model = await senapp.data.getMeta({ url: contractobject.paymentorderobject.urldata.meta });
+      contractobject.paymentorderobject.model = await senapp.data.getMeta({ url: contractobject.paymentorderobject.urldata.meta });
+      // const workcategory = await contractobject.paymentorderobject.getWorkType();
+      // contractobject.paymentorderobject.model.meta.find(item => item.field === 'ReviewedWorkCat').data = workcategory;
+
+      contractobject.paymentorderobject.tbl.datanew = JSON.parse(JSON.stringify(contractobject.paymentorderobject.model.datanew));
+      contractobject.paymentorderobject.tbl.meta = JSON.parse(JSON.stringify(contractobject.paymentorderobject.model.meta));
+
+      // contractobject.paymentorderobject.tbl.meta.map(column => {
+      //   column.description = `<span class="text-primary">${column.description || ''}</span>`;
+      // });
+      // contractobject.paymentorderobject.tbl.meta.forEach(column => {
+      //   const description=column.description || '';
+      //   column.description = `<span class="text-primary">${description}</span>`;
+      // });
+
+      await contractobject.paymentorderobject.tbl.initTable();
+
+      //gán định dạng tiêu đề cột được phép sửa
+      const headers = contractobject.paymentorderobject.tbl.container.querySelectorAll('th');
+      headers.forEach(th => {
+        const field = th.getAttribute('data-field');
+        const metacolumn = contractobject.paymentorderobject.tbl.metacolumns.find(col => col.field === field);
+        if (metacolumn) {
+          const isEditable = metacolumn.readonly !== true;// metacolumn.edit;
+          if (isEditable) {
+            th.classList.add('text-primary');
+          }
+        }
+      });
+
+      //khởi tạo điều kiện lọc cho chi tiết hợp đồng
+      await contractobject.getWorkType();
+      if (contractobject.itemworktype.length > 0) { contractobject.filterworktype = contractobject.itemworktype[0].id; }
+      await contractobject.getStatus();
+      // await contractobject.getWorkCategory();
+      // await contractobject.getRoles();
+
+      //gán filter
+      const linefilterhtml = contractobject.paymentorderobject.filterline();
+      contractobject.container.querySelector('#paymentorder-table-filter').innerHTML = linefilterhtml;
+
+      //tạo điều kiện lọc cho IPC management
+      const ipcmanagementfilterhtml = contractobject.ipcallobject.filter();
+      contractobject.container.querySelector('#paymentorder-ipcmanagement-filter').innerHTML = ipcmanagementfilterhtml;
+
+
+      //ngầm định chon status = 'in-progress'
+      contractobject.container.querySelector('select[name="filter-status"]').value = 'In-Progress';
+      //gọi hàm filterchange để load dữ liệu
+
+      // await contractobject.paymentorderobject.linefilterchange(contractobject.container.querySelector('input[name="filter-keyword"]'));
+
+      const selectcontract = contractobject.container.querySelector('#paymentorder-contract-select');
+      const choices = senapp.utils.lookup(selectcontract, {
+        itemSelectText: '',     // Ẩn "Press to select"
+        noChoicesText: '',      // Ẩn "No choices to choose from"
+        removeItemButton: true,
+        searchEnabled: true,
+        searchChoices: false
+      })
+      const lookup = contractobject.paymentorderobject.lookupfiltercontract;
+      selectcontract.addEventListener('search', async function (e) {
+        const keyword = e.detail.value;
+        if (!keyword.endsWith(' ')) return;
+        const trimmed = keyword.trim();
+        lookup.filter.conditions[0].value = trimmed;
+        try {
+          const res = await fetch(`${lookup.url}?lookupType=contract&pagesize=${lookup.pagesize || 10}&filter=${JSON.stringify(lookup.filter)}`);
+          lookup.data = [];
+          if (res.ok) {
+            const data = await res.json();
+            lookup.data = data.datas.map(item => ({ id: eval(lookup.fields.id), value: eval(lookup.fields.value), label: eval(lookup.fields.label) }));
+          }
+        } catch (err) { console.error('Lỗi khi gọi API:', err); }
+        choices.setChoices(lookup.data, 'value', 'label', true);
+      });
+
+      selectcontract.addEventListener('change', async function (e) {
+        await contractobject.paymentorderobject.mapDraftIPC();
+      });
+
+      //ipc
+      contractobject.ipcobject.model = await senapp.data.getMeta({ url: contractobject.ipcobject.urldata.meta });
+      contractobject.ipcobject.tbl.datanew = JSON.parse(JSON.stringify(contractobject.ipcobject.model.datanew));
+      contractobject.ipcobject.tbl.meta = JSON.parse(JSON.stringify(contractobject.ipcobject.model.meta));
+      await contractobject.ipcobject.tbl.initTable();
+      //ipc all
+      contractobject.ipcallobject.model = await senapp.data.getMeta({ url: contractobject.ipcallobject.urldata.meta });
+      contractobject.ipcallobject.tbl.datanew = JSON.parse(JSON.stringify(contractobject.ipcallobject.model.datanew));
+      contractobject.ipcallobject.tbl.meta = JSON.parse(JSON.stringify(contractobject.ipcallobject.model.meta));
+      await contractobject.ipcallobject.tbl.initTable();
+
+      await contractobject.paymentorderobject.mapDraftIPC();
+      
+
+    });
+  </script>
+
+</div>

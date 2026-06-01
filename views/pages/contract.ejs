@@ -1,0 +1,1206 @@
+<div id="contractmaster-section">
+  <div class="mb-9">
+    <h2 class="mb-4"><%- title %></h2>
+    <div class="mb-1">
+      <div class="">
+        <div class="btn-group me-1">
+          <div class="dropdown">
+            <a class="btn btn-subtle-secondary" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true"
+              aria-expanded="false"><i class="fa-solid fa-ellipsis-vertical"></i></a>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" onclick="contractobject.assignToUser()">Assign Member To Contract</a>
+            </div>
+          </div>
+        </div>
+        <div class="btn-group me-1">
+          <label class="control-label mt-1 me-1">Contract Type:</label>
+          <select name="filter-contract-type" class="form-select form-select-sm"
+            onchange="contractobject.filterchange(this)" style="width:150px">
+            <% model.contractTypes.datas.forEach(function(type) { %>
+              <option value="<%= type.ContractType %>">
+                <%= type.Description %>
+              </option>
+              <% }); %>
+          </select>
+
+        </div>
+        <!-- <div class="btn-group me-1">
+          <a onclick="contractobject.tbl.create()" class="btn btn-subtle-primary">Create New</a>
+        </div> -->
+      </div>
+    </div>
+    <div class="row-fluid">
+      <div class="card">
+        <div class="card-body">
+          <div class="search-box mb-3 mx-auto">
+            <div class="position-relative">
+              <input class="form-control search-input search form-control-sm" type="search" placeholder="Search"
+                aria-label="Search" />
+              <span class="fas fa-search search-box-icon"></span>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-sm fs-9 mb-5">
+              <tbody class="list">
+                <!-- Table datas will be added here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var contractobject = {};
+    contractobject.model = JSON.parse('<%- JSON.stringify(model) %>');
+    contractobject.container = document.getElementById("contractmaster-section");//khu vực chứa danh sách
+    contractobject.urldata = {
+      lists: '/contract/list',
+      item: '/contract/item',
+      // create: '/contract/create?viewname=contractmasterupdate&callback=' + encodeURIComponent('contractobject.createcallback'),
+      // edit: '/contract/edit?viewname=contractmasterupdate&callback=' + encodeURIComponent('contractobject.editcallback'),
+      // delete: '/contract/delete',
+      // update: '/contract/edit'
+      assignToUser: '/contractmember/create',
+      assignToSubmission: '/contractlinemember/create',
+      memberbycontract: '/contractmember/memberbycontract',
+      management: '/contract/management'
+    };
+
+    contractobject.createcallback = function (response) {
+      //nếu response[0] tồn tại thì hiển thị thông báo lỗi
+      if (response[0]) {
+        if (response[0].status == 0) {
+          alert(response[0].message);
+          return;
+        }
+        contractobject.tbl.onAddRowData({ data: response[0].data });
+        //senapp.sidebar.menuclickbydatalink('/contract');
+      }
+    };
+    contractobject.editcallback = function (response) {
+      //nếu response[0] tồn tại thì hiển thị thông báo lỗi
+      if (response[0]) {
+        if (response[0].status == 0) {
+          alert(response[0].message);
+          return;
+        }
+        contractobject.tbl.onChangeRowData({ data: response[0].data });
+        //nếu tồn tại dòng chi tiết thì load lại
+        const id = response[0].data[contractobject.tbl.keyfield];
+        if (contractobject.lineobject.tbls[id]) {
+          contractobject.lineobject.tbls[id].refreshDataDisplay();
+        }
+      }
+    };
+    contractobject.deletecallback = async function ({ response, data, row }) {
+      //nếu response[0] tồn tại thì hiển thị thông báo lỗi
+      if (response.status !== 0) {
+        //nếu tồn tại dòng chi tiết thì xóa đi
+        const id = data[contractobject.tbl.keyfield];
+        if (contractobject.lineobject.tbls[id]) {
+          contractobject.lineobject.tbls[id].container.remove();
+          delete contractobject.lineobject.tbls[id];
+        }
+      }
+    };
+
+    // Khởi tạo bảng
+    contractobject.tbl = new senapp.utils.table({
+      meta: contractobject.model.meta,
+      urldata: contractobject.urldata,
+      container: contractobject.container,
+      tableelement: contractobject.container.querySelector('table'),
+      modal: false,// khi thêm mới hoặc sửa thì có modal hay không
+      selectcolumn: true, // có hiển thị cột chọn hay không
+      addrow: false, // cho phép thêm mới
+      editrow: false, // cho phép sửa
+      deleterow: false, // cho phép xóa
+      readonly: true, //chế độ chỉ đọc
+      filterrow: false, // có hiển thị filter row hay không
+      filtercompact: true, // hiển thị filter row ở dạng compact
+      // loadmoreonvisible: false, // tự động tải thêm dữ liệu khi cuộn đến cuối danh sách      
+      sysnoviewcard: false, // cho phép xem card khi click vào số thứ tự
+      actionbuttons: { edit: false, delete: false },//ẩn/hiện nút hành động
+      metacolumns: [
+        { field: 'Ext01', description: '<i class="fa-solid fa-users" title="Members"></i>', colorder: -2, visible: true, show: true, gridwidth: 32 },
+        { field: 'ExtLine', description: 'Items', colorder: -1, visible: true, show: true },
+        { field: 'SysAction', visible: false },
+      ],
+      customcolumns: ['Ext01', 'ExtLine', 'ContractName'],// ['SysNo', 'String', 'Id'], // Danh sách các cột tùy chỉnh khi render cell
+      // filtercompact: true, // hiển thị filter row ở dạng compact
+      allowexport2excel: false,//cho phép xuất Excel
+      datanew: contractobject.model.datanew,
+      deletecallback: contractobject.deletecallback //gán hàm callback sau khi xóa
+    });
+    contractobject.tbl.genCellDataCustom = function ({ data, metacolumn }) {
+      if (!metacolumn || !metacolumn.field) {
+        return null; // Trả về null nếu không có metacolumn hoặc field
+      }
+      // Hàm này sẽ được sử dụng để tạo dữ liệu cho các cột tùy chỉnh
+      const tableobject = this;
+      const td = document.createElement('td');
+      td.setAttribute('data-field', metacolumn.field);
+      //nếu field.visible là false hoặc field.show là false thì không hiển thị cột này  gán class d-none
+      if (!metacolumn.show) { td.classList.add('d-none'); }
+      switch (metacolumn.field) {
+        case 'Ext01':
+          td.innerHTML = `<a href="javascript:;" onclick="contractobject.loadUser(this)" title="View Members"><i class="fa fa-ellipsis"></i></a>`;
+          break;
+        case 'ExtLine':
+          //nếu metacolumn.field là 'ExtLine' thì nội dung là số thứ tự của dòng trong bảng
+          const index = tableobject.datas.indexOf(data);
+          td.innerHTML = `<a data-load="false" href="javascript:;" onclick="contractobject.lineobject.loadLine(this)" title="View Items"><i class="fa fa-ellipsis"></i></a>`;
+          break;
+        case 'ContractName':
+          td.innerHTML = `<a href="/contract/management?${tableobject.keyfield}=${data[tableobject.keyfield]}" title="Management">${data[metacolumn.field] || ''}</a>`;
+          break;
+        default:
+          //nếu không phải là cột tùy chỉnh thì trả về giá trị của trường đó
+          td.innerHTML = data[metacolumn.field] || '';
+          break;
+      }
+      return td;
+    }
+
+    //#region chức năng
+
+    contractobject.filterchange = async function (element) {
+      const tableobject = contractobject.tbl;
+      const filtercontracttype = contractobject.container.querySelector('select[name="filter-contract-type"]').value;
+      if (filtercontracttype !== 'All') {
+        tableobject.metaAddFilter({ meta: tableobject.meta, field: 'ContractType', op: 'includes', value: filtercontracttype });
+        tableobject.changeRowFilter({ meta: tableobject.meta, condition: { field: 'searchTerm', op: 'includes', value: tableobject.searchelement.value.trim() } });
+      }
+      else {
+        tableobject.changeRowFilter({ meta: tableobject.meta, condition: { field: 'searchTerm', op: 'includes', value: tableobject.searchelement.value.trim() } });
+      }
+    };
+
+    contractobject.assignToUsercallback = async function (response) {
+      if (response && response.length > 0) {
+        // Process the selected roles
+        // console.log('Selected members:', response);
+        senapp.window.loading.show();
+        const tableobject = contractobject.tbl;
+        const selectedKeys = tableobject.getKeySelected();
+        try {
+          // Tạo mảng Promise bất đồng bộ
+          const promises = selectedKeys.flatMap(id =>
+            response.map(async m => {
+              const newrolemember = { Id: senapp.data.sessionAutoId(), ContractId: id, Account: m };
+              const res = await fetch(contractobject.urldata.assignToUser, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newrolemember)
+              });
+              if (!res.ok) { throw new Error(`HTTP error! status: ${res.status}`); }
+              const response = await res.json(); // hoặc .text() nếu API không trả JSON
+              if (response.status == 0) {
+                senapp.window.toast({ message: response.message, type: 'danger' });
+              } else {
+                senapp.window.toast({ message: response.message, type: 'success' });
+              }
+            })
+          );
+          await Promise.all(promises);
+          senapp.window.loading.hide();
+          console.log("Tất cả đã xong!");
+        } catch (err) {
+          senapp.window.alert({ message: `⚠️ ${await senapp.utils.text.t('An error occurred while processing:')}`, type: 'danger' });
+          console.error("Có lỗi :", err);
+        }
+      }
+      else {
+        senapp.window.alert({ message: `⚠️ ${await senapp.utils.text.t('No roles selected.')}`, type: 'warning' });
+      }
+    };
+    contractobject.assignToUser = async function () {
+      const selectedKeys = contractobject.tbl.getKeySelected();
+      if (selectedKeys.length === 0) {
+        senapp.window.alert({ message: `⚠️ ${await senapp.utils.text.t('Please select at least one row to assign.')}`, type: 'danger' });
+        return;
+      }
+
+      const lookupfilter = {
+        url: '/member/lookup', fields: { id: '`${item.Email}`', value: '`${item.Email}`', label: '`${item.Email}`' },
+        //filter: { logic: "and", conditions: [{ field: "Description", op: "includes", value: '' }] }
+        filter: { logic: "and", conditions: [{ field: "searchTerm", op: "includes", value: '' }] }
+      };
+      senapp.window.lookup({ options: { title: 'Select Members', multiple: true, callback: 'contractobject.assignToUsercallback', lookup: lookupfilter } });
+    };
+
+    contractobject.loadUser = function (element) {
+      const tableobject = contractobject.tbl;
+      const id = parseInt(element.closest('tr').getAttribute('data-id'));
+      const data = tableobject.datas.find(item => item[tableobject.keyfield] === id);
+
+      const urlline = `/contractmember?viewname=contractmemberbycontract&id=${id}`;
+      senapp.window.offcanvas({
+        title: `User List of ${data["ContractName"] || ''}`,
+        url: urlline
+      });
+    };
+
+    //#endregion chức năng
+
+    //#region line
+    contractobject.lineobject = { model: {}, tbls: [],tbl: null, contractlineobject: {}, contractid: 0 };
+    contractobject.lineobject.urldata = {
+      lists: '/contractline/list',
+      item: '/contractline/item',
+      // create: '/contractline/create',
+      // edit: '/contractline/edit',
+      // delete: '/contractline/delete',
+      // update: '/contractline/edit',
+      meta: '/contractline/meta'
+    };
+    contractobject.lineobject.lineloadUser = function (element) {
+      const id = parseInt(element.closest('tr').getAttribute('data-id'));
+      const parentid = element.closest('.extline-container').getAttribute('data-id');
+      const itemworktype = element.getAttribute('data-itemworktype') || '';
+      const tableobject = this.tbls[parentid];
+      const data = tableobject.datas.find(item => item[tableobject.keyfield] === id);
+
+      let urlline = `/contractlinemember?id=${id}&parentid=${parentid}&itemworktype=${encodeURIComponent(itemworktype)}`;
+      if (['add', 'deduction'].includes(itemworktype)) {
+        urlline += `&viewname=contractlinememberbycontractline4deduction`;
+      }
+      else {
+        urlline += `&viewname=contractlinememberbycontractline`;
+      }
+      senapp.window.offcanvas({
+        title: `User List of ${data["WBS"]}-${data["WorkName"] || ''}`,
+        url: urlline,
+        size: 'lg'
+      });
+    };
+
+    contractobject.lineobject.linefilterchange = async function (element) {
+
+      const id = element.closest('.extline-container').getAttribute('data-id');
+      const tableolinebject = this.tbls[id];
+
+      const filtercontainer = element.closest('table');// element.closest('.mb-1');
+      const filterstage = filtercontainer.querySelector('select[name="filter-stage"]').value;
+      const filterworktype = filtercontainer.querySelector('select[name="filter-worktype"]').value;
+      const filterlevel = filtercontainer.querySelector('select[name="filter-level"]').value;
+      const filterstatus = filtercontainer.querySelector('select[name="filter-status"]').value;
+      const filterkeyword = filtercontainer.querySelector('input[name="filter-keyword"]').value.trim();
+      const filterfromdate = filtercontainer.querySelector('input[name="filter-fromdate"]').value;
+      const filtertodate = filtercontainer.querySelector('input[name="filter-todate"]').value;
+      const filterhavingsubmission = filtercontainer.querySelector('input[name="filter-havingsubmission"]').checked;
+      const filteroverallapprovalstatus = filtercontainer.querySelector('input[name="filter-overallapprovalstatus"]').checked;
+      const filterworkcat = filtercontainer.querySelector('select[name="filter-workcategory"]').value;
+
+      let filter = `filterworktype=${encodeURIComponent(filterworktype)}`;
+      filter += `&filterfromdate=${encodeURIComponent(filterfromdate)}`;
+      filter += `&filtertodate=${encodeURIComponent(filtertodate)}`;
+      filter += `&filterkeyword=${encodeURIComponent(filterkeyword)}`;
+      filter += `&filterapprovalstatus=${encodeURIComponent(filterstatus)}`;
+      filter += `&filterstage=${encodeURIComponent(filterstage)}`;
+      filter += `&filtertolevel=${encodeURIComponent(filterlevel)}`;
+      filter += `&filterhavingsubmission=${filterhavingsubmission ? "Yes" : "No"}`;
+      filter += `&filteroverallapprovalstatus=${filteroverallapprovalstatus ? "Yes" : "No"}`;
+      // filter += `&filterworkcat=${encodeURIComponent(filterworkcat)}`;//yêu cầu chỉnh sau này
+      filter += `&filterworkcat=All`;//yêu cầu ngầm định All
+
+      tableolinebject.urldata.lists = `${this.urldata.lists}?${filter}&${contractobject.tbl.keyfield}=${encodeURIComponent(id)}`;
+      tableolinebject.refreshDataDisplay();
+    };
+
+    contractobject.lineobject.lineassignToUsercallback = async function (response) {
+      // Callback function for lookup
+      // console.log('Response from assignToUser:', response);
+      if (response && response.length > 0) {
+        // Process the selected roles
+        console.log('Selected members:', response);
+        senapp.window.loading.show();
+        const tableobject = contractobject.tbl;
+        const selectedKeys = this.contractlineobject.getKeySelected();
+        try {
+          // Tạo mảng Promise bất đồng bộ
+          const promises = selectedKeys.flatMap(async id => {
+            const selectusers = response[0]; // Lấy danh sách người dùng từ phần tử đầu tiên của response
+            const selectroles = response[1]; // Lấy danh sách vai trò từ phần tử thứ hai của response
+
+            const url = contractobject.urldata.assignToSubmission + `?worktype=${encodeURIComponent(contractobject.lineobject.lineassignToUserfilterworktype)}`;
+            //quét từng user
+            for (const u of selectusers) {
+              //quét từng role
+              for (const r of selectroles) {
+                const newcontractlinemember = {
+                  Id: senapp.data.sessionAutoId(),
+                  ContractId: this.contractid,
+                  ItemId: id,
+                  Account: u,
+                  IsActive: 'Yes',
+                  Description: `Assigned to role ${r}`,
+                  Role: r
+                };
+                // console.log('Adding contract line member:', newcontractlinemember);
+                const res = await fetch(url, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(newcontractlinemember)
+                });
+                if (!res.ok) { throw new Error(`HTTP error! status: ${res.status}`); }
+                const response = await res.json(); // hoặc .text() nếu API không trả JSON
+                if (response.status == 0) {
+                  senapp.window.toast({ message: response.message, type: 'danger' });
+                } else {
+                  senapp.window.toast({ message: response.message, type: 'success' });
+                }
+              }
+            }
+          });
+          await Promise.all(promises);
+          senapp.window.loading.hide();
+          console.log("Tất cả đã xong!");
+        } catch (err) {
+          senapp.window.alert({ message: `⚠️ ${await senapp.utils.text.t('An error occurred while processing:')}`, type: 'danger' });
+          console.error("Có lỗi :", err);
+        }
+      }
+      else {
+        senapp.window.alert({ message: `⚠️ ${await senapp.utils.text.t('No roles selected.')}`, type: 'warning' });
+      }
+    };
+
+    contractobject.lineobject.lineassignToUserfilterworktype = '';
+    contractobject.lineobject.lineassignToUsercontractid = 0;
+    contractobject.lineobject.lineassignToUser = async function (element) {
+      const id = element.closest('.extline-container').getAttribute('data-id');
+      // console.log('Assign to user for line id:', id);
+      this.contractlineobject = this.tbls[id];
+      this.contractid = id;
+
+      const filtercontainer = element.closest('.extline-container');
+      const filterworktype = filtercontainer.querySelector('select[name="filter-worktype"]').value;
+      contractobject.lineobject.lineassignToUserfilterworktype = filterworktype;
+      contractobject.lineobject.lineassignToUsercontractid = id;
+
+
+      const selectedKeys = this.contractlineobject.getKeySelected();
+      if (selectedKeys.length === 0) {
+        senapp.window.alert({ message: `⚠️ ${await senapp.utils.text.t('Please select at least one row to assign.')}`, type: 'danger' });
+        return;
+      }
+
+      // const lookupfilter = {
+      //   url: '/member/lookup', fields: { id: '`${item.Email}`', value: '`${item.Email}`', label: '`${item.Email}`' },
+      //   //filter: { logic: "and", conditions: [{ field: "Description", op: "includes", value: '' }] }
+      //   filter: {
+      //     logic: "and", conditions: [{ field: "searchTerm", op: "includes", value: '' }],
+      //     data: [{ id: 1, label: 'User 1' }, { id: 2, label: 'User 2' }, { id: 3, label: 'User 3' }]
+      //   }
+      // };
+
+      // const memberdata = await fetch(`${contractobject.urldata.memberbycontract}?pagesize=0&id=${id}`);
+      // const memberlist = await memberdata.json();
+      // // console.log('Member list:', memberlist);
+      // let data = [];
+      // memberlist.datas.forEach(item => {
+      //   data.push({ id: item.Account, value: item.Account, label: item.Account });
+      // });
+
+      // const lookupfilter = {
+      //   fields: { id: '`${item.Email}`', value: '`${item.Email}`', label: '`${item.Email}`' },
+      //   //filter: { logic: "and", conditions: [{ field: "Description", op: "includes", value: '' }] }
+      //   filter: { logic: "and", conditions: [{ field: "searchTerm", op: "includes", value: '' }] },
+      //   data: data
+      // };
+
+      const lookupfilter = {
+        url: '/common/lookup',
+        fields: { id: '`${item.Email}`', value: '`${item.Email}`', label: '`${item.Email}`' },
+        //filter: { logic: "and", conditions: [{ field: "Description", op: "includes", value: '' }] }
+        filter: { logic: "and", conditions: [{ field: "searchTerm", op: "includes", value: '' }] },
+        extparam: `&lookupType=memberincontract&id=${id}`
+      };
+
+
+      const lookupfilterraci = {
+        url: '/common/lookup', fields: { id: '`${item.RoleName}`', value: '`${item.RoleName}`', label: '`${item.RoleName}`' },
+        //filter: { logic: "and", conditions: [{ field: "Description", op: "includes", value: '' }] }
+        filter: { logic: "and", conditions: [{ field: "searchTerm", op: "includes", value: '' }] },
+        extparam: '&lookupType=raci_list'
+      };
+
+
+
+      senapp.window.lookups({
+        options: [
+          { title: 'Quick assignment', titleselect: 'Select Users', multiple: true, callback: 'contractobject.lineobject.lineassignToUsercallback', lookup: lookupfilter },
+          { title: 'Quick assignment', titleselect: 'Select Roles', multiple: true, callback: 'contractobject.lineobject.lineassignToUsercallback', lookup: lookupfilterraci }
+        ]
+      });
+    };
+
+    contractobject.lineobject.loadUser4RACIfilterworktype = '';
+    contractobject.lineobject.loadUser4RACIcontractid = 0;
+    contractobject.lineobject.loadUser4RACI = async function (element) {
+      const tableobject = contractobject.tbl;
+      const id = element.closest('.extline-container').getAttribute('data-id');
+      this.contractlineobject = this.tbls[id];
+      this.contractid = id;
+
+      const filtercontainer = element.closest('.extline-container');
+      const filterworktype = filtercontainer.querySelector('select[name="filter-worktype"]').value;
+      contractobject.lineobject.loadUser4RACIfilterworktype = filterworktype;
+      contractobject.lineobject.loadUser4RACIcontractid = id;
+
+      const selectedKeys = this.contractlineobject.getKeySelected();
+      if (selectedKeys.length === 0) {
+        senapp.window.alert({ message: `⚠️ ${await senapp.utils.text.t('Please select at least one row to assign.')}`, type: 'danger' });
+        return;
+      }
+
+      const data = tableobject.datas.find(item => item[tableobject.keyfield] === parseInt(id));
+      const idlines = selectedKeys.join(',');
+      const urlline = `/contractmember?viewname=contractmemberbycontract4raci&id=${id}&idlines=${encodeURIComponent(idlines)}&worktype=${encodeURIComponent(filterworktype)}`;
+      senapp.window.offcanvas({
+        title: `User List of ${data["ContractName"] || ''}`,
+        url: urlline,
+        size: 'lg'
+      });
+    };
+
+    contractobject.lineobject.headerline = function () {
+      return `
+    <div class="mb-1 text-end">
+      <div class="btn-group me-1">
+        <a onclick="contractobject.lineobject.lineassignToUser(this)" class="btn btn-subtle-secondary btn-sm">Quick assignment</a>
+        <a onclick="contractobject.lineobject.loadUser4RACI(this)" class="btn btn-subtle-secondary btn-sm ms-1">Reset Assignment(s)</a>
+      </div>
+    </div>
+    `;
+    };
+    contractobject.lineobject.filterline = function () {
+      const stage = contractobject.itemstage;
+      const worktype = contractobject.itemworktype;
+      const status = contractobject.itemstatus;
+      const workcategory = contractobject.itemworkcategory;
+      const level = ['All', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
+
+      // <td class="text-end">
+      //   <label class="col-form-label mb-0 text-nowrap">Work Category:</label>
+      // </td>
+      // <td>
+      //   <select class="form-select form-select-sm" name="filter-workcategory" onchange="contractobject.lineobject.linefilterchange(this)">
+      //     ${workcategory.map(wc => `<option value="${wc.id}">${wc.label}</option>`).join('')}
+      //   </select>
+      // </td>
+
+      return `
+    <div class="table-responsive mb-1">
+        <table class="table-sm">
+          <tr>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+          </tr>
+
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+
+          <tr>
+            <td class="text-end">
+              <label class="col-form-label mb-0 text-nowrap">Keyword:</label>
+            </td>
+            <td colspan="3">
+              <input type="text" name="filter-keyword" class="form-control form-control-sm" placeholder="Enter keyword" onchange="contractobject.lineobject.linefilterchange(this)">
+
+              <select class="form-select form-select-sm d-none" name="filter-workcategory" onchange="contractobject.lineobject.linefilterchange(this)">
+                ${workcategory.map(wc => `<option value="${wc.id}">${wc.label}</option>`).join('')}
+              </select>
+            </td>
+
+
+            <td class="text-end">
+              <label class="col-form-label mb-0 text-nowrap">Status:</label>
+            </td>
+            <td>
+              <select class="form-select form-select-sm" name="filter-status" onchange="contractobject.lineobject.linefilterchange(this)">
+                ${status.map(s => `<option value="${s.id}">${s.label}</option>`).join('')}
+              </select>
+            </td>
+
+            <td class="text-end"><label class="col-form-label mb-0 text-nowrap">From date:</label></td>
+            <td>
+              <input type="date" class="form-control form-control-sm" name="filter-fromdate" onchange="contractobject.lineobject.linefilterchange(this)">
+            </td>
+
+            <td class="text-end">
+              <label class="col-form-label mb-0 text-nowrap">Filtered by Final Approval:</label>
+            </td>
+            <td>
+              <input class="form-check-input" type="checkbox" name="filter-overallapprovalstatus" onchange="contractobject.lineobject.linefilterchange(this)">
+            </td>
+          </tr>
+
+          <tr>
+            <td class="text-end">
+              <label class="col-form-label mb-0 text-nowrap">Stage:</label>
+            </td>
+            <td>
+              <select class="form-select form-select-sm" name="filter-stage" onchange="contractobject.lineobject.linefilterchange(this)">
+                ${stage.map(s => `<option value="${s.id}">${s.label}</option>`).join('')}
+              </select>
+            </td>
+
+            <td class="text-end">
+              <label class="col-form-label mb-0 text-nowrap">Work Type:</label>
+            </td>
+            <td>
+              <select class="form-select form-select-sm" name="filter-worktype" onchange="contractobject.lineobject.linefilterchange(this)">
+                ${worktype.map(w => `<option value="${w.id}">${w.label}</option>`).join('')}
+              </select>
+            </td>
+            <td class="text-end">
+              <label class="col-form-label mb-0 text-nowrap">Level:</label>
+            </td>
+            <td>
+              <select class="form-select form-select-sm" name="filter-level" onchange="contractobject.lineobject.linefilterchange(this)">
+                ${level.map(l => `<option value="${l}">${l}</option>`).join('')}
+              </select>
+            </td>
+
+            <td class="text-end"><label class="col-form-label mb-0 text-nowrap">To date:</label></td>
+            <td>
+              <input type="date" class="form-control form-control-sm" name="filter-todate" onchange="contractobject.lineobject.linefilterchange(this)">
+            </td>
+
+            <td class="text-end">
+              <label class="col-form-label mb-0 text-nowrap">Items w Submission:</label>
+            </td>
+            <td>
+              <input class="form-check-input" type="checkbox" name="filter-havingsubmission" onchange="contractobject.lineobject.linefilterchange(this)">
+            </td>
+          </tr>
+        </table>
+      </div>
+    `;
+    };
+
+    contractobject.lineobject.filterline12 = function () {
+      const stage = contractobject.itemstage;
+      const worktype = contractobject.itemworktype;
+      const status = contractobject.itemstatus;
+      const workcategory = contractobject.itemworkcategory;
+      const level = ['All', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
+
+      return `
+    <div class="mb-1 row">
+      <div class="d-flex align-items-center gap-3">
+        
+        <!-- Keyword -->
+        <div class="d-flex align-items-center gap-4">
+          <label class="col-form-label mb-0 text-nowrap">Keyword:</label>
+          <input type="text"
+                name="filter-keyword"
+                class="form-control form-control-sm"
+                placeholder="Enter keyword"
+                onchange="contractobject.lineobject.linefilterchange(this)" />
+        </div>
+
+        <!-- Work Type -->
+        <div class="d-flex align-items-center gap-2">
+          <label class="col-form-label mb-0 text-nowrap">Work Type:</label>
+          <select class="form-select form-select-sm"
+                  style="width:150px"
+                  name="filter-worktype"
+                  onchange="contractobject.lineobject.linefilterchange(this)">
+            ${worktype.map(w => `<option value="${w.id}">${w.label}</option>`).join('')}
+          </select>
+        </div>
+
+          <!-- Having submission -->
+          <div class="d-flex align-items-center gap-2">
+            <label class="col-form-label mb-0 text-nowrap">Items w Submission:</label>
+            <div class="form-check mt-2">
+              <input class="form-check-input"
+                    type="checkbox"
+                    name="filter-havingsubmission"
+                    onchange="contractobject.lineobject.linefilterchange(this)">
+            </div>
+          </div>
+
+          <!-- Overall approval status -->
+          <div class="d-flex align-items-center gap-2">
+            <label class="col-form-label mb-0 text-nowrap">Filtered by Final Approval:</label>
+            <div class="form-check mt-2">
+              <input class="form-check-input"
+                    type="checkbox"
+                    name="filter-overallapprovalstatus"
+                    onchange="contractobject.lineobject.linefilterchange(this)">
+            </div>
+          </div>
+
+      </div>
+     
+      <div class="col-12 mt-2">
+        <div class="d-flex align-items-center flex-wrap gap-3">
+          <!-- Stage -->
+          <div class="d-flex align-items-center gap-2">
+            <label class="col-form-label mb-0 text-nowrap">Stage:</label>
+            <select class="form-select form-select-sm"
+                    style="width:150px"
+                    name="filter-stage"
+                    onchange="contractobject.lineobject.linefilterchange(this)">
+              ${stage.map(s => `<option value="${s.id}">${s.label}</option>`).join('')}
+            </select>
+          </div>
+          <!-- Work Category -->
+          <div class="d-flex align-items-center gap-2 d-none">
+            <label class="col-form-label mb-0 text-nowrap">Work Category:</label>
+            <select class="form-select form-select-sm"
+                    style="width:150px"
+                    name="filter-workcategory"
+                    onchange="contractobject.lineobject.linefilterchange(this)">
+              ${workcategory.map(wc => `<option value="${wc.id}">${wc.label}</option>`).join('')}
+            </select>
+          </div>
+
+
+          <!-- Status -->
+          <div class="d-flex align-items-center gap-2">
+            <label class="col-form-label mb-0 text-nowrap">Status:</label>
+            <select class="form-select form-select-sm"
+                    style="width:150px"
+                    name="filter-status"
+                    onchange="contractobject.lineobject.linefilterchange(this)">
+              ${status.map(s => `<option value="${s.id}">${s.label}</option>`).join('')}
+            </select>
+          </div>
+
+          <!-- Level -->
+          <div class="d-flex align-items-center gap-2">
+            <label class="col-form-label mb-0 text-nowrap">Level:</label>
+            <select class="form-select form-select-sm"
+                    style="width:150px"
+                    name="filter-level"
+                    onchange="contractobject.lineobject.linefilterchange(this)">
+              ${level.map(l => `<option value="${l}">${l}</option>`).join('')}
+            </select>
+          </div>
+          <!-- From date -->
+          <div class="d-flex align-items-center gap-2">
+            <label class="col-form-label mb-0 text-nowrap">From date:</label>
+            <input type="date"
+                  class="form-control form-control-sm"
+                  style="width:150px"
+                  name="filter-fromdate"
+                  onchange="contractobject.lineobject.linefilterchange(this)">
+          </div>
+
+          <!-- To date -->
+          <div class="d-flex align-items-center gap-2">
+            <label class="col-form-label mb-0 text-nowrap">To date:</label>
+            <input type="date"
+                  class="form-control form-control-sm"
+                  style="width:150px"
+                  name="filter-todate"
+                  onchange="contractobject.lineobject.linefilterchange(this)">
+          </div>
+          
+
+        </div>
+      </div>
+
+    </div>
+    `;
+    };
+
+    contractobject.lineobject.loadLine = async function (element) {
+      const tableobject = contractobject.tbl;
+      const tr = element.closest('tr');
+      const id = parseInt(tr.getAttribute('data-id'));
+      //nếu element có data-load=true thì collapse toggle tr extline và return không làm gì cả
+      if (element.getAttribute('data-load') === 'true') {
+        const extline = tr.nextElementSibling;
+        if (extline && extline.classList.contains('extline')) {
+          //ẩn hiện tr extline
+          if (extline.style.display === 'none') {
+            extline.style.display = '';
+          } else {
+            extline.style.display = 'none';
+          }
+        }
+        return;
+      }
+
+      // //tạo tr chèn vào dưới tr hiện tại
+      // if (tr.nextElementSibling && tr.nextElementSibling.classList.contains('extline')) {
+      //   //nếu đã có tr extline thì xóa đi
+      //   tr.nextElementSibling.remove();
+      //   return;
+      // }
+      // tạo id cho dòng chi tiết
+      element.setAttribute('data-load', 'true');
+      const containerlineid = `${contractobject.container.id}-line-${id}`;
+      //nếu tồn tại rồi thì không tạo nữa
+      if (document.querySelector(`tr.extline[data-id='${containerlineid}']`)) {
+        const extline = tr.nextElementSibling;
+        if (extline && extline.classList.contains('extline')) {
+          //ẩn hiện tr extline
+          if (extline.style.display === 'none') {
+            extline.style.display = '';
+          } else {
+            extline.style.display = 'none';
+          }
+        }
+        return;
+      }
+
+      const extline = document.createElement('tr');
+      extline.classList.add('extline');
+      extline.setAttribute('data-id', containerlineid);
+      extline.innerHTML = `<td colspan="100%">Loading...</td>`;
+      tr.parentNode.insertBefore(extline, tr.nextSibling);
+
+      extline.innerHTML = `<td colspan="100%">
+          <div class="extline-container" data-id="${id}">
+          ${contractobject.lineobject.headerline()}            
+            <div class="row-fluid">
+              <div class="card">
+                <div class="card-header">
+                  ${contractobject.lineobject.filterline()}
+                </div>
+                <div class="card-body">
+                  <div class="table-responsive">
+                    <table class="table table-sm fs-9 mb-5" id="${containerlineid}-table">
+                      <tbody class="list"></tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </td>`;
+      const urldata = JSON.parse(JSON.stringify(this.urldata));
+      let datanew = JSON.parse(JSON.stringify(this.model.datanew));
+      datanew[tableobject.keyfield] = id;
+      urldata.lists += `?${tableobject.keyfield}=${id}`;
+      const tablelineelement = document.getElementById(`${containerlineid}-table`);
+      let tblline = new senapp.utils.table({
+        datanew: datanew,
+        meta: this.model.meta,
+        urldata: urldata,
+        container: extline,
+        tableelement: tablelineelement,
+        selectcolumn: true, // có hiển thị cột chọn hay không
+        filterrow: false, // có hiển thị filter row hay không        
+        addrow: false, // cho phép thêm mới
+        editrow: false, // cho phép sửa
+        deleterow: false, // cho phép xóa
+        addnewfirst: false, //thêm mới vào đầu danh sách
+        loadmoreonvisible: true, // tự động tải thêm dữ liệu khi cuộn đến cuối danh sách  
+        metacolumns: [
+          { field: 'SysAction', visible: false, colorder: -9 },
+          { field: 'Ext02', description: '<i class="fas fa-list" title="Submissions"></i>', colorder: -8, visible: true, show: true, gridwidth: 80 },
+          { field: 'Ext01', description: '<i class="fa-solid fa-users" title="Members"></i>', colorder: -1, visible: true, show: true, gridwidth: 32 },
+        ],
+        customcolumns: ['Ext01', 'Ext02'], // Danh sách các cột tùy chỉnh khi render cell
+        allowloaddataininit: false,//không tự động load data khi khởi tạo
+      });
+
+      tblline.genCellDataCustom = function ({ data, metacolumn }) {
+        if (!metacolumn || !metacolumn.field) {
+          return null; // Trả về null nếu không có metacolumn hoặc field
+        }
+        // Hàm này sẽ được sử dụng để tạo dữ liệu cho các cột tùy chỉnh
+        const tableobject = this;
+        const td = document.createElement('td');
+        td.setAttribute('data-field', metacolumn.field);
+        //nếu field.visible là false hoặc field.show là false thì không hiển thị cột này  gán class d-none
+        if (!metacolumn.show) { td.classList.add('d-none'); }
+        switch (metacolumn.field) {
+          case 'Ext01':
+            td.innerHTML = `<a data-itemworktype="${data.WorkType || ''}" href="javascript:;" onclick="contractobject.lineobject.lineloadUser(this)" title="View Members"><i class="fa fa-ellipsis"></i></a>`;
+            break;
+          case 'Ext02':
+            if (data.Editable == 'Yes') {
+              td.innerHTML = `<a data-itemworktype="${data.WorkType || ''}" href="javascript:;" onclick="contractobject.lineperformobject.linecreatePerform(this)" title="Create Submission" class="me-1"><i class="fa fa-plus"></i></a>`;
+              if (data.NSubmission && data.NSubmission > 0) {
+                td.innerHTML += `<a data-itemworktype="${data.WorkType || ''}" href="javascript:;" onclick="contractobject.lineperformobject.lineloadPerform(this)" title="View Submission"><span data-nsubmission="${data.NSubmission || 0}" class="ms-1" title="Number of Submission: ${data.NSubmission}">(${data.NSubmission})</span></a>`;
+              }
+              else {
+                td.innerHTML += `<a data-itemworktype="${data.WorkType || ''}" href="javascript:;" onclick="contractobject.lineperformobject.lineloadPerform(this)" title="View Submission"><span data-nsubmission="0" class="ms-1" title="Number of Submission: 0">(0)</span></a>`;
+              }
+            }
+            break;
+          default:
+            //nếu không phải là cột tùy chỉnh thì trả về giá trị của trường đó
+            td.innerHTML = data[metacolumn.field] || '';
+            break;
+        }
+        return td;
+      }
+      await tblline.initTable();
+      this.tbls[id] = tblline;
+      await contractobject.lineobject.linefilterchange(extline.querySelector('input[name="filter-keyword"]'));
+
+    };
+    //#endregion line
+
+    //#region submission
+    contractobject.lineperformobject = { model: {}, tbls: [],tbl: null };
+    contractobject.lineperformobject.urldata = {
+      lists: '/contractlineperform/list',
+      item: '/contractlineperform/item',
+      // create: '/contractlineperform/create',
+      // edit: '/contractlineperform/edit',
+      // delete: '/contractlineperform/delete',
+      // update: '/contractlineperform/edit',
+      meta: '/contractlineperform/meta',
+      review: '/contractlineperform/review',
+      files: '/common/files?viewname=contractlineperformfiles'
+    };
+
+    contractobject.lineperformobject.linecreatePerformcallback = function (response) {
+      //nếu response[0] tồn tại thì hiển thị thông báo lỗi
+      if (response[0]) {
+        if (response[0].status == 0) {
+          alert(response[0].message);
+          return;
+        }
+
+        if (contractobject.lineobject.tbl){
+          contractobject.lineobject.tbl.refreshDataDisplay();
+          return;
+        }
+
+        const data = response[0].data;
+
+        const id = parseInt(contractobject.lineperformobject.elementcurrent.closest('tr').getAttribute('data-id'));
+        const tableobject = this.tbls[id]
+        // const tableobject = this.tbls[data.ItemId];
+        if (tableobject) {
+          tableobject.refreshDataDisplay();
+        }
+
+        const NSubmission = contractobject.lineperformobject.elementcurrent.closest('tr').querySelector('a[title="View Submission"] span').getAttribute('data-nsubmission') || '0';
+        const nsubmissionnew = parseInt(NSubmission) + 1;
+        contractobject.lineperformobject.elementcurrent.closest('tr').querySelector('a[title="View Submission"] span').setAttribute('data-nsubmission', nsubmissionnew);
+        contractobject.lineperformobject.elementcurrent.closest('tr').querySelector('a[title="View Submission"] span').innerText = `(${nsubmissionnew || 0})`;
+
+        console.log('Created Perform:', response[0]);
+        // senobjectobject.tbl.onAddRowData({ data: response[0].data });
+      }
+    };
+    contractobject.lineperformobject.elementcurrent = null;
+    contractobject.lineperformobject.linecreatePerform = function (element) {
+      contractobject.lineperformobject.elementcurrent = element;
+      const worktype = element.getAttribute('data-itemworktype') || '';
+      const id = parseInt(element.closest('tr').getAttribute('data-id'));
+      // const parentid = parseInt(contractobject.contractid);//dùng cho contractmanagement
+      const parentid = element.closest('.extline-container').getAttribute('data-id');
+      const tableobject = contractobject.lineobject.tbls[parentid];
+      const data = tableobject.datas.find(item => item[tableobject.keyfield] === id);
+      let title = `Create Submission`;
+
+      contractobject.lineobject.tbl = tableobject;
+
+      let url = `/contractlineperform/create?workname=${encodeURIComponent(data.WorkName)}&alias=${encodeURIComponent(data.Alias || '')}&contractid=${encodeURIComponent(parentid)}&worktype=${encodeURIComponent(worktype)}&itemid=${encodeURIComponent(id)}&callback=${encodeURIComponent('contractobject.lineperformobject.linecreatePerformcallback')}`;
+      if (['add', 'deduction'].includes(worktype)) {
+        url = `/contractlineperform/create?workname=${encodeURIComponent(data.WorkName)}&alias=${encodeURIComponent(data.Alias || '')}&contractid=${encodeURIComponent(parentid)}&worktype=deduction&itemid=${encodeURIComponent(id)}&callback=${encodeURIComponent('contractobject.lineperformobject.linecreatePerformcallback')}`;        
+        url += `&viewname=contractlineperformupdate4deduction`;
+        title = `Create Deduction`;
+      }
+      // if (type == 1) { url += `&viewname=contractlineperformupdate4deduction`; }
+      senapp.window.modal({ url: url, title: title });
+    };
+    contractobject.lineperformobject.loadfiles = function (element) {
+      const id = parseInt(element.closest('tr').getAttribute('data-id'));
+      const parentid = element.closest('.extline-container').getAttribute('data-id');
+      const tableobject = this.tbls[parentid];
+      const data = tableobject.datas.find(item => item[tableobject.keyfield] === id);
+
+      const url = `${this.urldata.files}&submissionid=${id}`;
+      senapp.window.offcanvas({
+        title: `Files of ${data["SubmissionName"] || ''}`,
+        url: url,
+        size: 'md'
+      });
+    };
+
+    contractobject.lineperformobject.loadreview = function (element) {
+      const id = parseInt(element.closest('tr').getAttribute('data-id'));
+      const parentid = element.closest('.extline-container').getAttribute('data-id');
+      const tableobject = this.tbls[parentid];
+      const data = tableobject.datas.find(item => item[tableobject.keyfield] === id);
+      const itemworktype = element.getAttribute('data-itemworktype') || '';
+
+
+      let url = `${this.urldata.review}?submissionid=${id}&worktype=${encodeURIComponent(itemworktype)}&itemworktype=${encodeURIComponent(itemworktype)}`;
+      if (['add', 'deduction'].includes(itemworktype)) {
+        url = `${this.urldata.review}?submissionid=${id}&worktype=deduction&itemworktype=deduction`;
+        url += `&viewname=contractlineperformreview4deduction`;
+      }
+
+
+      senapp.window.modal({
+        title: `Review of ${data["SubmissionName"] || ''}`,
+        url: url,
+        size: 'xl'
+      });
+    };
+
+    contractobject.lineperformobject.lineeditPerformcallback = function (response) {
+      //nếu response[0] tồn tại thì hiển thị thông báo lỗi
+      if (response[0]) {
+        if (response[0].status == 0) {
+          alert(response[0].message);
+          return;
+        }
+        if (contractobject.lineobject.tbl){
+          contractobject.lineobject.tbl.refreshDataDisplay();
+          return;
+        }
+
+        const data = response[0].data;
+        const id = parseInt(contractobject.lineperformobject.elementcurrent.getAttribute('data-itemid')) || 0;
+        console.log('Lineperform edit callback id:', id);
+        const tableobject = this.tbls[id]
+
+        // const tableobject = this.tbls[data.ItemId];
+        if (tableobject) { tableobject.refreshDataDisplay(); }
+        console.log('Edited Submission:', response[0]);
+        // senobjectobject.tbl.onAddRowData({ data: response[0].data });
+      }
+    };
+
+    contractobject.lineperformobject.lineeditperform = function (element) {
+      contractobject.lineperformobject.elementcurrent = element;
+      const worktype = element.getAttribute('data-itemworktype') || '';
+      const id = parseInt(element.closest('tr').getAttribute('data-id'));
+      const parentid = element.closest('.extline-container').getAttribute('data-id');
+      const itemid = parseInt(element.getAttribute('data-itemid')) || 0;
+      const contractid = parseInt(element.getAttribute('data-contractid')) || 0;
+      const tableobject = contractobject.lineobject.tbls[contractid];
+      const data = tableobject.datas.find(item => item[tableobject.keyfield] === itemid);
+      let title = `Update Submission`;
+
+      contractobject.lineobject.tbl = tableobject;
+
+      let url = `/contractlineperform/edit?workname=${encodeURIComponent(data.WorkName)}&alias=${encodeURIComponent(data.Alias || '')}&contractid=${encodeURIComponent(contractid)}&worktype=${encodeURIComponent(worktype)}&itemid=${encodeURIComponent(itemid)}&SubmissionId=${encodeURIComponent(id)}&callback=${encodeURIComponent('contractobject.lineperformobject.lineeditPerformcallback')}`;
+      if (['add', 'deduction'].includes(worktype)) {
+        url = `/contractlineperform/edit?workname=${encodeURIComponent(data.WorkName)}&alias=${encodeURIComponent(data.Alias || '')}&contractid=${encodeURIComponent(contractid)}&worktype=deduction&itemid=${encodeURIComponent(itemid)}&SubmissionId=${encodeURIComponent(id)}&callback=${encodeURIComponent('contractobject.lineperformobject.lineeditPerformcallback')}`;        
+        url += `&viewname=contractlineperformedit4deduction`;
+        title = `Update Deduction`;
+      }
+      else {
+        url += `&viewname=contractlineperformedit`;
+      }
+
+      senapp.window.modal({ url: url, title: title });
+    }
+
+    contractobject.lineperformobject.lineloadPerform = async function (element) {
+      const parentid = element.closest('.extline-container').getAttribute('data-id');
+      const tableobject = contractobject.lineobject.tbls[parentid];
+      const tr = element.closest('tr');
+      const id = parseInt(tr.getAttribute('data-id'));
+      const data = tableobject.datas.find(item => item[tableobject.keyfield] === id);
+      const itemworktype = element.getAttribute('data-itemworktype') || '';
+      const itemid = id;
+      //nếu element có data-load=true thì collapse toggle tr extline và return không làm gì cả
+      if (element.getAttribute('data-load') === 'true') {
+        const extline = tr.nextElementSibling;
+        if (extline && extline.classList.contains('extline')) {
+          //ẩn hiện tr extline
+          if (extline.style.display === 'none') {
+            extline.style.display = '';
+          } else {
+            extline.style.display = 'none';
+          }
+        }
+        return;
+      }
+
+      // //tạo tr chèn vào dưới tr hiện tại
+      // if (tr.nextElementSibling && tr.nextElementSibling.classList.contains('extline')) {
+      //   //nếu đã có tr extline thì xóa đi
+      //   tr.nextElementSibling.remove();
+      //   return;
+      // }
+      // tạo id cho dòng chi tiết
+      element.setAttribute('data-load', 'true');
+      const containerlineid = `${contractobject.container.id}-line-${id}`;
+      //nếu tồn tại rồi thì không tạo nữa
+      if (document.querySelector(`tr.extline[data-id='${containerlineid}']`)) {
+        const extline = tr.nextElementSibling;
+        if (extline && extline.classList.contains('extline')) {
+          //ẩn hiện tr extline
+          if (extline.style.display === 'none') {
+            extline.style.display = '';
+          } else {
+            extline.style.display = 'none';
+          }
+        }
+        return;
+      }
+
+      const extline = document.createElement('tr');
+      extline.classList.add('extline');
+      extline.setAttribute('data-id', containerlineid);
+      extline.innerHTML = `<td colspan="100%">Loading...</td>`;
+      tr.parentNode.insertBefore(extline, tr.nextSibling);
+      extline.innerHTML = `<td colspan="100%">
+          <div class="extline-container mb-3" data-id="${id}">
+                     
+            <div class="row-fluid">
+              <div class="card">
+                <div class="card-header">
+                  <h5 class="mb-0">Submission List of ${data["WorkName"] || ''}</h5>
+                </div>
+                <div class="card-body">
+                  <div class="table-responsive">
+                    <table class="table table-sm fs-9 mb-5">
+                      <tbody class="list"></tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </td>`;
+      const urldata = JSON.parse(JSON.stringify(this.urldata));
+      let datanew = JSON.parse(JSON.stringify(this.model.datanew));
+      datanew[tableobject.keyfield] = id;
+      urldata.lists += `?pagesize=50&id=${id}&parentid=${parentid}&workcat=${encodeURIComponent(data.Alias || '')}`;
+
+      //map điều kiện lọc từ tableobject sang urldata.lists tableobject.urldata.lists
+      let filterParams = tableobject.urldata.lists.split('?')[1];
+      if (filterParams) {
+        urldata.lists += `&${filterParams}`;
+      }
+
+
+      let tblline = new senapp.utils.table({
+        datanew: datanew,
+        meta: this.model.meta,
+        urldata: urldata,
+        container: extline,
+        selectcolumn: false, // có hiển thị cột chọn hay không
+        filterrow: false, // có hiển thị filter row hay không        
+        addrow: false, // cho phép thêm mới
+        editrow: false, // cho phép sửa
+        deleterow: false, // cho phép xóa
+        addnewfirst: false, //thêm mới vào đầu danh sách
+        // loadmoreonvisible: true, // tự động tải thêm dữ liệu khi cuộn đến cuối danh sách  
+        metacolumns: [
+          { field: 'SysAction', visible: false, colorder: -9 },
+          { field: 'Ext02', description: 'Review', colorder: -8, visible: true, show: true, gridwidth: 80 },
+          // { field: 'Ext01', description: '<i class="fa-solid fa-file" title="Files"></i>', colorder: -1, visible: false, show: true, gridwidth: 32 },
+        ],
+        customcolumns: ['Ext01', 'Ext02'], // Danh sách các cột tùy chỉnh khi render cell
+      });
+
+
+      tblline.genCellDataCustom = function ({ data, metacolumn }) {
+        if (!metacolumn || !metacolumn.field) {
+          return null; // Trả về null nếu không có metacolumn hoặc field
+        }
+        // Hàm này sẽ được sử dụng để tạo dữ liệu cho các cột tùy chỉnh
+        const tableobject = this;
+        const td = document.createElement('td');
+        td.setAttribute('data-field', metacolumn.field);
+        //nếu field.visible là false hoặc field.show là false thì không hiển thị cột này  gán class d-none
+        if (!metacolumn.show || !metacolumn.visible) { td.classList.add('d-none'); }
+        switch (metacolumn.field) {
+          case 'Ext01':
+            td.innerHTML = `<a data-contractid=${parentid} data-itemid="${itemid || 0}" data-itemworktype="${itemworktype || ''}" class="text-muted" href="javascript:;" onclick="contractobject.lineperformobject.loadfiles(this)" title="Files"><i class="fa fa-file"></i></a>`;
+            break;
+          case 'Ext02':
+            if (data.IsAssigned == 'No') {
+              td.innerHTML = `<a data-contractid=${parentid} data-itemid="${itemid || 0}" data-itemworktype="${itemworktype || ''}" class="text-muted me-2" href="javascript:;" onclick="contractobject.lineperformobject.lineeditperform(this)" title="Edit Submission"><i class="fa fa-edit"></i></a>`;
+            }
+            else {
+              td.innerHTML = `<a data-contractid=${parentid} data-itemid="${itemid || 0}" data-itemworktype="${itemworktype || ''}" class="text-muted" href="javascript:;" onclick="contractobject.lineperformobject.loadreview(this)" title="Review"><i class="fa fa-list"></i></a>`;
+            }
+            break;
+          default:
+            //nếu không phải là cột tùy chỉnh thì trả về giá trị của trường đó
+            td.innerHTML = data[metacolumn.field] || '';
+            break;
+        }
+        return td;
+      }
+
+
+      await tblline.initTable();
+      this.tbls[id] = tblline;
+
+
+    };
+    //#endregion submission
+
+    contractobject.itemstage = [{ id: 'implement', label: 'Implement' }, { id: 'plan', label: 'Plan' }];
+    contractobject.itemworktype = [];
+    contractobject.getWorkType = async function () {
+      const url = `/common/lookup?lookupType=worktype`;
+      const response = await fetch(url, { method: 'GET', });
+      const data = await response.json();
+      //map data to itemworktype
+      contractobject.itemworktype = data.datas.map(item => ({ id: item.Alias, label: item.Alias }));
+      // return data;
+    };
+
+    contractobject.itemstatus = [];
+    contractobject.getStatus = async function () {
+      const url = `/common/lookup?lookupType=contractlinestatus`;
+      const response = await fetch(url, { method: 'GET', });
+      const data = await response.json();
+      //map data to itemworktype
+      contractobject.itemstatus = data.datas.map(item => ({ id: item.Alias, value: item.Alias, label: item.Description }));
+      // return data;
+    };
+
+    contractobject.itemworkcategory = [];
+    contractobject.getWorkCategory = async function () {
+      const url = `/common/lookup?lookupType=workcategory`;
+      const response = await fetch(url, { method: 'GET', });
+      const data = await response.json();
+      //map data to itemworkcategory
+      contractobject.itemworkcategory = data.datas.map(item => ({ id: item.Alias, label: item.Alias }));
+      // return data;
+    };
+
+    $(async function () {
+      await contractobject.tbl.initTable();
+      contractobject.lineobject.model = await senapp.data.getMeta({ url: contractobject.lineobject.urldata.meta });
+      contractobject.lineperformobject.model = await senapp.data.getMeta({ url: contractobject.lineperformobject.urldata.meta });
+
+      //khởi tạo điều kiện lọc cho chi tiết hợp đồng
+      await contractobject.getWorkType();
+      await contractobject.getStatus();
+      await contractobject.getWorkCategory();
+      // console.log('contractobject.itemstage:', contractobject.itemstage);
+      // console.log('contractobject.itemstatus:', contractobject.itemstatus);
+      // console.log('contractobject.itemworktype:', contractobject.itemworktype);
+      // console.log('contractobject.itemworkcategory:', contractobject.itemworkcategory);
+
+    });
+  </script>
+
+</div>

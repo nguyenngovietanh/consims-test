@@ -1,0 +1,286 @@
+<div id="member-section">
+  <div class="mb-9">
+    <h2 class="mb-4"><%- title %></h2>
+
+    <div class="mb-1">
+      <div class="btn-group me-1">
+        <div class="dropdown">
+          <a class="btn btn-subtle-secondary" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true"
+            aria-expanded="false"><i class="fa-solid fa-ellipsis-vertical"></i></a>
+          <div class="dropdown-menu">
+            <a class="dropdown-item" onclick="memberobject.assignToModule()">Assign Module To Member</a>
+            <a class="dropdown-item" onclick="memberobject.approveRegistration()">Approve Member Registration</a>
+            <a class="dropdown-item" onclick="memberobject.rejectRegistration()">Reject Member Registration</a>
+          </div>
+        </div>
+      </div>
+      <div class="btn-group me-1">
+        <a onclick="memberobject.tbl.create()" class="btn btn-subtle-primary">Create New</a>
+        <!-- <a onclick="memberobject.tbl.deleteBySelected()" class="btn btn-subtle-secondary">Delete Selected</a> -->
+      </div>
+    </div>
+
+    <div class="row-fluid">
+      <div class="card">
+        <div class="card-body">
+          <div class="search-box mb-3 mx-auto">
+            <div class="position-relative">
+              <input class="form-control search-input search form-control-sm" type="search" placeholder="Search"
+                aria-label="Search" />
+              <span class="fas fa-search search-box-icon"></span>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-sm fs-9 mb-5">
+              <tbody class="list">
+                <!-- Table datas will be added here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var memberobject = {};
+    memberobject.model = JSON.parse('<%- JSON.stringify(model) %>');
+    memberobject.container = document.getElementById("member-section");//khu vực chứa danh sách
+    memberobject.urldata = {
+      lists: '/member/list',
+      item: '/member/item',
+      create: '/member/create?callback=' + encodeURIComponent('memberobject.createcallback'),
+      edit: '/member/edit?callback=' + encodeURIComponent('memberobject.editcallback'),
+      delete: '/member/delete',
+      assignToModule: '/modulemember/create',
+      approveRegistration: '/member/approve',
+      rejectRegistration: '/member/reject'
+    };
+    memberobject.createcallback = function (response) {
+      //nếu response[0] tồn tại thì hiển thị thông báo lỗi
+      if (response[0]) {
+        if (response[0].status == 0) {
+          alert(response[0].message);
+          return;
+        }
+        //memberobject.tbl.onAddRowData({ data: response[0].data.data });
+        senapp.sidebar.menuclickbydatalink('/member');
+      }
+    };
+
+    memberobject.editcallback = function (response) {
+      //nếu response[0] tồn tại thì hiển thị thông báo lỗi
+      if (response[0]) {
+        if (response[0].status == 0) {
+          alert(response[0].message);
+          return;
+        }
+        //memberobject.tbl.onChangeRowData({ data: response[0].data.data });
+        senapp.sidebar.menuclickbydatalink('/member');
+      }
+    };
+
+    // Khởi tạo bảng
+    memberobject.tbl = new senapp.utils.table({
+      meta: memberobject.model.meta,
+      urldata: memberobject.urldata,
+      container: memberobject.container,
+      tableelement: memberobject.container.querySelector('table'),
+      modal: true,
+      selectcolumn: true,
+      filterrow: false, // không hiển thị filter row
+      //filtercompact: false // hiển thị filter row ở dạng compact
+      //sysnoviewcard: true, // cho phép xem card khi click vào số thứ tự
+      metacolumns: [{ field: 'SysAction', visible: true }], // danh sách các cột trong bảng
+      //loadmoreonvisible: true,
+      //loadmoreshowtoast: true,
+      metacolumns: [
+        { field: 'Ext01', description: '<i class="fa-solid fa-layer-group" title="Modules"></i>', colorder: 1, visible: true, show: true, gridwidth: 32 },
+      ],
+      customcolumns: ['Ext01'],
+    });
+
+    //mở rộng
+    memberobject.assignToModulecallback = async function (response) {
+      // Callback function for lookup
+      console.log('Response from assignToModule:', response);
+      if (response && response.length > 0) {
+        // Process the selected roles
+        //console.log('Selected members:', response);
+        senapp.window.loading.show();
+        const tableobject = memberobject.tbl;
+        const selectedKeys = tableobject.getKeySelected();
+        try {
+          // Tạo mảng Promise bất đồng bộ
+          const promises = selectedKeys.flatMap(id =>
+            response.map(async m => {
+              const newrolemember = { Id: senapp.data.sessionAutoId(), UserId: id, ModuleId: parseInt(m) };
+              //console.log('Adding role member:', newrolemember);
+              // viết hàm post vào memberobject.urldata.assignToModule bằng fetch
+              const res = await fetch(memberobject.urldata.assignToModule, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newrolemember)
+              });
+              if (!res.ok) { throw new Error(`HTTP error! status: ${res.status}`); }
+              const response = await res.json(); // hoặc .text() nếu API không trả JSON
+              if (response.status == 0) {
+                senapp.window.toast({ message: response.message, type: 'danger' });
+              } else {
+                senapp.window.toast({ message: response.message, type: 'success' });
+              }
+            })
+          );
+          await Promise.all(promises);
+          senapp.window.loading.hide();
+          console.log("Tất cả đã xong!");
+        } catch (err) {
+          senapp.window.alert({ message: `⚠️ ${await senapp.utils.text.t('An error occurred while processing:')}`, type: 'danger' });
+          console.error("Có lỗi :", err);
+        }
+      }
+      else {
+        senapp.window.alert({ message: `⚠️ ${await senapp.utils.text.t('No roles selected.')}`, type: 'warning' });
+      }
+    };
+    memberobject.assignToModule = async function () {
+      const selectedKeys = memberobject.tbl.getKeySelected();
+      if (selectedKeys.length === 0) {
+        senapp.window.alert({ message: `⚠️ ${await senapp.utils.text.t('Please select at least one row to assign.')}`, type: 'danger' });
+        return;
+      }
+
+      const lookupfilter = {
+        url: '/module/lookup', fields: { id: '`${item.ModuleId}`', value: '`${item.ModuleId}`', label: '`${item.Description}`' },
+        //filter: { logic: "and", conditions: [{ field: "Description", op: "includes", value: '' }] }
+        filter: { logic: "and", conditions: [{ field: "searchTerm", op: "includes", value: '' }] }
+      };
+      senapp.window.lookup({ options: { title: 'Select Modules', multiple: true, callback: 'memberobject.assignToModulecallback', lookup: lookupfilter } });
+    };
+    //duyệt chấp nhận đăng ký thành viên
+    memberobject.approveRegistration = async function () {
+      senapp.window.loading.show();
+      const tableobject = memberobject.tbl;
+      const selectedKeys = tableobject.getKeySelected();
+      try {
+        // Tạo mảng Promise bất đồng bộ
+        console.log('Selected member IDs for approval:', selectedKeys);
+        const promises = selectedKeys.map(async id => {
+          const updateMember = { UserId: id };
+          // console.log('Approving member registration for:', updateMember);
+
+          const res = await fetch(memberobject.urldata.approveRegistration, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updateMember)
+          });
+
+          if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+
+          const response = await res.json(); // hoặc .text() nếu API không trả JSON
+          if (response.status == 0) {
+            senapp.window.toast({ message: response.message, type: 'danger' });
+          } else {
+            //tìm data trong bảng và cập nhật lại trạng thái
+            const data = tableobject.datas.find(item => item[tableobject.keyfield] === id);
+            // console.log('Updating table row data for approved member:', data);
+            if (data) {
+              data.IsActive = 'Yes';
+              tableobject.refreshCellDisplayByData({ data: data, fields: ['IsActive'] });
+            }
+            senapp.window.toast({ message: response.message, type: 'success' });
+          }
+        });
+
+        await Promise.all(promises);
+        senapp.window.loading.hide();
+        console.log("Tất cả đã xong!");
+      } catch (err) {
+        senapp.window.alert({ message: `⚠️ ${await senapp.utils.text.t('An error occurred while processing:')}`, type: 'danger' });
+        console.error("Có lỗi :", err);
+      }
+    };
+    //duyệt từ chối đăng ký thành viên
+    memberobject.rejectRegistration = async function () {
+      senapp.window.loading.show();
+      const tableobject = memberobject.tbl;
+      const selectedKeys = tableobject.getKeySelected();
+      try {
+        // Tạo mảng Promise bất đồng bộ
+        console.log('Selected member IDs for approval:', selectedKeys);
+        const promises = selectedKeys.map(async id => {
+          const updateMember = { UserId: id };
+          // console.log('Rejecting member registration for:', updateMember);
+
+          const res = await fetch(memberobject.urldata.rejectRegistration, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updateMember)
+          });
+
+          if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+
+          const response = await res.json(); // hoặc .text() nếu API không trả JSON
+          if (response.status == 0) {
+            senapp.window.toast({ message: response.message, type: 'danger' });
+          } else {
+            //tìm data trong bảng và cập nhật lại trạng thái
+            const data = tableobject.datas.find(item => item[tableobject.keyfield] === id);
+            // console.log('Updating table row data for rejected member:', data);
+            if (data) {
+              data.IsActive = 'No';
+              tableobject.refreshCellDisplayByData({ data: data, fields: ['IsActive'] });
+            }
+            senapp.window.toast({ message: response.message, type: 'success' });
+          }
+        });
+
+        await Promise.all(promises);
+        senapp.window.loading.hide();
+        console.log("Tất cả đã xong!");
+      } catch (err) {
+        senapp.window.alert({ message: `⚠️ ${await senapp.utils.text.t('An error occurred while processing:')}`, type: 'danger' });
+        console.error("Có lỗi :", err);
+      }
+    };
+
+    memberobject.tbl.genCellDataCustom = function ({ data, metacolumn }) {
+      if (!metacolumn || !metacolumn.field) {
+        return null; // Trả về null nếu không có metacolumn hoặc field
+      }
+      // Hàm này sẽ được sử dụng để tạo dữ liệu cho các cột tùy chỉnh
+      const tableobject = this;
+      const td = document.createElement('td');
+      td.setAttribute('data-field', metacolumn.field);
+      //nếu field.visible là false hoặc field.show là false thì không hiển thị cột này  gán class d-none
+      if (!metacolumn.show) { td.classList.add('d-none'); }
+      switch (metacolumn.field) {
+        case 'Ext01':
+          td.innerHTML = `<a href="javascript:;" onclick="memberobject.loadModule(this)" title="View Modules"><i class="fa fa-ellipsis"></i></a>`;
+          break;
+        default:
+          //nếu không phải là cột tùy chỉnh thì trả về giá trị của trường đó
+          td.innerHTML = data[metacolumn.field] || '';
+          break;
+      }
+      return td;
+    }
+
+    memberobject.loadModule = function (element) {
+      const tableobject = memberobject.tbl;
+      const id = parseInt(element.closest('tr').getAttribute('data-id'));
+      const data = tableobject.datas.find(item => item[tableobject.keyfield] === id);
+
+      const urlline = `/modulemember?viewname=modulememberbymember&id=${id}`;
+      senapp.window.offcanvas({
+        title: `Module List of ${data["Email"] || ''}`,
+        url: urlline,
+        size: 'md'
+      });
+    };
+
+    $(function () { memberobject.tbl.initTable(); });
+
+  </script>
+
+</div>

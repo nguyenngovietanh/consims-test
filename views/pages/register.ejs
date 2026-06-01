@@ -1,0 +1,71 @@
+<div class="container" id="register-section">
+  <div class="row flex-center min-vh-100 py-5">
+    <div class="col-sm-10 col-md-8 col-lg-5 col-xl-5 col-xxl-3"><a class="d-flex flex-center text-decoration-none mb-4"
+        href="/">
+        <div class="d-flex align-items-center fw-bolder fs-3 d-inline-block"><img src="/assets/img/icons/logo.png"
+            alt="phoenix" width="58" />
+        </div>
+      </a>
+
+      <div class="text-center mb-7">
+        <h3 class="text-body-highlight"><span class="sen-label">Sign Up</span></h3>
+        <p class="text-body-tertiary"><span class="sen-label">Create your account today</span></p>
+      </div>
+      <!-- Thông báo tổng -->
+      <% if (model.error) { %>
+        <div id="register-message" class="callout callout-danger" role="alert">
+          <%= model.error %>
+        </div>
+        <% } %>
+
+          <form method="POST" action="/register">
+            <div class="mb-3 text-start">
+              <label class="form-label" for="name">Name</label>
+              <input class="form-control" id="name" name="fullname" value="<%= model?.fullname||'' %>" type="text"
+                placeholder="Full Name" />
+            </div>
+            <div class="mb-3 text-start">
+              <label class="form-label" for="email">Email address</label>
+              <input class="form-control" id="email" type="email" name="username" value="<%= model?.username||'' %>"
+                placeholder="name@example.com" />
+            </div>
+            <div class="row g-3 mb-3">
+              <div class="col-sm-6">
+                <label class="form-label" for="password">Password</label>
+                <div class="position-relative" data-password="data-password">
+                  <input class="form-control form-icon-input pe-6" id="password" name="password" type="password"
+                    value="<%= model?.password||'' %>" placeholder="Password"
+                    data-password-input="data-password-input" />
+                  <button class="btn px-3 py-0 h-100 position-absolute top-0 end-0 fs-7 text-body-tertiary"
+                    data-password-toggle="data-password-toggle" type="button"><span
+                      class="uil uil-eye show"></span><span class="uil uil-eye-slash hide"></span></button>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <label class="form-label" for="confirmPassword">Confirm Password</label>
+                <div class="position-relative" data-password="data-password">
+                  <input class="form-control form-icon-input pe-6" id="confirmPassword" name="confirmpassword"
+                    value="<%= model?.confirmpassword||'' %>" type="password" placeholder="Confirm Password"
+                    data-password-input="data-password-input" />
+                  <button class="btn px-3 py-0 h-100 position-absolute top-0 end-0 fs-7 text-body-tertiary"
+                    data-password-toggle="data-password-toggle" type="button"><span
+                      class="uil uil-eye show"></span><span class="uil uil-eye-slash hide"></span></button>
+                </div>
+              </div>
+            </div>
+
+
+            <button class="btn btn-primary w-100 mb-3" type="submit"><span class="sen-label">Sign up</span></button>
+            <div class="text-center"><a class="fs-9 fw-bold" href="/login"><span class="sen-label">Sign
+                  in to an existing account</span></a></div>
+          </form>
+    </div>
+  </div>
+  <script>
+    var registerobject = {};
+    registerobject.container = document.getElementById("register-section");
+    // //nếu  html render hết thì mới chạy đoạn script này
+    // document.addEventListener("DOMContentLoaded", function () { senapp.utils.text.initLocaleLabels({ container: registerobject.container }); });
+  </script>
+
+</div>

@@ -1,0 +1,161 @@
+<div id="clientupdate-section" class="" style="margin: 0 auto;">
+  <form id="clientupdate-form">
+
+    <div class="card">
+      <div class="card-header">
+        <h4 class="mb-0">
+          <%= title %>
+        </h4>
+      </div>
+      <div class="card-body">
+        <!-- Thông báo tổng -->
+        <div class="message-all callout d-none" client="alert"></div>
+        <div class="row g-3 align-items-center mb-1">
+          <div class="col-md-6">
+            <label for="clientupdate-ClientCode" field-name="ClientCode" class="control-label">Client Code:</label>
+            <input type="text" id="clientupdate-ClientCode" name="ClientCode" class="form-control">
+          </div>
+          <div class="col-md-6">
+            <label for="clientupdate-CompanyName" field-name="CompanyName" class="control-label">Company Name:</label>
+            <input type="text" id="clientupdate-CompanyName" name="CompanyName" class="form-control">
+          </div>
+        </div>
+        <div class="row g-3 align-items-center mb-1">
+          <div class="col-md-6">
+            <label for="clientupdate-RegistrationNumber" field-name="RegistrationNumber"
+              class="control-label">Registration Number:</label>
+            <input type="text" id="clientupdate-RegistrationNumber" name="RegistrationNumber" class="form-control">
+          </div>
+          <div class="col-md-6">
+            <label for="clientupdate-TaxID" field-name="TaxID" class="control-label">Tax ID:</label>
+            <input type="text" id="clientupdate-TaxID" name="TaxID" class="form-control">
+          </div>
+        </div>
+
+        <div class="row g-3 align-items-center mb-1">
+          <div class="col-md-6">
+            <label for="clientupdate-Industry" field-name="Industry" class="control-label">Industry:</label>
+            <input type="text" id="clientupdate-Industry" name="Industry" class="form-control">
+          </div>
+          <div class="col-md-6">
+            <label for="clientupdate-Website" field-name="Website" class="control-label">Website:</label>
+            <input type="text" id="clientupdate-Website" name="Website" class="form-control">
+          </div>
+        </div>
+
+        <div class="row g-3 align-items-center mb-1">
+          <div class="col-md-6">
+            <label for="clientupdate-PhoneMain" field-name="PhoneMain" class="control-label">Phone Main:</label>
+            <input type="text" id="clientupdate-PhoneMain" name="PhoneMain" class="form-control">
+          </div>
+          <div class="col-md-6">
+            <label for="clientupdate-EmailMain" field-name="EmailMain" class="control-label">Email Main:</label>
+            <input type="email" id="clientupdate-EmailMain" name="EmailMain" class="form-control">
+          </div>
+        </div>
+
+        <div class="row g-3 align-items-center mb-1">
+          <div class="col-md-6">
+            <label for="clientupdate-Street" field-name="Street" class="control-label">Street:</label>
+            <input type="text" id="clientupdate-Street" name="Street" class="form-control">
+          </div>
+          <div class="col-md-6">
+            <label for="clientupdate-City" field-name="City" class="control-label">City:</label>
+            <input type="text" id="clientupdate-City" name="City" class="form-control">
+          </div>
+        </div>
+
+        <div class="row g-3 align-items-center mb-1">
+          <div class="col-md-6">
+            <label for="clientupdate-StateProvince" field-name="StateProvince" class="control-label">State
+              Province:</label>
+            <input type="text" id="clientupdate-StateProvince" name="StateProvince" class="form-control">
+          </div>
+          <div class="col-md-6">
+            <label for="clientupdate-PostalCode" field-name="PostalCode" class="control-label">Postal Code:</label>
+            <input type="text" id="clientupdate-PostalCode" name="PostalCode" class="form-control">
+          </div>
+        </div>
+
+        <div class="row g-3 align-items-center mb-1">
+          <div class="col-md-6">
+            <label for="clientupdate-Country" field-name="Country" class="control-label">Country:</label>
+            <input type="text" id="clientupdate-Country" name="Country" class="form-control">
+          </div>
+          <div class="col-md-6">
+            <label for="clientupdate-ClientType" field-name="ClientType" class="control-label">Client Type:</label>
+            <input type="text" id="clientupdate-ClientType" name="ClientType" class="form-control">
+          </div>
+        </div>
+
+        <div class="row g-3 align-items-center mb-1">
+          <div class="col-md-6">
+            <label for="clientupdate-IsActive" field-name="IsActive" class="control-label">Active:</label>
+            <select id="clientupdate-IsActive" name="IsActive" class="form-control">
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label for="clientupdate-ParentId" field-name="ParentId" class="control-label">Parent Id:</label>
+            <select id="clientupdate-ParentId" name="ParentId" class="form-control"></select>
+          </div>
+
+          <div class="col-md-6 d-none">
+            <label for="clientupdate-ClientId" field-name="ClientId" class="control-label">Client ID:</label>
+            <input type="text" id="clientupdate-ClientId" name="ClientId" class="form-control" readonly>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <button type="submit" class="btn btn-subtle-primary">Save & Close</button>
+        <button type="button" class="btn btn-subtle-secondary"
+          onclick="clientupdateobject.form.cancel()">Cancel</button>
+      </div>
+    </div>
+  </form>
+
+  <script>
+    var clientupdateobject = {};
+    // clientupdateobject.model = <%- JSON.stringify(model) %>;// dùng cách này là ok nhất nhưng bị cảnh báo
+    // clientupdateobject.model = JSON.parse(('<%- JSON.stringify(model) %>').replace(/\r?\n|\r/g, "\\n"));//xử lí xuống dòng trong chuỗi json
+    clientupdateobject.model = JSON.parse('<%- JSON.stringify(model) %>');
+
+    clientupdateobject.container = document.getElementById("clientupdate-section");//khu vực chứa form nghiệp vụ
+    console.log(clientupdateobject.model);
+    // Khởi tạo bảng
+    clientupdateobject.form = new senapp.utils.form({
+      meta: clientupdateobject.model.meta,
+      data: clientupdateobject.model.data,
+      urldata: clientupdateobject.model.url,
+      container: clientupdateobject.container,
+      mode: (clientupdateobject.model.url.path == '/client/edit') ? 'edit' : 'create',
+    });
+
+    $(async function () {
+            // Lấy danh sách Parent Client
+      if (clientupdateobject.model.data.ParentClient) {
+        // gán label cho ParentId tìm option trong clientupdate-ParentId theo value và gán lại label
+        let parentSelect = document.getElementById("clientupdate-ParentId");
+        //tìm option theo value nếu không có thì tạo mới và thêm vào select 
+        let existingOption = parentSelect.querySelector(`option[value="${clientupdateobject.model.data.ParentId}"]`);
+        if (existingOption) {
+          existingOption.selected = true;
+          existingOption.text = `${clientupdateobject.model.data.ParentClient.ClientId} - ${clientupdateobject.model.data.ParentClient.CompanyName}`;
+        }
+        else {
+          let newOption = document.createElement("option");
+          newOption.value = clientupdateobject.model.data.ParentId;
+          newOption.text = `${clientupdateobject.model.data.ParentClient.ClientId} - ${clientupdateobject.model.data.ParentClient.CompanyName}`;
+          newOption.selected = true;
+          parentSelect.appendChild(newOption);
+        }
+      }
+
+      await clientupdateobject.form.initForm();
+
+    });
+
+  </script>
+
+</div>

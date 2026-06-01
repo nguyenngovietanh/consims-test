@@ -1,0 +1,1122 @@
+<form class="dropzone dropzone-multiple p-0 dz-clickable dz-file-processing" id="dropzone-multiple" data-dropzone="data-dropzone" action="#!">
+  <div class="dz-message" data-dz-message="data-dz-message"><img class="me-2"
+      src="/assets/img/icons/cloud-upload.svg" width="25" alt="">Drop your files here</div>
+  <div class="dz-preview dz-preview-multiple m-0 d-flex flex-column">
+  </div>
+</form>
+
+
+
+<button class="btn btn-primary" onclick="showLookupModal0()">Hiển thị lookup modal từ nội dung có sẵn</button>
+<button class="btn btn-primary" onclick="showLookupModal1()">Lookup client</button>
+
+<button class="btn btn-primary" onclick="showLookupModal({options:{multiple:false,callback:'lookupcallback',}})">Hiển
+  thị lookup
+  modal từ nội dung
+  có sẵn của thư
+  viện</button>
+
+<script>
+  function lookupcallback(response) {
+    // Callback function for lookup
+    console.log('Response from lookup:', response);
+  }
+  function showLookupModal0() {
+    const filter = { url: '/senobject/lookup', fields: { id: '`${item.Id}`', value: '`${item.String}`', label: '`${item.Id}-${item.String}`' }, filter: { logic: "and", conditions: [{ field: "String", op: "includes", value: '' }] } };
+    const data = [{ id: 1, value: 'option1', label: 'Option 1' }, { id: 2, value: 'option2', label: 'Option 2' }, { id: 3, value: 'option3', label: 'Option 3' }, { id: 4, value: 'option4', label: 'Option 4' }];
+    senapp.window.lookup({ options: { multiple: false, callback: 'lookupcallback', data: data } });
+  }
+
+  function showLookupModal1() {
+    const lookupfilter = {
+      url: '/module/lookup', fields: { id: '`${item.ModuleId}`', value: '`${item.Code}`', label: '`${item.Code}-${item.Description}`' },
+      //filter: { logic: "and", conditions: [{ field: "Description", op: "includes", value: '' }] }
+      filter: { logic: "and", conditions: [{ field: "searchTerm", op: "includes", value: '' }] }
+    };
+    senapp.window.lookup({ options: { multiple: true, callback: 'lookupcallback', lookup: lookupfilter } });
+  }
+
+  function showLookupModal() {
+    const lookupfilter = { url: '/senobject/lookup', fields: { id: '`${item.Id}`', value: '`${item.String}`', label: '`${item.Id}-${item.String}`' }, filter: { logic: "and", conditions: [{ field: "String", op: "includes", value: '' }] } };
+    const data = [{ id: 1, value: 'option1', label: 'Option 1' }, { id: 2, value: 'option2', label: 'Option 2' }, { id: 3, value: 'option3', label: 'Option 3' }, { id: 4, value: 'option4', label: 'Option 4' }];
+    senapp.window.lookup({ options: { multiple: true, callback: 'lookupcallback', lookup: lookupfilter } });
+  }
+
+  function lookup({ options } = {}) {
+    // Tạo một modal với nội dung có sẵn
+    // Nội dung này có thể là HTML hoặc cấu trúc DOM
+    // Ví dụ: tạo một select với các tùy chọn
+    //#region initialization
+    const defaults = {
+      title: '',//'Lookup Modal',
+      titleselect: '',//'Select an option from the list',
+      multiple: false, // Chỉ chọn một hay nhiều
+      lookup: null,// { url: '/senobject/lookup', fields: { id: '`${item.Id}`', value: '`${item.String}`', label: '`${item.Id}-${item.String}`' }, filter: { logic: "and", conditions: [{ field: "String", op: "includes", value: '' }] } },
+      data: [],//[{id:1,value:'option1',label:'Option 1'},{id:2,value:'option2',label:'Option 2'},{id:3,value:'option3',label:'Option 3'},{id:4,value:'option4',label:'Option 4'}]
+    };
+    Object.assign(defaults, options);
+
+    // 1) Tạo select + container
+    const select = document.createElement('select');
+    select.className = 'form-select';
+    select.multiple = defaults.multiple;
+    select.innerHTML = `${defaults.data.map(item => `<option value="${item.id}">${item.label}</option>`).join('')} `;
+
+    //tạo container là cấu trúc card bootstrap
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+    <div class="card-header">
+      <h5 class="card-title mb-0">${defaults.title}</h5>
+    </div>
+    <div class="card-body">
+      <p class="card-text">${defaults.titleselect}</p>
+    </div>
+    <div class="card-footer">
+    </div>
+  `;
+    //tạo 2 nut accept và cancel thêm sự kiện cho chúng không dùng id
+    const acceptBtn = document.createElement('button');
+    acceptBtn.className = 'btn btn-subtle-primary me-1';
+    acceptBtn.innerText = 'Accept';
+    const cancelBtn = document.createElement('button');
+    cancelBtn.className = 'btn btn-subtle-secondary';
+    cancelBtn.innerText = 'Cancel';
+
+    //tạo thêm 2 button accept và cancel gán vào card-footer
+    const cardFooter = card.querySelector('.card-footer');
+    cardFooter.appendChild(acceptBtn);
+    cardFooter.appendChild(cancelBtn);
+    card.appendChild(cardFooter);
+    //cancel-btn là đóng modal
+    cancelBtn.addEventListener('click', () => {
+      //đóng modal nếu có
+      const modal = card.closest('.modal');
+      if (modal) {
+        const bootstrapModal = bootstrap.Modal.getInstance(modal);
+        bootstrapModal.hide();
+      }
+    });
+
+    //accept-btn là xác nhận và lấy giá trị
+    acceptBtn.addEventListener('click', () => {
+      const selectedValues = Array.from(select.selectedOptions).map(option => option.value);
+      //console.log('Selected values:', selectedValues);
+      // Đóng modal nếu có
+      const modal = card.closest('.modal');
+      if (modal) {
+        const bootstrapModal = bootstrap.Modal.getInstance(modal);
+        bootstrapModal.hide();
+      }
+      //nếu có callback thì gọi callback
+      if (options.callback) {
+        senapp.utils.executefunctionbyname(options.callback, window, selectedValues);
+      }
+    });
+
+    //append select vào card body
+    const cardBody = card.querySelector('.card-body');
+    cardBody.appendChild(select);
+
+    senapp.window.modal({ contentel: card });
+
+    // 4) Khởi tạo Choices *sau* khi select đã ở trong DOM
+    const choices = senapp.utils.lookup(select, { searchChoices: !(defaults.lookup) });// new Choices(select,{});
+
+
+
+    // // lắng nghe thay đổi: lắng vào chính select là ok
+    // select.addEventListener('change', (e) => {
+    //   console.log('Selected value:', select.value);
+    // });
+
+    //focus vào trường đầu tiên
+    // Đợi Choices render xong rồi focus
+    setTimeout(() => {
+      const firstInput = card.querySelector('.choices');
+      if (firstInput) {
+        //console.log('Focus vào trường đầu tiên:', firstInput);
+        //focus vào trường đầu tiên
+        //nếu nằm trong modal thì focus vào trường đầu tiên
+
+        //nếu select có multiple thì 
+        if (defaults.multiple) {
+          //nếu là multiple thì focus vào trường đầu tiên của select
+          const input = firstInput.querySelector('input.choices__input');
+          if (input) {
+            //console.log('Focus vào trường đầu tiên:', input);
+            if (card.closest('.modal')) {
+              $(card).closest('.modal').off('shown.bs.modal').on('shown.bs.modal', function () {
+                input.focus();
+              });
+            } else  //nếu không nằm trong modal thì focus vào trường đầu tiên
+              input.focus();
+          }
+        } else {
+          if (card.closest('.modal')) {
+            $(card).closest('.modal').off('shown.bs.modal').on('shown.bs.modal', function () {
+              firstInput.focus();
+            });
+          } else  //nếu không nằm trong modal thì focus vào trường đầu tiên
+            firstInput.focus();
+        }
+      }
+    }, 0);
+
+
+    const lookup = defaults.lookup;
+    if (lookup) {
+      select.addEventListener('search', async function (e) {
+        const keyword = e.detail.value;
+        if (!keyword.endsWith(' ')) return;
+        const trimmed = keyword.trim();
+        lookup.filter.conditions[0].value = trimmed;
+        try {
+          const res = await fetch(`${lookup.url}?pagesize=${lookup.pagesize || 0}&filter=${JSON.stringify(lookup.filter)}`);
+          lookup.data = [];
+          if (res.ok) {
+            const data = await res.json();
+            lookup.data = data.datas.map(item => ({ id: eval(lookup.fields.id), value: eval(lookup.fields.value), label: eval(lookup.fields.label) }));
+          }
+        } catch (err) { console.error('Lỗi khi gọi API:', err); }
+        choices.setChoices(lookup.data, 'id', 'label', true);
+      });
+    }
+  }
+
+
+  function showLookupModal2() {
+    // 1) Tạo select + container
+    const select = document.createElement('select');
+    select.className = 'form-select';
+    select.innerHTML = `
+    <option value="">Select an option</option>
+    <option value="option1">Option 1</option>
+    <option value="option2">Option 2</option>
+    <option value="option3">Option 3</option>
+    <option value="option4">Option 4</option>
+  `;
+
+    const container = document.createElement('div');
+    container.className = 'mb-3';
+    // tùy bạn muốn label hay ko
+    const label = document.createElement('label');
+    label.textContent = 'Chọn một tùy chọn:';
+    container.appendChild(label);
+    container.appendChild(select);
+
+    // 2) Tạo cấu trúc modal bootstrap (dialog -> content -> header/body/footer)
+    const modal = document.createElement('div');
+    modal.className = 'modal fade';
+    modal.tabIndex = -1;
+    modal.setAttribute('role', 'dialog');
+
+    const modalDialog = document.createElement('div');
+    modalDialog.className = 'modal-dialog';
+
+    const modalContent = document.createElement('div');
+    modalContent.className = 'modal-content';
+
+    // header
+    const modalHeader = document.createElement('div');
+    modalHeader.className = 'modal-header';
+    const title = document.createElement('h5');
+    title.className = 'modal-title';
+    title.textContent = 'Lookup Modal';
+    const btnClose = document.createElement('button');
+    btnClose.type = 'button';
+    btnClose.className = 'btn-close';
+    btnClose.setAttribute('data-bs-dismiss', 'modal');
+    btnClose.setAttribute('aria-label', 'Close');
+    modalHeader.appendChild(title);
+    modalHeader.appendChild(btnClose);
+
+    // body
+    const modalBody = document.createElement('div');
+    modalBody.className = 'modal-body';
+    const p = document.createElement('p');
+    p.textContent = 'Chọn một tùy chọn từ danh sách:';
+    modalBody.appendChild(p);
+    modalBody.appendChild(container); // <-- an toàn: container là Node
+
+    // footer
+    const modalFooter = document.createElement('div');
+    modalFooter.className = 'modal-footer';
+    const btnDismiss = document.createElement('button');
+    btnDismiss.type = 'button';
+    btnDismiss.className = 'btn btn-secondary';
+    btnDismiss.setAttribute('data-bs-dismiss', 'modal');
+    btnDismiss.textContent = 'Đóng';
+
+    const btnChoose = document.createElement('button');
+    btnChoose.type = 'button';
+    btnChoose.className = 'btn btn-primary';
+    btnChoose.textContent = 'Chọn';
+    btnChoose.addEventListener('click', function () {
+      // Ví dụ submitLookup lấy giá trị select hiện tại
+      const val = select.value;
+      console.log('Chọn:', val);
+      if (typeof submitLookup === 'function') submitLookup(val);
+      bsModal.hide();
+    });
+
+    modalFooter.appendChild(btnDismiss);
+    modalFooter.appendChild(btnChoose);
+
+    // ghép lại
+    modalContent.appendChild(modalHeader);
+    modalContent.appendChild(modalBody);
+    modalContent.appendChild(modalFooter);
+    modalDialog.appendChild(modalContent);
+    modal.appendChild(modalDialog);
+    document.body.appendChild(modal);
+
+    // 3) Khởi tạo Bootstrap Modal
+    const bsModal = new bootstrap.Modal(modal);
+    bsModal.show();
+
+    // 4) Khởi tạo Choices *sau* khi select đã ở trong DOM
+    const choices = new Choices(select, {
+      removeItemButton: true,
+      searchEnabled: true,
+      placeholder: true,
+      placeholderValue: 'Select an option...'
+    });
+
+    // lắng nghe thay đổi: lắng vào chính select là ok
+    select.addEventListener('change', (e) => {
+      console.log('Selected value:', select.value);
+    });
+
+    // 5) Clean up khi modal đóng: xóa element và destroy choices
+    modal.addEventListener('hidden.bs.modal', () => {
+      try { choices.destroy(); } catch (e) { /* ignore */ }
+      modal.remove();
+    }, { once: true });
+  }
+
+</script>
+
+<!-- lookup -->
+<div class="row">
+  <div class="col-12">
+    <div class="container">
+      <h3 class="mb-4">🌍 Tìm kiếm quốc gia (Remote Lookup)</h3>
+
+      <div class="mb-3">
+        <label for="country-select" class="form-label">Chọn quốc gia</label>
+        <select id="country-select" class="form-select" placeholder="Nhập tên quốc gia..." multiple>
+          <!-- <option value="VN" selected="">Vietnam</option> -->
+        </select>
+      </div>
+
+      <div id="selected-country" class="alert alert-info d-none"></div>
+    </div>
+  </div>
+
+  <div class="col-12">
+    <div class="mb-0">
+      <select id="lookup-select-via-async" class="form-select">
+        <option value="VN">Vietnam</option>
+      </select>
+      <div class="invalid-feedback">Please select one wait async</div>
+    </div>
+  </div>
+
+  <div class="col-12">
+    <div class="mb-0">
+      <select id="lookup-select-via-multi-async" class="form-select" multiple>
+      </select>
+      <div class="invalid-feedback">Please select one or multiple wait async</div>
+    </div>
+  </div>
+
+
+  <div class="col-12">
+    <div class="mb-0">
+      <select id="lookup-select" class="form-select" data-choices="data-choices" placeholder="Press space to search">
+        <!-- <option value="">Select an option</option> -->
+        <option value="option1">Option 1</option>
+        <option value="option2">Option 2</option>
+        <option value="option3">Option 3</option>
+        <option value="option4">Option 4</option>
+      </select>
+      <div class="invalid-feedback">Please select one</div>
+    </div>
+  </div>
+
+
+  <div class="col-12">
+    <div class="mb-0">
+      <select id="lookup-select-via" class="form-select" data-choices="data-choices">
+      </select>
+      <div class="invalid-feedback">Please select one</div>
+    </div>
+  </div>
+
+  <div class="col-12">
+    <div class="mb-0">
+      <select id="lookup-select-via-multi" class="form-select" data-choices="data-choices" multiple>
+        <option value="VN" selected="">Vietnam</option>
+        <option value="VN" selected="">Vietnam</option>
+        <option value="VN" selected="">Vietnam</option>
+      </select>
+      <div class="invalid-feedback">Please select one or multiple</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+
+  var selectElement = document.getElementById('country-select');
+  var displayDiv = document.getElementById('selected-country');
+
+  var choices = new Choices(selectElement, {
+    removeItemButton: true,
+    searchEnabled: true,
+    searchChoices: false, // Tắt lọc nội bộ, dùng API remote
+    placeholder: true,
+    placeholderValue: 'Nhập tên quốc gia...'
+  }
+  );
+  console.log('Choices initialized:', choices);
+
+  // Đợi Choices render xong rồi focus
+  setTimeout(() => {
+    const firstSelect = document.getElementById('country-select').closest('.choices');
+    if (firstSelect) {
+      //console.log('Focus on first select');
+      document.getElementById('country-select').focus();
+      const input = firstSelect.querySelector('input');
+      input.focus();
+      //firstSelect.focus();
+
+    }
+  }, 0);
+
+
+  async function fetchCountries(keyword = '') {
+    if (!keyword) return [];
+
+    try {
+      const res = await fetch(`https://restcountries.com/v3.1/name/${encodeURIComponent(keyword)}`);
+      if (!res.ok) return [];
+
+      const data = await res.json();
+      return data.map(country => ({
+        value: country.cca2,
+        label: country.name.common
+      }));
+    } catch (err) {
+      console.error('Lỗi khi gọi API:', err);
+      return [];
+    }
+  }
+
+  var debounceTimer;
+  // selectElement.addEventListener('search', function(e) {
+  //   const keyword = e.detail.value;
+  //   clearTimeout(debounceTimer);
+  //   debounceTimer = setTimeout(async () => {
+  //     const options = await fetchCountries(keyword);
+  //     choices.setChoices(options, 'value', 'label', true);
+  //   }, 400); // debounce 400ms
+  // });
+
+  //khi gõ phím space thì sẽ gọi API để tìm kiếm
+  selectElement.addEventListener('search', function (e) {
+    const keyword = e.detail.value;
+
+    // Kiểm tra nếu vừa gõ phím space (có khoảng trắng)
+    if (!keyword.endsWith(' ')) return;
+
+    const trimmed = keyword.trim();
+    if (!trimmed) return;
+
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(async () => {
+      const options = await fetchCountries(trimmed);
+      choices.setChoices(options, 'value', 'label', true);
+    }, 300);
+  });
+
+  // Hiển thị quốc gia đã chọn
+  selectElement.addEventListener('change', function (e) {
+    const selected = choices.getValue(true); // lấy value
+    const label = choices.getValue(true, 'label'); // lấy label
+    displayDiv.classList.remove('d-none');
+    displayDiv.innerHTML = `🇺🇳 Mã quốc gia: <strong>${selected}</strong> - Tên: <strong>${label}</strong>`;
+  });
+
+
+</script>
+
+<script>
+
+
+  var senobjectlookupViaAsync = { url: '/senobject/list', data: [], pagesize: 0, filter: { "logic": "and", "conditions": [{ "field": "Boolean", "op": "==", "value": true }, { "field": "String", "op": "includes", "value": '' }] } };
+  var selectElementViaAsync = document.getElementById('lookup-select-via-async');
+  var choicesViaAsync = new Choices(selectElementViaAsync, {
+    removeItemButton: true,
+    searchEnabled: true,
+    searchChoices: false, // Tắt lọc nội bộ, dùng API remote
+    placeholder: true,
+    placeholderValue: 'Input Object String...'
+  });
+
+  async function fetchViaAsync(keyword = '') {
+    //if (!keyword) return [];
+    senobjectlookupViaAsync.filter.conditions[1].value = keyword; // Cập nhật điều kiện lọc
+    try {
+      const res = await fetch(`${senobjectlookupViaAsync.url}?pagesize=${senobjectlookupViaAsync.pagesize}&filter=${JSON.stringify(senobjectlookupViaAsync.filter)}`);
+      console.log('fetchViaAsync', res);
+      if (!res.ok) return [];
+      const data = await res.json();
+      return data.datas.map(item => ({
+        value: item.Id,
+        label: item.String
+      }));
+    } catch (err) {
+      console.error('Lỗi khi gọi API:', err);
+      return [];
+    }
+  }
+
+  var debounceTimerViaAsync;
+  //khi gõ phím space thì sẽ gọi API để tìm kiếm
+  selectElementViaAsync.addEventListener('search', function (e) {
+    const keyword = e.detail.value;
+    // Kiểm tra nếu vừa gõ phím space (có khoảng trắng)
+    if (!keyword.endsWith(' ')) return;
+    const trimmed = keyword.trim();
+    //if (!trimmed) return;//khoảng trắng không cần thiết (nếu cần thì mở dòng này)
+
+    clearTimeout(debounceTimerViaAsync);
+    debounceTimerViaAsync = setTimeout(async () => {
+      const options = await fetchViaAsync(trimmed);
+      choicesViaAsync.setChoices(options, 'value', 'label', true);
+    }, 300);
+  });
+
+  // Hiển thị quốc gia đã chọn
+  selectElementViaAsync.addEventListener('change', function (e) {
+    const selected = choicesViaAsync.getValue(true); // lấy value
+    const label = choicesViaAsync.getValue(true, 'label'); // lấy label
+    console.log(`value: ${selected} - label: ${label}`);
+
+  });
+
+
+</script>
+
+<script>
+
+  // lookup load trước data
+
+  var senobjectlookup = { url: '/senobject/list', data: [], pagesize: 0, filter: { "logic": "and", "conditions": [{ "field": "Boolean", "op": "==", "value": true }] } };
+  senobjectlookup.init = function () {
+    //fetch data for lookup
+    fetch(`${senobjectlookup.url}?pagesize=${senobjectlookup.pagesize}&filter=${JSON.stringify(senobjectlookup.filter)}`)
+      .then(response => response.json())
+      .then(data => {
+        senobjectlookup.data = data.datas;
+        const select = document.getElementById("lookup-select");
+        const selectVia = document.getElementById("lookup-select-via");
+
+        // Populate the first select
+        senobjectlookup.data.forEach(item => {
+          const option = document.createElement("option");
+          option.value = item.Id; // Assuming Id is the unique identifier
+          option.textContent = item.String; // Assuming String is the display value
+          select.appendChild(option);
+        });
+
+        // Populate the second select (via)
+        senobjectlookup.data.forEach(item => {
+          const optionVia = document.createElement("option");
+          optionVia.value = item.Id; // Assuming Id is the unique identifier
+          optionVia.textContent = item.String; // Assuming String is the display value
+          selectVia.appendChild(optionVia);
+        });
+      })
+      .catch(error => console.error('Error fetching lookup data:', error));
+  };
+
+  senobjectlookup.initwithchoices = async function () {
+    //fetch data for lookup
+    await fetch(`${senobjectlookup.url}?pagesize=${senobjectlookup.pagesize}&filter=${JSON.stringify(senobjectlookup.filter)}`)
+      .then(response => response.json())
+      .then(data => {
+        senobjectlookup.data = data.datas;
+
+        const selectVia = document.getElementById("lookup-select-via");
+        // Populate the second select (via)
+        senobjectlookup.data.forEach(item => {
+          const optionVia = document.createElement("option");
+          optionVia.value = item.Id; // Assuming Id is the unique identifier
+          optionVia.textContent = item.String; // Assuming String is the display value
+          selectVia.appendChild(optionVia);
+
+        });
+
+
+        // Initialize Choices.js for the second select
+        const choicesVia = new Choices(selectVia, {
+          searchEnabled: true,
+          removeItemButton: true
+        });
+
+        const selectViaMulti = document.getElementById("lookup-select-via-multi");
+        senobjectlookup.data.forEach(item => {
+          const optionVia = document.createElement("option");
+          optionVia.value = item.Id; // Assuming Id is the unique identifier
+          optionVia.textContent = item.String; // Assuming String is the display value
+          selectViaMulti.appendChild(optionVia);
+
+        });
+
+
+        // Initialize Choices.js for the second select
+        const choicesViaMulti = new Choices(selectViaMulti, {
+          searchEnabled: true,
+          removeItemButton: true
+        });
+
+
+        const select = document.getElementById("lookup-select");
+        // Initialize Choices.js for the first select
+        const choices = new Choices(select, {
+          searchEnabled: true,
+          removeItemButton: true
+        });
+
+      })
+      .catch(error => console.error('Error fetching lookup data:', error));
+  };
+
+
+  senobjectlookup.initwithchoices();
+
+
+  //lookup
+  document.getElementById("lookup-select").addEventListener("change", function () {
+    var selectedValue = this.value;
+    // Thực hiện tìm kiếm hoặc lọc dữ liệu dựa trên giá trị đã chọn
+    console.log("Selected value:", selectedValue);
+  });
+
+  //lookup via
+  document.getElementById("lookup-select-via").addEventListener("change", function () {
+    var selectedValue = this.value;
+    // Thực hiện tìm kiếm hoặc lọc dữ liệu dựa trên giá trị đã chọn
+    console.log("Selected value via:", selectedValue);
+  });
+
+  //lookup via multi
+  document.getElementById("lookup-select-via-multi").addEventListener("change", function () {
+    var selectedValues = Array.from(this.selectedOptions).map(option => option.value);
+    // Thực hiện tìm kiếm hoặc lọc dữ liệu dựa trên các giá trị đã chọn
+    console.log("Selected values via multi:", selectedValues);
+  });
+
+
+</script>
+
+</script>
+
+<!-- Nội dung chính -->
+<div class="container mt-5">
+  <h1 class="text-center">Bootstrap Toast Demo</h1>
+  <div class="d-flex justify-content-center gap-3 mt-4">
+
+
+    <button class="btn btn-primary"
+      onclick="senapp.window.toast({message: 'Đây là một thông báo thành công!', type: 'success', duration: 500})">Hiển
+      thị Toast
+      Thành công</button>
+    <button class="btn btn-success" onclick="showBootstrapToast('Thao tác thành công!', 'success', 500)">Hiển thị Toast
+      Thành công</button>
+    <button class="btn btn-danger" onclick="showBootstrapToast('Đã có lỗi xảy ra!', 'danger', 1000)">Hiển thị Toast
+      Lỗi</button>
+    <button class="btn btn-warning"
+      onclick="showBootstrapToast('Cảnh báo: Kiểm tra lại dữ liệu!', 'warning', 1000)">Hiển thị Toast Cảnh báo</button>
+  </div>
+</div>
+
+<button class="btn btn-primary" onclick="showToast('Đây là một thông báo từ hàm showToast')">Hiển thị toast</button>
+<button class="btn btn-primary" onclick="senapp.window.modal({'url': '/senobject/create'})">Hiển thị modal từ
+  URL</button>
+<button class="btn btn-primary" onclick="showDialogWithUrl('Thông báo từ URL', '/senobject/create')">Hiển thị thông báo
+  từ URL</button>
+
+<button class="btn btn-primary"
+  onclick="showDialogMove('Thông báo có thể kéo thả', 'Đây là một thông báo có thể kéo thả bằng chuột')">Hiển thị thông
+  báo có thể kéo thả</button>
+<button class="btn btn-primary" onclick="showDialog('Thông báo', 'Đây là một thông báo từ hàm showDialog')">Hiển thị
+  thông báo</button>
+
+
+
+<h2>Upload nhiều file</h2>
+<form method="POST" action="/file/upload" enctype="multipart/form-data">
+  <input type="file" name="files" multiple />
+  <button type="submit">Upload</button>
+</form>
+
+<h2>Upload nhiều file hình ảnh</h2>
+<form method="POST" action="/file/upload" enctype="multipart/form-data">
+  <input type="file" name="files" multiple accept="image/*" />
+  <button type="submit">Upload</button>
+</form>
+
+<h2>Upload nhiều hình ảnh bằng AJAX</h2>
+<form id="uploadForm">
+  <input type="file" name="files" id="files" multiple accept="image/*">
+  <button type="submit">Upload</button>
+</form>
+
+<div id="result"></div>
+
+<script>
+  var form = document.getElementById("uploadForm");
+  var filesInput = document.getElementById("files");
+  var resultDiv = document.getElementById("result");
+
+  form.addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const formData = new FormData();
+    const files = filesInput.files;
+
+    for (let i = 0; i < files.length; i++) {
+      formData.append("files", files[i]); // tên "files" phải giống server multer.array("files")
+    }
+
+    try {
+      const response = await fetch("/file/upload", {
+        method: "POST",
+        body: formData
+      });
+
+      const result = await response.text();
+      //resultDiv.innerHTML = `<pre>${result}</pre>`;
+    } catch (error) {
+      resultDiv.innerText = "Lỗi upload: " + error;
+    }
+  });
+
+  //hàm showdialog bootstrap
+  // Hàm hiển thị Bootstrap modal và tự xóa sau khi đóng
+  function showDialogMove1(title, message) {
+    // Tạo modal Bootstrap
+    const dialog = document.createElement('div');
+    dialog.className = 'modal fade';
+    dialog.innerHTML = `
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header" style="cursor: move;">
+            <h5 class="modal-title">${title}</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p>${message}</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(dialog);
+
+    const modal = new bootstrap.Modal(dialog);
+    modal.show();
+
+    dialog.addEventListener('hidden.bs.modal', () => {
+      dialog.remove();
+    });
+
+    // Kéo thả dialog bằng chuột
+    const modalDialog = dialog.querySelector('.modal-dialog');
+    const header = dialog.querySelector('.modal-header');
+    let isDragging = false, startX = 0, startY = 0, origX = 0, origY = 0;
+
+    header.addEventListener('mousedown', function (e) {
+      isDragging = true;
+      startX = e.clientX;
+      startY = e.clientY;
+      // Lấy vị trí hiện tại của modal-dialog
+      const rect = modalDialog.getBoundingClientRect();
+      origX = rect.left;
+      origY = rect.top;
+      document.body.style.userSelect = 'none';
+    });
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+
+    function onMouseMove(e) {
+      if (!isDragging) return;
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+      modalDialog.style.position = 'fixed';
+      modalDialog.style.margin = '0';
+      modalDialog.style.left = (origX + dx) + 'px';
+      modalDialog.style.top = (origY + dy) + 'px';
+      modalDialog.style.zIndex = 1060;
+    }
+
+    function onMouseUp() {
+      if (isDragging) {
+        isDragging = false;
+        document.body.style.userSelect = '';
+      }
+    }
+  }
+
+  function showDialog(title, message) {
+    const dialog = document.createElement('div');
+    dialog.className = 'modal fade';
+    dialog.innerHTML = `
+    <div class="modal-dialog" style="position: fixed; top: 20%; left: 50%; transform: translate(-50%, -20%); z-index: 1055;">
+      <div class="modal-content">
+        <div class="modal-header" style="cursor: move;">
+          <h5 class="modal-title">${title}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>${message}</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+        </div>
+      </div>
+    </div>
+  `;
+
+    document.body.appendChild(dialog);
+
+    const modal = new bootstrap.Modal(dialog);
+    modal.show();
+
+    dialog.addEventListener('hidden.bs.modal', () => {
+      dialog.remove();
+    });
+
+    // === Kéo thả phần header ===
+    const header = dialog.querySelector('.modal-header');
+    const modalDialog = dialog.querySelector('.modal-dialog');
+    let isDragging = false;
+    let offsetX = 0;
+    let offsetY = 0;
+
+    header.addEventListener('mousedown', function (e) {
+      isDragging = true;
+      const rect = modalDialog.getBoundingClientRect();
+      offsetX = e.clientX - rect.left;
+      offsetY = e.clientY - rect.top;
+      document.body.style.userSelect = 'none';
+    });
+
+    document.addEventListener('mousemove', function (e) {
+      if (isDragging) {
+        modalDialog.style.left = `${e.clientX - offsetX}px`;
+        modalDialog.style.top = `${e.clientY - offsetY}px`;
+        modalDialog.style.transform = `none`;
+      }
+    });
+
+    document.addEventListener('mouseup', function () {
+      isDragging = false;
+      document.body.style.userSelect = '';
+    });
+  }
+
+
+  function showDialogMove2(title, message) {
+    const dialog = document.createElement('div');
+    dialog.className = 'modal fade';
+    dialog.innerHTML = `
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">${title}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>${message}</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+        </div>
+      </div>
+    </div>
+  `;
+
+    document.body.appendChild(dialog);
+    const modalInstance = new bootstrap.Modal(dialog);
+    modalInstance.show();
+
+    dialog.addEventListener('hidden.bs.modal', () => dialog.remove());
+
+    // === Kéo thả modal bằng JavaScript thuần ===
+    const modalDialog = dialog.querySelector('.modal-dialog');
+    const modalHeader = dialog.querySelector('.modal-header');
+
+    // Set style trực tiếp bằng JS (không dùng CSS ngoài)
+    modalDialog.style.position = 'fixed';
+    modalDialog.style.top = '20%';
+    modalDialog.style.left = '50%';
+    modalDialog.style.transform = 'translate(-50%, -20%)';
+    modalHeader.style.cursor = 'move';
+
+    let isDragging = false;
+    let startX = 0, startY = 0;
+    let startLeft = 0, startTop = 0;
+
+    modalHeader.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      const rect = modalDialog.getBoundingClientRect();
+      startX = e.clientX;
+      startY = e.clientY;
+      startLeft = rect.left;
+      startTop = rect.top;
+
+      // Gỡ transform để xử lý left/top thủ công
+      modalDialog.style.transform = 'none';
+
+      document.body.style.userSelect = 'none'; // Tránh bôi đen chữ
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+      modalDialog.style.left = `${startLeft + dx}px`;
+      modalDialog.style.top = `${startTop + dy}px`;
+    });
+
+    document.addEventListener('mouseup', () => {
+      isDragging = false;
+      document.body.style.userSelect = '';
+    });
+  }
+
+  function showDialogMove(title, message) {
+    const dialog = $(`
+        <div class="modal fade">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">${title}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <p>${message}</p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `);
+
+    // Thêm vào DOM
+    $('body').append(dialog);
+
+    // Kích hoạt Bootstrap modal
+    const modal = new bootstrap.Modal(dialog[0]);
+    modal.show();
+
+    // Xóa khi đóng
+    dialog.on('hidden.bs.modal', function () {
+      dialog.remove();
+    });
+
+    // Kéo được modal bằng jQuery UI
+    dialog.find('.modal-dialog').draggable({
+      handle: ".modal-header"
+    });
+
+
+  }
+
+  // Hàm hiển thị Bootstrap modal và tự xóa sau khi đóng with url dùng $.load
+  function showDialogWithUrl(title, url) {
+    const dialog = document.createElement('div');
+    dialog.className = 'modal fade';
+    dialog.innerHTML = `
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">${title}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div id="modalContent">Loading...</div>
+        </div>
+      </div>
+    </div>
+  `;
+
+
+
+
+    // //load url vào modal-content
+    // fetch(url)
+    //   .then(response => response.text())
+    //   .then(html => {
+    //     document.getElementById('modalContent').innerHTML = html;
+    //   })
+    //   .catch(error => {
+    //     document.getElementById('modalContent').innerHTML = "Lỗi tải nội dung: " + error;
+    //   });
+
+    // Thêm modal vào body
+    document.body.appendChild(dialog);
+
+    //load url vào modal-content bằng $.load
+    $('#modalContent').load(url, function (response, status, xhr) {
+      if (status === "error") {
+        document.getElementById('modalContent').innerHTML = "Lỗi tải nội dung: " + xhr.status + " " + xhr.statusText;
+      }
+    });
+
+
+    // Tạo modal Bootstrap instance và show
+    const modal = new bootstrap.Modal(dialog);
+    modal.show();
+
+    // Khi modal đóng thì xoá khỏi DOM
+    dialog.addEventListener('hidden.bs.modal', () => {
+      dialog.remove();
+    });
+  }
+
+  // Hàm hiển thị toast thông báo bằng Bootstrap hiển thị trung tâm từ dưới lên có thời gian tự động tắt 5 giây
+  function showToast(message) {
+
+    // Đóng tất cả toast đang hiển thị
+
+    const toasts = document.querySelectorAll('.toast');
+    toasts.forEach(toastElement => {
+      //remove class show
+      toastElement.classList.remove('show');
+    });
+
+    // Tạo toast container nếu chưa có
+    let toastContainer = document.querySelector('.toast-container');
+    if (!toastContainer) {
+      toastContainer = document.createElement('div');
+      //toastContainer.className = 'toast-container position-fixed top-50 start-50 translate-middle';
+      toastContainer.className = 'toast-container position-fixed bottom-0 start-50 translate-middle-x p-3';
+
+      toastContainer.style.zIndex = '9999';
+      document.body.appendChild(toastContainer);
+    }
+
+    const toast = document.createElement('div');
+    toast.className = 'toast align-items-center text-white bg-primary border-0';
+    toast.setAttribute('role', 'alert');
+    toast.setAttribute('aria-live', 'assertive');
+    toast.setAttribute('aria-atomic', 'true');
+    toast.innerHTML = `
+    <div class="d-flex">
+      <div class="toast-body">
+        ${message}
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+  `;
+
+    toastContainer.appendChild(toast);
+
+    const bsToast = new bootstrap.Toast(toast, { delay: 500 });
+    bsToast.show();
+
+    // Tự động xoá sau khi tắt
+    toast.addEventListener('hidden.bs.toast', () => {
+      toast.remove();
+      // Xoá container nếu không còn toast nào
+      if (toastContainer.children.length === 0) {
+        toastContainer.remove();
+      }
+    });
+  }
+
+  function showBootstrapToast(message, type = 'success', duration = 3000) {
+
+    // Đóng tất cả toast đang hiển thị
+
+    const toasts = document.querySelectorAll('.toast');
+    toasts.forEach(toastElement => {
+      //remove class show
+      toastElement.classList.remove('show');
+    });
+
+
+    // Tạo toast container nếu chưa có
+    let toastContainer = document.querySelector('.toast-container');
+    if (!toastContainer) {
+      toastContainer = document.createElement('div');
+      toastContainer.className = 'toast-container position-fixed bottom-0 start-50 translate-middle-x p-3';
+      document.body.appendChild(toastContainer);
+    }
+
+    // Tạo toast element
+    const toastId = 'toast-' + Date.now();
+    const toastHtml = `
+                <div id="${toastId}" class="toast align-items-center text-white bg-${type} border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            ${message}
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                </div>
+            `;
+
+    // Thêm toast vào container
+    toastContainer.innerHTML += toastHtml;
+
+    // Khởi tạo và hiển thị toast
+    const toastElement = document.getElementById(toastId);
+    const toast = new bootstrap.Toast(toastElement, {
+      animation: true,
+      autohide: true,
+      delay: duration
+    });
+
+    // Thêm animation CSS
+    const style = document.createElement('style');
+    style.innerHTML = `
+                .toast-container {
+                    z-index: 1055;
+                }
+                .toast {
+                    opacity: 0;
+                    transform: translateY(100px);
+                    transition: all 0.5s ease;
+                }
+                .toast.show {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            `;
+    document.head.appendChild(style);
+
+    // Hiển thị toast
+    toast.show();
+
+    // Xóa toast khỏi DOM sau khi ẩn
+    toastElement.addEventListener('hidden.bs.toast', () => {
+      toastElement.remove();
+    });
+  }
+
+
+
+</script>

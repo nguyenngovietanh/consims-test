@@ -1,0 +1,98 @@
+<div id="signfile-section" class="" style="margin: 0 auto;">
+    <form id="signfile-form">
+
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">
+                    <%= title||'Confirm' %>
+                </h4>
+            </div>
+            <div class="card-body">
+                <!-- Thông báo tổng -->
+                <div class="message-all callout d-none" member="alert"></div>
+                <div class="row">
+                    <div class="col-md-12 mb-2">
+                        <!-- <label for="signfile-FullName" class="control-label" field-name="FullName">Full Name:</label> -->
+                        <input type="text" id="signfile-Remark" name="Remark" class="form-control"
+                            placeholder="type your remarks here...">
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-check">
+                            <input class="form-check-input" id="flexCheckChecked" type="checkbox" name="IsRead"
+                                onchange="signfileobject.read(this)" />
+                            <label class="form-check-label" for="flexCheckChecked">I have read file and confirmed my
+                                signature</label>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="card-footer">
+                <!-- <button type="submit" class="btn btn-subtle-primary">Save & Close</button> -->
+                <button type="button" class="btn btn-subtle-primary" onclick="signfileobject.saveclose()">Save &
+                    Close</button>
+                <button type="button" class="btn btn-subtle-secondary"
+                    onclick="signfileobject.form.cancel()">Cancel</button>
+            </div>
+        </div>
+    </form>
+
+    <script>
+        var signfileobject = {};
+        signfileobject.model = JSON.parse('<%- JSON.stringify(model) %>');
+        signfileobject.container = document.getElementById("signfile-section");//khu vực chứa form nghiệp vụ
+        console.log(signfileobject.model);
+        signfileobject.read = function (element) {
+            const checked = element.checked;
+            if (checked) {
+                this.container.querySelector('#signfile-Remark').value = 'I have read file and confirmed my signature';
+            } else {
+
+            }
+        };
+        signfileobject.saveclose = function () {
+            const formobject = this.form;
+            const modal = formobject.container.closest('.modal');
+            if (modal) {
+                const bootstrapModal = bootstrap.Modal.getInstance(modal);
+                bootstrapModal.hide();
+            }
+            else {
+                //nếu có offcanvas thì đóng offcanvas
+                const offcanvas = formobject.container.closest('.offcanvas');
+                if (offcanvas) {
+                    const bootstrapOffcanvas = bootstrap.Offcanvas.getInstance(offcanvas);
+                    bootstrapOffcanvas.hide();
+                }
+            }
+            //nếu có callback thì gọi callback
+            if (formobject.urldata.query.callback) {
+                const response = {
+                    status: 0,
+                    data: {
+                        IsRead: formobject.container.querySelector('input[name="IsRead"]').checked,
+                        Remark: formobject.container.querySelector('input[name="Remark"]').value,
+                        urldata: formobject.urldata
+                    }
+                };
+                senapp.utils.executefunctionbyname(formobject.urldata.query.callback, window, [response]);
+            }
+        };
+
+        // Khởi tạo bảng
+        signfileobject.form = new senapp.utils.form({
+            meta: [],
+            // data: signfileobject.model.data,
+            urldata: signfileobject.model.url,
+            container: signfileobject.container,
+            // mode: (signfileobject.model.url.path == '/member/edit') ? 'edit' : 'create',
+        });
+
+        $(function () {
+            signfileobject.form.initForm();
+        });
+
+    </script>
+
+</div>

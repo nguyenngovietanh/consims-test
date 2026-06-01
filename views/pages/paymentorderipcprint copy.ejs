@@ -1,0 +1,542 @@
+ <style>
+    :root{
+      --border:#000;
+      --grid:#000;
+      --text:#000;
+      --muted:#444;
+      --approved:#d40000;
+      --bg:#fff;
+    }
+    body{
+      margin:0;
+      padding:24px;
+      background:#f5f5f5;
+      font-family: Arial, Helvetica, sans-serif;
+      color:var(--text);
+    }
+    .sheet{
+      width: 860px;
+      max-width: 100%;
+      margin: 0 auto;
+      background: var(--bg);
+      border: 2px solid var(--border);
+      box-shadow: 0 2px 10px rgba(0,0,0,.08);
+    }
+    .row{
+      display:flex;
+      width:100%;
+    }
+    .cell{
+      border: 1px solid var(--grid);
+      padding: 6px 8px;
+      font-size: 12px;
+      line-height: 1.25;
+    }
+    .cell.tight{ padding:4px 6px; }
+    .cell.center{ text-align:center; }
+    .cell.right{ text-align:right; }
+    .cell.bold{ font-weight:700; }
+    .cell.muted{ color:var(--muted); }
+    .no-border{ border:none !important; }
+
+    /* Header top strip */
+    .logo{
+      width: 34%;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight:700;
+      font-size:16px;
+      padding:10px 12px;
+    }
+    .logo-badge{
+      width:28px; height:28px;
+      border:2px solid #1f4e79;
+      border-radius:50%;
+      position:relative;
+      box-sizing:border-box;
+    }
+    .logo-badge:before{
+      content:"";
+      position:absolute;
+      inset:6px;
+      border:2px solid #c00000;
+      border-left-color:transparent;
+      border-bottom-color:transparent;
+      border-radius:50%;
+      transform:rotate(45deg);
+    }
+    .meta{
+      width: 46%;
+      padding:0;
+    }
+    .meta .row .cell{
+      border-left:1px solid var(--grid);
+      border-right:1px solid var(--grid);
+    }
+    .status{
+      width: 20%;
+      padding:0;
+    }
+    .status .approved{
+      background: var(--approved);
+      color:#fff;
+      font-weight:700;
+      text-align:center;
+      padding:10px 8px;
+      border:1px solid var(--grid);
+      font-size:14px;
+    }
+
+    /* Title */
+    .title{
+      text-align:center;
+      font-weight:800;
+      padding:10px 8px;
+      border-top:1px solid var(--grid);
+      border-bottom:1px solid var(--grid);
+      font-size:14px;
+      letter-spacing:.2px;
+    }
+    .subtitle{
+      text-align:center;
+      font-weight:800;
+      padding:0 8px 10px;
+      margin-top:-6px;
+      font-size:13px;
+    }
+
+    /* Info grid */
+    table{
+      border-collapse:collapse;
+      width:100%;
+    }
+    .info td{
+      border:1px solid var(--grid);
+      padding:6px 8px;
+      font-size:12px;
+      vertical-align:top;
+    }
+    .info td.label{
+      width: 13%;
+      font-weight:700;
+    }
+    .info td.value{
+      width: 37%;
+    }
+    .info td.label2{
+      width: 13%;
+      font-weight:700;
+    }
+    .info td.value2{
+      width: 37%;
+    }
+
+    /* Main table */
+    .main th, .main td{
+      border:1px solid var(--grid);
+      padding:6px 8px;
+      font-size:12px;
+      vertical-align:top;
+    }
+    .main th{
+      font-weight:800;
+      text-align:center;
+    }
+    .main td.num{
+      width:56px;
+      text-align:center;
+      white-space:nowrap;
+    }
+    .main td.content{
+      width:auto;
+    }
+    .main td.amount{
+      width:210px;
+      text-align:right;
+      white-space:nowrap;
+      font-variant-numeric: tabular-nums;
+    }
+    .section{
+      font-weight:800;
+    }
+    .indent-1{ padding-left:18px !important; }
+    .indent-2{ padding-left:34px !important; }
+    .indent-3{ padding-left:50px !important; }
+
+    /* Footer approvals */
+    .footer-title{
+      font-weight:800;
+      padding:8px;
+      border-top:1px solid var(--grid);
+      border-bottom:1px solid var(--grid);
+      font-size:12px;
+    }
+    .approvals th, .approvals td{
+      border:1px solid var(--grid);
+      padding:6px 8px;
+      font-size:12px;
+      vertical-align:top;
+    }
+    .approvals th{
+      text-align:center;
+      font-weight:800;
+    }
+  </style>
+<div id="paymentorderipcprint-section" class="" style="margin: 0 auto;">
+  <form id="paymentorderipcprint-form">
+    <div class="card">
+      <div class="card-header">
+        <h4 class="mb-0">
+          Create IPC from Draft
+        </h4>
+      </div>
+      <div class="card-body">
+        <!-- Thông báo tổng -->
+        <div class="message-all callout d-none" role="alert"></div>
+        <div class="sheet">
+          <!-- Top header -->
+          <div class="row">
+            <div class="cell logo">
+              <span class="logo-badge" aria-hidden="true"></span>
+              <span>CENTRAL</span>
+            </div>
+
+            <div class="meta">
+              <div class="row">
+                <div class="cell tight" style="width:50%"><b>Hợp đồng:</b></div>
+                <div class="cell tight" style="width:50%"><b>HD Nhà Thầu Phụ Demo</b></div>
+              </div>
+              <div class="row">
+                <div class="cell tight" style="width:50%"><b>Ngày nhận:</b></div>
+                <div class="cell tight" style="width:50%"></div>
+              </div>
+              <div class="row">
+                <div class="cell tight" style="width:50%"><b>Số hạng toán:</b></div>
+                <div class="cell tight" style="width:50%"><b>Kỳ thanh toán:</b></div>
+              </div>
+            </div>
+
+            <div class="status">
+              <div class="approved">Approved</div>
+              <div class="cell center bold">TCC</div>
+            </div>
+          </div>
+
+          <!-- Title -->
+          <div class="title">THÔNG BÁO THANH TOÁN</div>
+          <div class="subtitle">(NCC/NTP)</div>
+
+          <!-- Info -->
+          <table class="info" aria-label="Thông tin chung">
+            <tr>
+              <td class="label">NCC/NTP:</td>
+              <td class="value">Nhà thầu Demo</td>
+              <td class="label2">Số HĐ:</td>
+              <td class="value2">PC275 08 11 - TEST-25.09/001</td>
+            </tr>
+            <tr>
+              <td class="label">Hạng mục:</td>
+              <td class="value">QA</td>
+              <td class="label2">Ngày ký:</td>
+              <td class="value2"></td>
+            </tr>
+          </table>
+
+          <!-- Main table -->
+          <table class="main" aria-label="Chi tiết thanh toán">
+            <thead>
+              <tr>
+                <th style="width:56px">No.</th>
+                <th>Nội dung</th>
+                <th style="width:210px">Giá trị (VNĐ)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="num section">A</td>
+                <td class="content section">GIÁ TRỊ HỢP ĐỒNG (BAO GỒM VAT)</td>
+                <td class="amount section">6,407,429,595</td>
+              </tr>
+              <tr>
+                <td class="num">1</td>
+                <td class="content">Giá trị hợp đồng ban đầu</td>
+                <td class="amount">6,407,429,595</td>
+              </tr>
+              <tr>
+                <td class="num">2</td>
+                <td class="content">Giá trị phát sinh</td>
+                <td class="amount"></td>
+              </tr>
+              <tr>
+                <td class="num">3</td>
+                <td class="content">Giá trị hợp đồng sau điều chỉnh</td>
+                <td class="amount"></td>
+              </tr>
+
+              <tr>
+                <td class="num section">B</td>
+                <td class="content section">GIÁ TRỊ THANH TOÁN</td>
+                <td class="amount section"></td>
+              </tr>
+
+              <tr>
+                <td class="num section">B.1</td>
+                <td class="content section">Tổng đợt</td>
+                <td class="amount section">600,523,707,782</td>
+              </tr>
+
+              <tr>
+                <td class="num">1</td>
+                <td class="content">Thực hiện</td>
+                <td class="amount"></td>
+              </tr>
+              <tr>
+                <td class="num">2</td>
+                <td class="content">Thanh toán</td>
+                <td class="amount"></td>
+              </tr>
+
+              <tr>
+                <td class="num">3</td>
+                <td class="content">Trừ</td>
+                <td class="amount">101,988,502,517</td>
+              </tr>
+              <tr>
+                <td class="num"></td>
+                <td class="content indent-1">- Thu hồi tạm ứng</td>
+                <td class="amount">166,600,000</td>
+              </tr>
+              <tr>
+                <td class="num"></td>
+                <td class="content indent-1">- Bảo hành</td>
+                <td class="amount">39,475,070,004</td>
+              </tr>
+              <tr>
+                <td class="num"></td>
+                <td class="content indent-1">- Khác</td>
+                <td class="amount">62,346,826,513</td>
+              </tr>
+
+              <tr>
+                <td class="num">4</td>
+                <td class="content">Thêm</td>
+                <td class="amount">2,005,173,948,384</td>
+              </tr>
+              <tr>
+                <td class="num"></td>
+                <td class="content indent-1">- Tạm ứng</td>
+                <td class="amount">76,830,258</td>
+              </tr>
+              <tr>
+                <td class="num"></td>
+                <td class="content indent-1">- Bảo hành</td>
+                <td class="amount">617,494,746</td>
+              </tr>
+              <tr>
+                <td class="num"></td>
+                <td class="content indent-1">- Hoàn khác</td>
+                <td class="amount">2,004,478,823,380</td>
+              </tr>
+
+              <tr>
+                <td class="num section">B.2</td>
+                <td class="content section">Đợt kỳ này</td>
+                <td class="amount section"></td>
+              </tr>
+              <tr>
+                <td class="num">1</td>
+                <td class="content">Thực hiện</td>
+                <td class="amount">121,283,017,037</td>
+              </tr>
+              <tr>
+                <td class="num">2</td>
+                <td class="content">Thanh toán</td>
+                <td class="amount">50,927,134,970</td>
+              </tr>
+              <tr>
+                <td class="num">3</td>
+                <td class="content">Trừ</td>
+                <td class="amount"></td>
+              </tr>
+              <tr>
+                <td class="num"></td>
+                <td class="content indent-1">- Thu hồi tạm ứng</td>
+                <td class="amount">83,300,000</td>
+              </tr>
+              <tr>
+                <td class="num"></td>
+                <td class="content indent-1">- Bảo hành</td>
+                <td class="amount">19,737,638,001</td>
+              </tr>
+              <tr>
+                <td class="num"></td>
+                <td class="content indent-1">- Khác</td>
+                <td class="amount">31,106,196,969</td>
+              </tr>
+              <tr>
+                <td class="num">4</td>
+                <td class="content">Thêm</td>
+                <td class="amount">1,002,541,560,762</td>
+              </tr>
+              <tr>
+                <td class="num"></td>
+                <td class="content indent-1">- Tạm ứng</td>
+                <td class="amount">38,315,129</td>
+              </tr>
+              <tr>
+                <td class="num"></td>
+                <td class="content indent-1">- Hoàn bảo hành</td>
+                <td class="amount">300,847,373</td>
+              </tr>
+              <tr>
+                <td class="num"></td>
+                <td class="content indent-1">- Hoàn khác</td>
+                <td class="amount">1,002,202,398,260</td>
+              </tr>
+
+              <tr>
+                <td class="num section">B.3</td>
+                <td class="content section">Kỳ này</td>
+                <td class="amount section"></td>
+              </tr>
+              <tr>
+                <td class="num">1</td>
+                <td class="content">Thực hiện</td>
+                <td class="amount"></td>
+              </tr>
+              <tr>
+                <td class="num">2</td>
+                <td class="content">Thanh toán</td>
+                <td class="amount"></td>
+              </tr>
+              <tr>
+                <td class="num">3</td>
+                <td class="content">Trừ</td>
+                <td class="amount"></td>
+              </tr>
+              <tr>
+                <td class="num"></td>
+                <td class="content indent-1">- Thu hồi tạm ứng</td>
+                <td class="amount"></td>
+              </tr>
+              <tr>
+                <td class="num"></td>
+                <td class="content indent-1">- Bảo hành</td>
+                <td class="amount"></td>
+              </tr>
+              <tr>
+                <td class="num"></td>
+                <td class="content indent-1">- Khác</td>
+                <td class="amount"></td>
+              </tr>
+              <tr>
+                <td class="num">4</td>
+                <td class="content">Thêm</td>
+                <td class="amount"></td>
+              </tr>
+              <tr>
+                <td class="num"></td>
+                <td class="content indent-1">- Tạm ứng</td>
+                <td class="amount"></td>
+              </tr>
+              <tr>
+                <td class="num"></td>
+                <td class="content indent-1">- Hoàn bảo hành</td>
+                <td class="amount"></td>
+              </tr>
+              <tr>
+                <td class="num"></td>
+                <td class="content indent-1">- Hoàn khác</td>
+                <td class="amount"></td>
+              </tr>
+
+              <tr>
+                <td class="num section">B.4</td>
+                <td class="content section">Thu VAT kỳ này</td>
+                <td class="amount section"></td>
+              </tr>
+
+              <tr>
+                <td class="num section">B.5</td>
+                <td class="content section">GIÁ TRỊ ĐỀ NGHỊ THANH TOÁN KỲ NÀY = (B.3.1) - (B.3.3) + (B.3.4) + (B4)</td>
+                <td class="amount section"></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="footer-title">Thông tin phê duyệt:</div>
+
+          <table class="approvals" aria-label="Thông tin phê duyệt">
+            <thead>
+              <tr>
+                <th style="width:14%">Vai trò</th>
+                <th style="width:26%">Nhân sự thực hiện</th>
+                <th style="width:20%">Thời gian</th>
+                <th style="width:18%">Quyết định</th>
+                <th>Ý kiến</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Trình</td>
+                <td>Võ Thị Hồng Phượng</td>
+                <td class="center">2026-02-04 11:31:49</td>
+                <td class="center">Đã trình</td>
+                <td>Trình</td>
+              </tr>
+              <tr>
+                <td>Soát xét</td>
+                <td>Võ Thị Hồng Phượng</td>
+                <td class="center">2026-02-04 11:31:49</td>
+                <td class="center">Đồng ý</td>
+                <td>Soát xét</td>
+              </tr>
+              <tr>
+                <td>Phê duyệt</td>
+                <td>Phan Phước Phước</td>
+                <td class="center">2026-02-04 16:27:31</td>
+                <td class="center">Từ chối</td>
+                <td>có thể PCC theo yêu cầu của Hàng</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+      <div class="card-footer d-none">
+        <button type="submit" class="btn btn-subtle-primary"><span class="sen-label">Save & Close</span></button>
+        <button type="button" class="btn btn-subtle-secondary" onclick="paymentorderipcprintobject.form.cancel()"><span
+            class="sen-label">Cancel</span></button>
+      </div>
+    </div>
+  </form>
+
+  <script>
+    var paymentorderipcprintobject = {};
+    // paymentorderipcprintobject.model = <%- JSON.stringify(model) %>;// dùng cách này là ok nhất không bị các trường hợp rớt dòng nhưng bị cảnh báo
+    paymentorderipcprintobject.model = JSON.parse(('<%- JSON.stringify(model) %>').replace(/\r?\n|\r/g, "\\n"));//xử lí xuống dòng trong chuỗi json
+    paymentorderipcprintobject.container = document.getElementById("paymentorderipcprint-section");//khu vực chứa form nghiệp vụ
+
+    // Khởi tạo bảng
+    paymentorderipcprintobject.form = new senapp.utils.form({
+      meta: paymentorderipcprintobject.model.meta,
+      data: paymentorderipcprintobject.model.data,
+      urldata: paymentorderipcprintobject.model.url,
+      container: paymentorderipcprintobject.container,
+      mode: 'view',//chỉ xem không cho sửa
+    });
+
+    // paymentorderipcprintobject.form.saveBefore = async function () {
+    //   this.data.ContractId = parseInt(paymentorderipcprintobject.model.url.query.contractid) || 0;//thêm ContractId vào data để gửi lên server
+    //   return true;
+    // };
+
+    $(function () {
+      paymentorderipcprintobject.form.initForm();
+    });
+
+  </script>
+
+
+</div>

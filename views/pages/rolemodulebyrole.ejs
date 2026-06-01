@@ -1,0 +1,189 @@
+<div id="rolemodulebyrole-section">
+  <div class="mb-9">
+    <!-- <h2 class="mb-4"><%- title %></h2> -->
+    <div class="mb-1">
+      <div class="">
+        <!-- <a onclick="rolemodulebyroleobject.tbl.create()" class="btn btn-subtle-primary">Create New</a> -->
+        <a onclick="rolemodulebyroleobject.tbl.deleteBySelected()" class="btn btn-subtle-secondary">Delete Selected</a>
+      </div>
+    </div>
+    <div class="row-fluid">
+      <div class="card">
+        <div class="card-body">
+          <div class="search-box mb-3 mx-auto d-none">
+            <div class="position-relative">
+              <input class="form-control search-input search form-control-sm" type="search" placeholder="Search"
+                aria-label="Search" />
+              <span class="fas fa-search search-box-icon"></span>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-sm fs-9 mb-5">
+              <tbody class="list">
+                <!-- Table datas will be added here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var rolemodulebyroleobject = {};
+    rolemodulebyroleobject.model = JSON.parse('<%- JSON.stringify(model) %>');
+    rolemodulebyroleobject.container = document.getElementById("rolemodulebyrole-section");//khu vực chứa danh sách
+    rolemodulebyroleobject.urldata = {
+      lists: `/rolemodule/modulebyrole?id=${rolemodulebyroleobject.model.url.query.id}`,
+      item: '/rolemodule/item',
+      create: '/rolemodule/create?callback=' + encodeURIComponent('rolemodulebyroleobject.createcallback'),
+      edit: '/rolemodule/edit?callback=' + encodeURIComponent('rolemodulebyroleobject.editcallback'),
+      delete: '/rolemodule/delete',
+      update: '/rolemodule/edit'
+    };
+
+    //console.log(rolemodulebyroleobject.model);
+    rolemodulebyroleobject.createcallback = function (response) {
+      //nếu response[0] tồn tại thì hiển thị thông báo lỗi
+      if (response[0]) {
+        if (response[0].status == 0) {
+          alert(response[0].message);
+          return;
+        }
+        //rolemodulebyroleobject.tbl.onAddRowData({ data: response[0].data.data });
+        senapp.sidebar.menuclickbydatalink('/rolemodulebyrole');
+      }
+    };
+
+    rolemodulebyroleobject.editcallback = function (response) {
+      //nếu response[0] tồn tại thì hiển thị thông báo lỗi
+      if (response[0]) {
+        if (response[0].status == 0) {
+          alert(response[0].message);
+          return;
+        }
+        //rolemodulebyroleobject.tbl.onChangeRowData({ data: response[0].data.data });
+        senapp.sidebar.menuclickbydatalink('/rolemodulebyrole');
+      }
+    };
+    //ẩn hết các trường chỉ để lại trường cần thiết
+    rolemodulebyroleobject.model.meta.forEach(element => {
+      const excludedFields = ['Alias']; // Danh sách các trường không cần thiết
+      if (!excludedFields.includes(element.field)) { element.visible = false; }
+    });
+
+    // Khởi tạo bảng
+    rolemodulebyroleobject.tbl = new senapp.utils.table({
+      meta: rolemodulebyroleobject.model.meta,
+      urldata: rolemodulebyroleobject.urldata,
+      container: rolemodulebyroleobject.container,
+      tableelement: rolemodulebyroleobject.container.querySelector('table'),
+      modal: true,
+      selectcolumn: true,
+      filterrow: false, // không hiển thị filter row
+      //filtercompact: false // hiển thị filter row ở dạng compact
+      loadmoreonvisible: true, // tự động tải thêm dữ liệu khi cuộn đến cuối danh sách
+      //loadmoreshowtoast: true,
+      metacolumns: [
+        { field: 'SysAction', visible: false },
+        { field: 'C_R', description: 'Create', colorder: 100, visible: true, show: true },
+        { field: 'U_R', description: 'Update', colorder: 103, visible: true, show: true },
+        { field: 'D_R', description: 'Delete', colorder: 104, visible: true, show: true },
+        { field: 'R_R', description: 'Read', colorder: 105, visible: true, show: true },
+      ],
+      customcolumns: ['C_R', 'U_R', 'D_R', 'R_R'],
+    });
+
+    /*
+    */
+
+
+    rolemodulebyroleobject.tbl.deleteparaext = function (data) {
+      //dùng cho override
+      return `?RoleId=${encodeURIComponent(rolemodulebyroleobject.model.url.query.id)}&ModuleId=${encodeURIComponent(data.ModuleId)}`;
+    }
+
+    //mở rộng
+    rolemodulebyroleobject.tbl.updateparaext = function (data) {
+      //dùng cho override
+      return `?RoleId=${encodeURIComponent(rolemodulebyroleobject.model.url.query.id)}`;
+    }
+
+    rolemodulebyroleobject.tbl.genCellDataCustom = function ({ data, metacolumn }) {
+      if (!metacolumn || !metacolumn.field) {
+        return null; // Trả về null nếu không có metacolumn hoặc field
+      }
+      // Hàm này sẽ được sử dụng để tạo dữ liệu cho các cột tùy chỉnh
+      const tableobject = this;
+      const td = document.createElement('td');
+      td.setAttribute('data-field', metacolumn.field);
+      //nếu field.visible là false hoặc field.show là false thì không hiển thị cột này  gán class d-none
+      if (!metacolumn.show) { td.classList.add('d-none'); }
+
+      switch (metacolumn.field) {
+        case "C_R":
+        case "U_R":
+        case "D_R":
+        case "R_R":
+          const checkbox = document.createElement('input');
+          checkbox.type = 'checkbox';
+          checkbox.className = 'form-check-input';
+          checkbox.value = data[metacolumn.field];
+          //nếu data[metacolumn.field]==true thì checkbox chọn
+          if (data[metacolumn.field] == true) { checkbox.checked = true; }
+          //khi thay đổi thì gọi hàm updateData của  tableobject
+          checkbox.onchange = function () {
+            data[metacolumn.field] = this.checked;
+            tableobject.updateByKey(data[tableobject.keyfield]);
+          };
+          td.appendChild(checkbox);
+          break;
+        default:
+          //nếu không phải là cột tùy chỉnh thì trả về giá trị của trường đó
+          td.innerHTML = data[metacolumn.field] || '';
+          break;
+      }
+      return td;
+    }
+
+    //tạm khóa 20250828
+    // rolemodulebyroleobject.tbl.genCellHeaderExt = function ({ metacolumn }) {
+    //   const tableobject = this;
+    //   //dùng để override
+    //   switch (metacolumn.field) {
+    //     case "C_R":
+    //     case "U_R":
+    //     case "D_R":
+    //     case "R_R":
+    //       //tạo div chứa checkbox
+    //       const div = document.createElement('div');
+    //       //tạo checkbox để
+    //       const checkbox = document.createElement('input');
+    //       checkbox.type = 'checkbox';
+    //       checkbox.className = 'form-check-input';
+    //       checkbox.onclick = function () {
+    //         const isChecked = this.checked;
+    //         const cells = tableobject.tableelement.querySelectorAll(`tbody.row-datas td[data-field="${metacolumn.field}"]`);
+    //         cells.forEach(cell => {
+    //           const checkbox = cell.querySelector('input[type="checkbox"]');
+    //           if (checkbox) { 
+    //             if (checkbox.checked!==isChecked) {
+    //               checkbox.checked = isChecked;
+    //               checkbox.onchange();
+    //             }
+    //           }
+    //         });
+    //       };
+    //       div.appendChild(checkbox);
+    //       return div;
+    //     default:
+    //       return null;
+    //   }
+    // }
+
+
+    $(function () { rolemodulebyroleobject.tbl.initTable(); });
+
+  </script>
+
+</div>

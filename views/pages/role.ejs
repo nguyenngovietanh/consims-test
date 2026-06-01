@@ -1,0 +1,270 @@
+<div id="role-section">
+  <div class="mb-9">
+    <h2 class="mb-4">Roles Management</h2>
+    <div class="mb-1">
+      <div class="btn-group me-1">
+        <div class="dropdown">
+          <a class="btn btn-subtle-secondary" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true"
+            aria-expanded="false"><i class="fa-solid fa-ellipsis-vertical"></i></a>
+          <div class="dropdown-menu">
+            <!-- <a class="dropdown-item" onclick="roleobject.tbl.deleteBySelected()">Delete Selected</a>
+            <div class="dropdown-divider"></div> -->
+            <a class="dropdown-item" onclick="roleobject.assignToUser()">Assign Member To Role</a>
+            <a class="dropdown-item" onclick="roleobject.assignToModule()">Assign Module To Role</a>
+          </div>
+        </div>
+      </div>
+      <div class="btn-group me-1">
+        <a onclick="roleobject.tbl.create()" class="btn btn-subtle-primary">Create New Role</a>
+        <a onclick="roleobject.tbl.deleteBySelected()" class="btn btn-subtle-secondary">Delete Selected</a>
+      </div>
+    </div>
+    <div class="row-fluid">
+      <div class="card">
+        <div class="card-body">
+          <div class="search-box mb-3 mx-auto">
+            <div class="position-relative"><input class="form-control search-input search form-control-sm" type="search"
+                placeholder="Search" aria-label="Search" />
+              <span class="fas fa-search search-box-icon"></span>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-sm fs-9 mb-5">
+              <tbody class="list">
+                <!-- Table datas will be added here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <script>
+    var roleobject = {};
+    roleobject.model = JSON.parse('<%- JSON.stringify(model) %>');
+    roleobject.container = document.getElementById("role-section");//khu vực chứa danh sách
+    console.log(roleobject.model);
+    console.log('lists api: /api/get-role-list');
+    console.log('create api: /api/upsert-role-list');
+    console.log('update api: /api/upsert-role-list');
+    console.log('delete api: /api/upsert-role-list');
+
+    roleobject.urldata = {
+      lists: '/role/list',
+      item: '/role/item',
+      create: '/role/create?callback=' + encodeURIComponent('roleobject.createcallback'),
+      edit: '/role/edit?callback=' + encodeURIComponent('roleobject.editcallback'),
+      delete: '/role/delete',
+      assignToUser: '/rolemember/create',
+      assignToModule: '/rolemodule/create',
+    };
+
+    roleobject.createcallback = function (response) {
+      //nếu response[0] tồn tại thì hiển thị thông báo lỗi
+      if (response[0]) {
+        if (response[0].status == 0) {
+          alert(response[0].message);
+          return;
+        }
+        senapp.sidebar.menuclickbydatalink('/role');
+      }
+    };
+    roleobject.editcallback = function (response) {
+      //nếu response[0] tồn tại thì hiển thị thông báo lỗi
+      if (response[0]) {
+        if (response[0].status == 0) {
+          alert(response[0].message);
+          return;
+        }
+        senapp.sidebar.menuclickbydatalink('/role');
+      }
+    };
+    // Khởi tạo bảng
+    roleobject.tbl = new senapp.utils.table({
+      meta: roleobject.model.meta,
+      urldata: roleobject.urldata,
+      container: roleobject.container,
+      tableelement: roleobject.container.querySelector('table'),
+      modal: true, // hiển thị modal khi tạo mới hoặc sửa
+      selectcolumn: true,
+      filterrow: false, // không hiển thị filter row
+      //filtercompact: false, // hiển thị filter row ở dạng compact
+      metacolumns: [
+        { field: 'Ext01', description: '<i class="fa-solid fa-users" title="Members"></i>', colorder: 1, visible: true, show: true, gridwidth: 32 },
+        { field: 'Ext02', description: '<i class="fa-solid fa-layer-group" title="Modules"></i>', colorder: 1, visible: true, show: true, gridwidth: 32 },
+      ],
+      customcolumns: ['Ext01', 'Ext02'],
+    });
+
+    //mở rộng
+    roleobject.assignToUsercallback = async function (response) {
+      // Callback function for lookup
+      console.log('Response from assignToUser:', response);
+      if (response && response.length > 0) {
+        // Process the selected roles
+        console.log('Selected members:', response);
+        senapp.window.loading.show();
+        const tableobject = roleobject.tbl;
+        const selectedKeys = tableobject.getKeySelected();
+        try {
+          // Tạo mảng Promise bất đồng bộ
+          const promises = selectedKeys.flatMap(id =>
+            response.map(async m => {
+              const newrolemember = { Id: senapp.data.sessionAutoId(), RoleId: id, UserId: parseInt(m) };
+              //console.log('Adding role member:', newrolemember);
+              // viết hàm post vào roleobject.urldata.assignToUser bằng fetch
+              const res = await fetch(roleobject.urldata.assignToUser, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newrolemember)
+              });
+              if (!res.ok) { throw new Error(`HTTP error! status: ${res.status}`); }
+              const response = await res.json(); // hoặc .text() nếu API không trả JSON
+              if (response.status == 0) {
+                senapp.window.toast({ message: response.message, type: 'danger' });
+              } else {
+                senapp.window.toast({ message: response.message, type: 'success' });
+              }
+            })
+          );
+          await Promise.all(promises);
+          senapp.window.loading.hide();
+          console.log("Tất cả đã xong!");
+        } catch (err) {
+          senapp.window.alert({ message: `⚠️ ${await senapp.utils.text.t('An error occurred while processing:')}`, type: 'danger' });
+          console.error("Có lỗi :", err);
+        }
+      }
+      else {
+        senapp.window.alert({ message: `⚠️ ${await senapp.utils.text.t('No roles selected.')}`, type: 'warning' });
+      }
+    };
+    roleobject.assignToUser = async function () {
+      const selectedKeys = roleobject.tbl.getKeySelected();
+      if (selectedKeys.length === 0) {
+        senapp.window.alert({ message: `⚠️ ${await senapp.utils.text.t('Please select at least one row to assign.')}`, type: 'danger' });
+        return;
+      }
+
+      const lookupfilter = {
+        url: '/member/lookup', fields: { id: '`${item.UserId}`', value: '`${item.UserId}`', label: '`${item.Email}`' },
+        //filter: { logic: "and", conditions: [{ field: "Description", op: "includes", value: '' }] }
+        filter: { logic: "and", conditions: [{ field: "searchTerm", op: "includes", value: '' }] }
+      };
+      senapp.window.lookup({ options: { title: 'Select Members', multiple: true, callback: 'roleobject.assignToUsercallback', lookup: lookupfilter } });
+    };
+
+    roleobject.assignToModulecallback = async function (response) {
+      // Callback function for lookup
+      console.log('Response from assignToModule:', response);
+      if (response && response.length > 0) {
+        senapp.window.loading.show();
+        const tableobject = roleobject.tbl;
+        const selectedKeys = tableobject.getKeySelected();
+        try {
+          // Tạo mảng Promise bất đồng bộ
+          const promises = selectedKeys.flatMap(id =>
+            response.map(async m => {
+              const newrolemember = { Id: senapp.data.sessionAutoId(), RoleId: id, ModuleId: parseInt(m) };
+              // viết hàm post vào roleobject.urldata.assignToModule bằng fetch
+              const res = await fetch(roleobject.urldata.assignToModule, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newrolemember)
+              });
+              if (!res.ok) { throw new Error(`HTTP error! status: ${res.status}`); }
+              const response = await res.json(); // hoặc .text() nếu API không trả JSON
+              if (response.status == 0) {
+                senapp.window.toast({ message: response.message, type: 'danger' });
+              } else {
+                senapp.window.toast({ message: response.message, type: 'success' });
+              }
+            })
+          );
+          await Promise.all(promises);
+          senapp.window.loading.hide();
+          console.log("Tất cả đã xong!");
+        } catch (err) {
+          senapp.window.alert({ message: `⚠️ ${await senapp.utils.text.t('An error occurred while processing:')}`, type: 'danger' });
+          console.error("Có lỗi :", err);
+        }
+      }
+      else {
+        senapp.window.alert({ message: `⚠️ ${await senapp.utils.text.t('No roles selected.')}`, type: 'warning' });
+      }
+    };
+    roleobject.assignToModule = async function () {
+      const selectedKeys = roleobject.tbl.getKeySelected();
+      if (selectedKeys.length === 0) {
+        senapp.window.alert({ message: `⚠️ ${await senapp.utils.text.t('Please select at least one row to assign.')}`, type: 'danger' });
+        return;
+      }
+
+      const lookupfilter = {
+        url: '/module/lookup', fields: { id: '`${item.ModuleId}`', value: '`${item.ModuleId}`', label: '`${item.Description}`' },
+        //filter: { logic: "and", conditions: [{ field: "Description", op: "includes", value: '' }] }
+        filter: { logic: "and", conditions: [{ field: "searchTerm", op: "includes", value: '' }] }
+      };
+      senapp.window.lookup({ options: { title: 'Select Modules', multiple: true, callback: 'roleobject.assignToModulecallback', lookup: lookupfilter } });
+    };
+
+
+    roleobject.tbl.genCellDataCustom = function ({ data, metacolumn }) {
+      if (!metacolumn || !metacolumn.field) {
+        return null; // Trả về null nếu không có metacolumn hoặc field
+      }
+      // Hàm này sẽ được sử dụng để tạo dữ liệu cho các cột tùy chỉnh
+      const tableobject = this;
+      const td = document.createElement('td');
+      td.setAttribute('data-field', metacolumn.field);
+      //nếu field.visible là false hoặc field.show là false thì không hiển thị cột này  gán class d-none
+      if (!metacolumn.show) { td.classList.add('d-none'); }
+      switch (metacolumn.field) {
+        case 'Ext01':
+          td.innerHTML = `<a href="javascript:;" onclick="roleobject.loadUser(this)" title="View Members"><i class="fa fa-ellipsis"></i></a>`;
+          break;
+        case 'Ext02':
+          td.innerHTML = `<a href="javascript:;" onclick="roleobject.loadModule(this)" title="View Modules"><i class="fa fa-ellipsis"></i></a>`;
+          break;
+        default:
+          //nếu không phải là cột tùy chỉnh thì trả về giá trị của trường đó
+          td.innerHTML = data[metacolumn.field] || '';
+          break;
+      }
+      return td;
+    }
+
+    roleobject.loadUser = function (element) {
+      const tableobject = roleobject.tbl;
+      const id = parseInt(element.closest('tr').getAttribute('data-id'));
+      const data = tableobject.datas.find(item => item[tableobject.keyfield] === id);
+
+      const urlline = `/rolemember?viewname=rolememberbyrole&id=${id}`;
+      senapp.window.offcanvas({
+        title: `User List of ${data["RoleName"] || ''}`,
+        url: urlline
+      });
+    };
+
+    roleobject.loadModule = function (element) {
+      const tableobject = roleobject.tbl;
+      const id = parseInt(element.closest('tr').getAttribute('data-id'));
+      const data = tableobject.datas.find(item => item[tableobject.keyfield] === id);
+
+      const urlline = `/rolemodule?viewname=rolemodulebyrole&id=${id}`;
+      senapp.window.offcanvas({
+        title: `Module List of ${data["RoleName"] || ''}`,
+        url: urlline,
+        size: 'md'
+      });
+    };
+
+    $(function () {
+      roleobject.tbl.initTable();
+    });
+
+  </script>
+
+</div>

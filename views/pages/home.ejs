@@ -1,0 +1,539 @@
+<div id="dashboard-overview" class="dashboard-overview">
+  <div class="dashboard-tabs" role="tablist" aria-label="Dashboard tabs">
+    <button class="active" type="button">Contract Dashboard</button>
+    <button type="button">Project Dashboard</button>
+    <button type="button">Company Dashboard</button>
+  </div>
+
+  <div class="dashboard-filter-row" aria-label="Dashboard filters">
+    <select class="form-select" aria-label="Project or contract">
+      <option>Project/Contract</option>
+    </select>
+    <select class="form-select" aria-label="Client">
+      <option>Client</option>
+    </select>
+    <select class="form-select" aria-label="Project manager">
+      <option>Project manager</option>
+    </select>
+    <select class="form-select" aria-label="Contract type">
+      <option>Contract type</option>
+    </select>
+    <select class="form-select" aria-label="Status">
+      <option>Status</option>
+    </select>
+    <select class="form-select" aria-label="Data as on">
+      <option>Data as on</option>
+    </select>
+  </div>
+
+  <div class="dashboard-kpi-grid" aria-label="Contract summary">
+    <article class="dashboard-kpi">
+      <h3>Original Contract Value</h3>
+      <strong>0</strong>
+    </article>
+    <article class="dashboard-kpi">
+      <h3>Approved Variations</h3>
+      <strong>0</strong>
+    </article>
+    <article class="dashboard-kpi">
+      <h3>Revised Contract Value</h3>
+      <strong>0</strong>
+    </article>
+    <article class="dashboard-kpi">
+      <h3>Revenue Recognized<br>(To date)</h3>
+      <strong>0</strong>
+      <span class="positive">57.1%</span><span> of RCV</span>
+    </article>
+    <article class="dashboard-kpi">
+      <h3>Cost Incurred<br>(To date)</h3>
+      <strong>0</strong>
+      <span class="positive">46%</span><span> of RCV</span>
+    </article>
+    <article class="dashboard-kpi">
+      <h3>Forecast Final Cost<br>(EAC)</h3>
+      <strong>0</strong>
+    </article>
+    <article class="dashboard-kpi">
+      <h3>Forecast<br>Profit</h3>
+      <strong>0</strong>
+      <span class="positive">46%</span><span> of RCV</span>
+    </article>
+    <article class="dashboard-kpi">
+      <h3>Forecast<br>Margin</h3>
+      <strong>0</strong>
+      <span class="negative">-1.2%</span><span> of RCV</span>
+    </article>
+    <article class="dashboard-kpi">
+      <h3>Cash Collected<br>(To date)</h3>
+      <strong>0</strong>
+      <span class="positive">46%</span><span> of RCV</span>
+    </article>
+    <article class="dashboard-kpi">
+      <h3>Outstanding<br>Receivables</h3>
+      <strong>0</strong>
+    </article>
+  </div>
+
+  <section class="dashboard-section">
+    <h2>1. Finance Performance</h2>
+    <div class="dashboard-section-body two-cols">
+      <div class="dashboard-panel">
+        <table class="dashboard-table">
+          <thead>
+            <tr>
+              <th>Description</th>
+              <th class="text-end">Amount</th>
+              <th class="text-end">% of RCV</th>
+            </tr>
+          </thead>
+          <tbody data-dashboard-table="finance"></tbody>
+        </table>
+      </div>
+      <div class="dashboard-panel">
+        <h3>Revenue vs Cost (Cumulative)</h3>
+        <div class="dashboard-chart" data-dashboard-chart="revenue-cost"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="dashboard-section">
+    <h2>2. Progress &amp; Time Performance</h2>
+    <div class="dashboard-section-body three-cols">
+      <div class="dashboard-panel">
+        <table class="dashboard-table">
+          <thead>
+            <tr>
+              <th>Description</th>
+              <th class="text-end">% of RCV</th>
+            </tr>
+          </thead>
+          <tbody data-dashboard-table="progress"></tbody>
+        </table>
+      </div>
+      <div class="dashboard-panel">
+        <h3>Planned vs Actual Process (S-Curve)</h3>
+        <div class="dashboard-chart" data-dashboard-chart="planned-actual"></div>
+      </div>
+      <div class="dashboard-panel">
+        <h3>Milestone Status</h3>
+        <div class="dashboard-chart" data-dashboard-chart="milestone"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="dashboard-section">
+    <h2>3. Variations (Change Orders)</h2>
+    <div class="dashboard-stat-row">
+      <div><span>Raised (YTD)</span><strong class="text-info">$6.10M</strong></div>
+      <div><span>Approved</span><strong class="text-success">$6.10M</strong></div>
+      <div><span>Pending Approval</span><strong class="text-warning">$6.10M</strong></div>
+      <div><span>Rejected</span><strong class="text-danger">$6.10M</strong></div>
+      <div><span>Avg Approval Time</span><strong>18 Ngay</strong></div>
+    </div>
+    <div class="dashboard-section-body two-cols">
+      <div class="dashboard-panel">
+        <h3>Variations Aging (Pending)</h3>
+        <div class="dashboard-chart" data-dashboard-chart="variation-aging"></div>
+      </div>
+      <div class="dashboard-panel">
+        <h3>Variations by Cause (YTD)</h3>
+        <div class="dashboard-chart" data-dashboard-chart="variation-cause"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="dashboard-section">
+    <h2>4. Claims &amp; Disputes</h2>
+    <div class="dashboard-stat-row">
+      <div><span>EOT Claims</span><strong class="text-info">2</strong></div>
+      <div><span>Cost Claims</span><strong class="text-success">3</strong></div>
+      <div><span>Claims Approval</span><strong class="text-warning">1</strong></div>
+      <div><span>Claims Pending</span><strong class="text-danger">4</strong></div>
+      <div><span>Disputes / Arbitration</span><strong>0</strong></div>
+    </div>
+    <div class="dashboard-section-body two-cols">
+      <div class="dashboard-panel">
+        <h3>Claims Aging (Pending)</h3>
+        <div class="dashboard-chart" data-dashboard-chart="claims-aging"></div>
+      </div>
+      <div class="dashboard-panel">
+        <h3>Claims by Type (Value)</h3>
+        <div class="dashboard-chart" data-dashboard-chart="claims-type"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="dashboard-section">
+    <h2>5. Payments &amp; Cash Flow</h2>
+    <div class="dashboard-stat-row">
+      <div><span>Invoices Submitted YTD</span><strong class="text-info">2</strong></div>
+      <div><span>Certified Amount</span><strong class="text-success">3</strong></div>
+      <div><span>Claims Approval</span><strong class="text-warning">1</strong></div>
+      <div><span>Claims Pending</span><strong class="text-danger">4</strong></div>
+      <div><span>Disputes / Arbitration</span><strong>0</strong></div>
+    </div>
+    <div class="dashboard-section-body two-cols">
+      <div class="dashboard-panel">
+        <h3>Receivables Aging</h3>
+        <div class="dashboard-chart" data-dashboard-chart="receivables-aging"></div>
+      </div>
+      <div class="dashboard-panel">
+        <h3>Billing vs Collection (Cumulative)</h3>
+        <div class="dashboard-chart" data-dashboard-chart="billing-collection"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="dashboard-section">
+    <h2>6. Risk Overview</h2>
+    <div class="dashboard-section-body two-cols">
+      <div class="dashboard-panel">
+        <div class="risk-matrix" aria-label="Risk matrix">
+          <span>High</span><div class="risk-yellow">1</div><div class="risk-orange">2</div><div class="risk-red">2</div>
+          <span>Medium</span><div class="risk-yellow">1</div><div class="risk-orange">3</div><div class="risk-orange">1</div>
+          <span>Low</span><div class="risk-green">2</div><div class="risk-green">1</div><div class="risk-green">0</div>
+        </div>
+      </div>
+      <div class="dashboard-panel">
+        <table class="dashboard-table compact">
+          <thead>
+            <tr>
+              <th>Top risk</th>
+              <th class="text-end">Likelihood</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>1. Delay in material approvals</td><td class="text-end text-danger">High</td></tr>
+            <tr><td>2. Design changes impacting MEP</td><td class="text-end text-danger">High</td></tr>
+            <tr><td>3. Skilled labor shortage</td><td class="text-end text-warning">Medium</td></tr>
+            <tr><td>4. Delay in client decisions</td><td class="text-end text-warning">Medium</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="dashboard-section">
+    <h2>7. Personnel</h2>
+    <div class="dashboard-stat-row three">
+      <div><span>Total Actual Personnel</span><strong class="text-info">1.300</strong></div>
+      <div><span>So nhan su theo ke hoach</span><strong class="text-danger">1.380</strong></div>
+      <div><span>Variance / Difference</span><strong class="text-danger">50</strong></div>
+    </div>
+    <div class="dashboard-section-body two-cols">
+      <div class="dashboard-panel">
+        <table class="dashboard-table">
+          <thead><tr><th>Month</th><th class="text-end">Planned Personnel</th><th class="text-end">Actual Personnel</th><th class="text-end">Actual Progress %</th></tr></thead>
+          <tbody data-dashboard-table="personnel"></tbody>
+        </table>
+      </div>
+      <div class="dashboard-panel">
+        <h3>Personnel Fluctuation &amp; Actual Progress</h3>
+        <div class="dashboard-chart" data-dashboard-chart="personnel"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="dashboard-section">
+    <h2>8. Materials &amp; Equipment</h2>
+    <div class="dashboard-stat-row">
+      <div><span>Total Cumulative Import Value</span><strong class="text-info">$6.10M</strong></div>
+      <div><span>Actual Wastage % / Loss %</span><strong class="text-success">$6.10M</strong></div>
+      <div><span>Material Inventory / Stock</span><strong class="text-warning">$6.10M</strong></div>
+      <div><span>Equipment Readiness Rate</span><strong class="text-danger">$6.10M</strong></div>
+      <div><span>Outsourcing Costs / Month</span><strong>18 Ngay</strong></div>
+    </div>
+    <div class="dashboard-section-body two-cols">
+      <div class="dashboard-panel">
+        <table class="dashboard-table">
+          <thead><tr><th>Month</th><th class="text-end">Import Value (Billion)</th><th class="text-end">Actual Consumption Value (Billion)</th><th class="text-end">Wastage %</th></tr></thead>
+          <tbody data-dashboard-table="materials"></tbody>
+        </table>
+      </div>
+      <div class="dashboard-panel">
+        <h3>Actual Consumption</h3>
+        <div class="dashboard-chart" data-dashboard-chart="materials"></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="dashboard-bottom-grid">
+    <section class="dashboard-section">
+      <h2>9. Compliance &amp; Contract Admin</h2>
+      <div class="dashboard-panel">
+        <table class="dashboard-table compact">
+          <tbody>
+            <tr><td>Bao hiem con hieu luc</td><td class="status-ok">Yes</td></tr>
+            <tr><td>Bao lanh thuc hien hop dong con hieu luc</td><td class="status-ok">Yes</td></tr>
+            <tr><td>Bao lanh tam ung</td><td class="status-ok">Yes</td></tr>
+            <tr><td>Thong bao duoc gui dung han</td><td class="status-ok">92%</td></tr>
+            <tr><td>Cac san pham ban giao theo hop dong den han</td><td class="status-warn">3</td></tr>
+            <tr><td>Cac thong bao / tai lieu con thieu</td><td class="status-warn">2</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="dashboard-section">
+      <h2>10. Key Activities (This month)</h2>
+      <div class="dashboard-panel">
+        <table class="dashboard-table compact">
+          <thead><tr><th>Hoat dong</th><th>Han hoan thanh</th><th class="text-end">Trang thai</th></tr></thead>
+          <tbody>
+            <tr><td>Nop ho so thanh toan khoi luong hang thang</td><td>5 Jun 2025</td><td class="text-end">Yes</td></tr>
+            <tr><td>De be tong - San tang 20 Thap B</td><td>6 Jun 2025</td><td class="text-end">Yes</td></tr>
+            <tr><td>MEP Rough-in - Level 15</td><td>7 Jun 2025</td><td class="text-end">92%</td></tr>
+            <tr><td>Lap dat tam mat dung (Facade)</td><td>8 Jun 2025</td><td class="text-end">3</td></tr>
+            <tr><td>Hop xem xet voi khach hang</td><td>9 Jun 2025</td><td class="text-end">2</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="dashboard-section">
+      <h2>11. Procurement &amp; Subcontracts</h2>
+      <div class="dashboard-panel">
+        <table class="dashboard-table compact">
+          <tbody>
+            <tr><td>Cac goi thau phu chinh da giao thau</td><td class="text-end">82%</td></tr>
+            <tr><td>Cam ket thau phu</td><td class="text-end">$18.65M</td></tr>
+            <tr><td>Gia tri da cam ket tinh den hien tai</td><td class="text-end">$15.25M</td></tr>
+            <tr><td>Khoi luong tri nha thau phu</td><td class="text-end">2</td></tr>
+            <tr><td>Ty le ban phat dieu khoan tuong ung</td><td class="text-end">94%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="dashboard-section">
+      <h2>12. Actions Required</h2>
+      <div class="dashboard-panel">
+        <table class="dashboard-table compact">
+          <thead><tr><th>Hoat dong</th><th>Nguoi phu trach</th><th>Han hoan thanh</th><th class="text-end">Trang thai</th></tr></thead>
+          <tbody>
+            <tr><td>Phe duyet thay doi/phat sinh - VR-045</td><td>Khach hang</td><td>5 Jun 2025</td><td class="text-end">Yes</td></tr>
+            <tr><td>Cung cap ban ve ket cau</td><td>Don vi tu van</td><td>5 Jun 2025</td><td class="text-end">Yes</td></tr>
+            <tr><td>Thanh toan hoa don dang treo INV-125</td><td>Khach hang</td><td>5 Jun 2025</td><td class="text-end">92%</td></tr>
+            <tr><td>Kiem tra bien truong - QA/QC</td><td>Truong phong QLCL</td><td>5 Jun 2025</td><td class="text-end">3</td></tr>
+            <tr><td>Submit EOT Claim - 02</td><td>Truong phong QLCL</td><td>5 Jun 2025</td><td class="text-end">2</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script>
+  (function () {
+    const root = document.getElementById("dashboard-overview");
+    if (!root) return;
+
+    const financeRows = [
+      "Original Contract Value",
+      "Approved Variations",
+      "Pending Variations",
+      "Revised Contract Value",
+      "Revenue Recognized (To date)",
+      "Cost Incurred (To date)",
+      "Forecast Final Cost (EAC)",
+      "Forecast Profit",
+      "Tender Margin",
+      "Forecast Profit"
+    ];
+    const months = ["2/2026", "3/2026", "4/2026", "5/2026", "6/2026", "7/2026"];
+
+    function fillTable(selector, rows) {
+      const body = root.querySelector(selector);
+      if (body) body.innerHTML = rows.join("");
+    }
+
+    fillTable('[data-dashboard-table="finance"]', financeRows.map(function (label) {
+      return '<tr><td>' + label + '</td><td class="text-end">$52.600.000</td><td class="text-end">100%</td></tr>';
+    }));
+
+    fillTable('[data-dashboard-table="progress"]', financeRows.map(function (label) {
+      return '<tr><td>' + label + '</td><td class="text-end">100%</td></tr>';
+    }));
+
+    const personnelRows = [
+      ["9/2025", 100, 95, "2%"],
+      ["10/2025", 150, 140, "5%"],
+      ["11/2025", 200, 210, "12%"],
+      ["12/2025", 250, 245, "20%"],
+      ["1/2026", 270, 230, "25%"],
+      ["2/2026", 280, 260, "32%"],
+      ["3/2026", 300, 290, "45%"],
+      ["4/2026", 320, 310, "55%"]
+    ];
+    fillTable('[data-dashboard-table="personnel"]', personnelRows.map(function (row) {
+      return '<tr><td>' + row[0] + '</td><td class="text-end">' + row[1] + '</td><td class="text-end">' + row[2] + '</td><td class="text-end">' + row[3] + '</td></tr>';
+    }));
+
+    const materialRows = [
+      ["9/2025", 2.5, 2.4, "0.5%"],
+      ["10/2025", 4.2, 3.9, "1.5%"],
+      ["11/2025", 8.1, 7.8, "1.2%"],
+      ["12/2025", 12.5, 11.8, "3.5%"],
+      ["1/2026", 9.0, 8.5, "2.8%"],
+      ["2/2026", 7.5, 7.0, "3.2%"],
+      ["3/2026", 15.2, 14.5, "4.5%"],
+      ["4/2026", 10.4, 13.0, "2.5%"]
+    ];
+    fillTable('[data-dashboard-table="materials"]', materialRows.map(function (row) {
+      return '<tr><td>' + row[0] + '</td><td class="text-end">' + row[1] + '</td><td class="text-end">' + row[2] + '</td><td class="text-end">' + row[3] + '</td></tr>';
+    }));
+
+    if (!window.echarts) return;
+
+    const palette = {
+      navy: "#1e2b58",
+      blue: "#7b8cff",
+      green: "#6ed49a",
+      orange: "#ffae52",
+      cyan: "#27c9d7",
+      yellow: "#ffd75e",
+      grid: "#d7dce8",
+      text: "#454b5f"
+    };
+
+    const chartInstances = [];
+    function chart(name, option) {
+      const el = root.querySelector('[data-dashboard-chart="' + name + '"]');
+      if (!el) return;
+      const instance = echarts.init(el);
+      instance.setOption(option);
+      chartInstances.push(instance);
+    }
+
+    function baseGrid() {
+      return { left: 42, right: 18, top: 28, bottom: 42 };
+    }
+
+    function lineOption(series) {
+      return {
+        color: [palette.blue, palette.green, palette.orange],
+        tooltip: { trigger: "axis" },
+        legend: { bottom: 0, itemWidth: 10, itemHeight: 10, textStyle: { color: palette.text, fontSize: 11 } },
+        grid: baseGrid(),
+        xAxis: { type: "category", data: months, axisTick: { show: false }, axisLine: { lineStyle: { color: "#aeb6c8" } } },
+        yAxis: { type: "value", min: 0, max: 100, splitLine: { lineStyle: { color: palette.grid, type: "dashed" } } },
+        series: series.map(function (item) {
+          return {
+            name: item.name,
+            type: "line",
+            smooth: true,
+            symbolSize: 9,
+            lineStyle: { width: 2 },
+            data: item.data
+          };
+        })
+      };
+    }
+
+    function donutOption(data, colors) {
+      return {
+        color: colors,
+        tooltip: { trigger: "item" },
+        legend: { right: 16, top: "middle", orient: "vertical", itemWidth: 9, itemHeight: 9, textStyle: { fontSize: 11 } },
+        series: [{
+          type: "pie",
+          radius: ["44%", "72%"],
+          center: ["38%", "50%"],
+          avoidLabelOverlap: true,
+          label: { show: false },
+          data: data
+        }]
+      };
+    }
+
+    function horizontalBarOption(categories, values) {
+      return {
+        color: [palette.blue],
+        tooltip: { trigger: "axis" },
+        grid: { left: 88, right: 24, top: 12, bottom: 28 },
+        xAxis: { type: "value", min: 0, max: 1, splitLine: { lineStyle: { color: palette.grid, type: "dashed" } } },
+        yAxis: { type: "category", data: categories, axisTick: { show: false }, axisLine: { show: false } },
+        series: [{ type: "bar", data: values, barWidth: 18, label: { show: true, position: "insideRight", color: "#fff" } }]
+      };
+    }
+
+    chart("revenue-cost", lineOption([
+      { name: "Revenue", data: [10, 10, 14, 34, 19, 14] },
+      { name: "Cost", data: [25, 39, 41, 54, 62, 43] },
+      { name: "Forecast EAC", data: [44, 62, 69, 83, 84, 75] }
+    ]));
+
+    chart("planned-actual", lineOption([
+      { name: "Planned", data: [39, 54, 63, 66, 76, 78] },
+      { name: "Actual", data: [15, 28, 33, 42, 54, 61] },
+      { name: "Forecast", data: [14, 28, 33, 42, 54, 61] }
+    ]));
+
+    chart("milestone", donutOption([
+      { value: 46, name: "Completed" },
+      { value: 82, name: "On track" },
+      { value: 10, name: "Overdue" }
+    ], [palette.green, "#1296ed", palette.orange]));
+
+    chart("variation-aging", horizontalBarOption(["0-30 days", "31-60 days", "61-90 days", "> 90 days"], [0.40, 0.71, 0.63, 0.51]));
+    chart("variation-cause", donutOption([
+      { value: 32, name: "Design Changes" },
+      { value: 26, name: "Client Requests" },
+      { value: 18, name: "Site Conditions" },
+      { value: 14, name: "Regulatory" },
+      { value: 10, name: "Others" }
+    ], [palette.blue, palette.green, palette.orange, palette.cyan, palette.yellow]));
+
+    chart("claims-aging", horizontalBarOption(["0-30 days", "31-60 days", "61-90 days", "> 90 days"], [0.57, 0.82, 0.70, 0.60]));
+    chart("claims-type", donutOption([
+      { value: 30, name: "EOT" },
+      { value: 28, name: "Cost" },
+      { value: 32, name: "Disruption" },
+      { value: 10, name: "Others" }
+    ], [palette.blue, palette.green, palette.cyan, palette.yellow]));
+
+    chart("receivables-aging", donutOption([
+      { value: 4.2, name: "0-20 days" },
+      { value: 3.1, name: "31-60 days" },
+      { value: 2.05, name: "61-90 days" },
+      { value: 2.1, name: "> 90 days" }
+    ], [palette.blue, palette.green, palette.cyan, palette.orange]));
+
+    chart("billing-collection", {
+      color: [palette.blue, palette.green, palette.orange],
+      tooltip: { trigger: "axis" },
+      legend: { bottom: 0, itemWidth: 10, itemHeight: 10 },
+      grid: baseGrid(),
+      xAxis: { type: "category", data: ["11/2025", "12/2025", "1/2026", "2/2026", "3/2026", "4/2026"] },
+      yAxis: [{ type: "value", min: 0, max: 100 }, { type: "value", min: 0, max: 100 }],
+      series: [
+        { name: "Billed", type: "bar", data: [55, 65, 80, 84, 70, 35], barWidth: 18 },
+        { name: "Collected", type: "bar", data: [40, 80, 38, 45, 66, 26], barWidth: 18 },
+        { name: "Collection %", type: "line", yAxisIndex: 1, smooth: true, data: [45, 47, 59, 73, 92, 70] }
+      ]
+    });
+
+    function comboChart(name, bar1, bar2, line) {
+      chart(name, {
+        color: [palette.blue, palette.green, "#2454ff"],
+        tooltip: { trigger: "axis" },
+        legend: { bottom: 0, itemWidth: 10, itemHeight: 10 },
+        grid: baseGrid(),
+        xAxis: { type: "category", data: personnelRows.map(function (row) { return row[0]; }) },
+        yAxis: [{ type: "value" }, { type: "value", min: 0, max: 75, axisLabel: { formatter: "{value}%" } }],
+        series: [
+          { name: "Planned", type: "bar", data: bar1, barWidth: 18 },
+          { name: "Actual", type: "bar", data: bar2, barWidth: 18 },
+          { name: "Progress", type: "line", yAxisIndex: 1, smooth: true, data: line }
+        ]
+      });
+    }
+
+    comboChart("personnel", [100, 150, 200, 250, 270, 280, 300, 320], [95, 140, 210, 245, 230, 260, 290, 310], [2, 5, 12, 20, 25, 32, 45, 55]);
+    comboChart("materials", [250, 420, 810, 125, 900, 750, 520, 400], [240, 390, 780, 118, 850, 700, 450, 300], [5, 11, 23, 44, 51, 58, 65, 72]);
+
+    window.addEventListener("resize", function () {
+      chartInstances.forEach(function (instance) { instance.resize(); });
+    });
+  })();
+</script>

@@ -1,0 +1,329 @@
+<div id="contractlineperformupdate-section" class="" style="margin: 0 auto;">
+  <form id="contractlineperformupdate-form" enctype="multipart/form-data">
+
+    <div class="card">
+      <div class="card-header">
+        <!-- <h4 class="mb-0">
+          <%= title %>
+        </h4> -->
+        <div class="row g-2 m-0">
+          <div class="col-9 d-flex align-items-center">
+            <h4 class="sen-label" data-field="ItemName"></h4>
+          </div>
+          <div class="col-3 d-flex align-items-center gap-2 text-right pe-3">
+            <label for="contractlineperformupdate-Stage" class="mb-0">Stage:</label>
+            <select id="contractlineperformupdate-Stage" name="Stage" class="form-control">
+              <option value="implement">Implement</option>
+              <option value="plan">Plan</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <!-- Thông báo tổng -->
+        <div class="message-all callout d-none" contractlineperform="alert"></div>
+        <!-- <div class="row g-2 m-0">
+          <div class="col-9 d-flex align-items-center">
+            <h4 class="sen-label" data-field="ItemName"></h4>
+          </div>
+          <div class="col-3 d-flex align-items-center gap-2 text-right">
+            <label for="contractlineperformupdate-Stage" class="mb-0">Stage:</label>
+            <select id="contractlineperformupdate-Stage" name="Stage" class="form-control">
+              <option value="implement">Implement</option>
+              <option value="plan">Plan</option>
+            </select>
+          </div>
+        </div> -->
+
+
+        <div class="row g-3 align-items-center mb-3">
+          <div class="col-md-12">
+            <label for="contractlineperformupdate-SubmissionName" field-name="SubmissionName"
+              class="control-label">Submission Name:</label>
+            <textarea id="contractlineperformupdate-SubmissionName" name="SubmissionName" class="form-control"
+              rows="3"></textarea>
+          </div>
+        </div>
+
+        <div class="row g-3 align-items-center mb-3">
+          <div class="col-md-4">
+            <label for="contractlineperformupdate-SubmissionDate" field-name="SubmissionDate"
+              class="control-label">Submission Date:</label>
+            <input type="date" id="contractlineperformupdate-SubmissionDate" name="SubmissionDate" class="form-control">
+          </div>
+          <div class="col-md-4">
+            <label for="contractlineperformupdate-Unit" field-name="Unit" class="control-label">Unit:</label>
+            <!-- <input type="text" id="contractlineperformupdate-Unit" name="Unit" class="form-control"> -->
+            <select id="contractlineperformupdate-Unit" name="Unit" class="form-control">
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label for="contractlineperformupdate-SubmissionType" field-name="SubmissionType" class="control-label">Work
+              Category:</label>
+            <select id="contractlineperformupdate-SubmissionType" name="SubmissionType" class="form-control"
+              onchange="contractlineperformupdateobject.SubmissionTypeChange(this);">
+            </select>
+          </div>
+
+          <!-- <div class="col-md-4">
+            <label for="contractlineperformupdate-WorkType" field-name="WorkType" class="control-label">Work
+              Category:</label>
+            <select id="contractlineperformupdate-WorkType" name="WorkType" class="form-control">
+            </select>
+          </div> -->
+        </div>
+
+        <div class="row g-3 align-items-center mb-3">
+
+          <div class="col-md-6">
+            <label for="contractlineperformupdate-Qnty" field-name="Qnty" class="control-label">Quantity:</label>
+            <input type="number" id="contractlineperformupdate-Qnty" name="Qnty" class="form-control">
+          </div>
+
+          <div class="col-md-6">
+            <label for="contractlineperformupdate-UnitPrice" field-name="UnitPrice" class="control-label">Unit
+              Price:</label>
+            <input type="number" id="contractlineperformupdate-UnitPrice" name="UnitPrice" class="form-control">
+          </div>
+        </div>
+
+        <div class="row g-3 align-items-center mb-3">
+          <div class="col-md-12">
+            <label for="contractlineperformupdate-Remarks" field-name="Remarks" class="control-label">Remarks:</label>
+            <textarea id="contractlineperformupdate-Remarks" name="Remarks" class="form-control" rows="2"></textarea>
+          </div>
+        </div>
+
+        <div class="row g-3 align-items-center mb-3">
+          <div class="col-md-12">
+            <label for="contractlineperformupdate-Attachments" field-name="Attachments"
+              class="control-label">Attachments:</label>
+            <input type="file" id="contractlineperformupdate-Attachments" name="Attachments" class="form-control"
+              multiple>
+          </div>
+        </div>
+
+        <div class="row g-3 align-items-center mb-3">
+          <div class="col-md-12">
+            <label for="contractlineperformupdate-StartProcessNow" field-name="StartProcessNow"
+              class="control-label">Start Process Now:</label>
+            <input type="checkbox" id="contractlineperformupdate-StartProcessNow" name="StartProcessNow"
+              class="form-check-input" data-load="false"
+              onclick="contractlineperformupdateobject.onclickStartProcessNow(this);">
+          </div>
+          <div class="col-md-12">
+            <div id="assignmentsection" class="d-none">
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <button type="submit" class="btn btn-subtle-primary">Save & Close</button>
+        <button type="button" class="btn btn-subtle-secondary"
+          onclick="contractlineperformupdateobject.form.cancel()">Cancel</button>
+      </div>
+    </div>
+  </form>
+
+  <script>
+    var contractlineperformupdateobject = {};
+    // contractlineperformupdateobject.model = <%- JSON.stringify(model) %>;// dùng cách này là ok nhất nhưng bị cảnh báo
+    // contractlineperformupdateobject.model = JSON.parse(('<%- JSON.stringify(model) %>').replace(/\r?\n|\r/g, "\\n"));//xử lí xuống dòng trong chuỗi json
+    contractlineperformupdateobject.model = JSON.parse('<%- JSON.stringify(model) %>');
+
+    contractlineperformupdateobject.container = document.getElementById("contractlineperformupdate-section");//khu vực chứa form nghiệp vụ
+    contractlineperformupdateobject.assignmentcontainer = document.getElementById("assignmentsection");//khu vực chứa form nghiệp vụ
+    contractlineperformupdateobject.worktype = 'deduction';// contractlineperformupdateobject.model.url.query.worktype || 'deduction';
+    console.log(contractlineperformupdateobject.model);
+    // Khởi tạo bảng
+    contractlineperformupdateobject.form = new senapp.utils.form({
+      meta: contractlineperformupdateobject.model.meta,
+      data: contractlineperformupdateobject.model.data,
+      urldata: contractlineperformupdateobject.model.url,
+      container: contractlineperformupdateobject.container,
+      mode: (contractlineperformupdateobject.model.url.path == '/contractlineperform/edit') ? 'edit' : 'create',
+    });
+
+
+    contractlineperformupdateobject.form.saveBefore = async function () {
+      const formobject = this;
+      //gan contractid vao form data
+      formobject.data.contractid = contractlineperformupdateobject.model.url.query.contractid;
+
+
+      //gán lại dữ liệu mô tả cho Assignment
+      contractlineperformupdateobject.form.data.Assignment = contractlineperformupdateobject.form.data.Assignment.map((item, i) => ({
+        WorkType: contractlineperformupdateobject.worktype,
+        UserId: item.UserId,
+        Role: item.Role,
+        Description: document.querySelector(
+          `[name="Assignment[${i}][Description]"]`
+        ).value
+      }));
+
+
+      const url = `/common/uploadfile`;
+      const formData = new FormData();
+
+      // Lấy toàn bộ input file
+      this.container.querySelectorAll('input[type="file"]').forEach(input => {
+        for (const file of input.files) {
+          formData.append(input.name, file);
+        }
+      });
+
+      formData.append('WorkType', contractlineperformupdateobject.worktype);
+
+
+      //nếu không có file thì return true luôn
+      if (formData.getAll('Attachments').length === 0) { return true; }
+      const response = await fetch('/common/uploadfile', { method: 'POST', body: formData });
+      const result = await response.json();
+      if (result.status === 'false' || result.status === 0) {
+        // Gán lại danh sách file url vào dữ liệu form
+        senapp.window.toast({ message: result.message, type: 'danger' });
+        return false;
+      }
+      contractlineperformupdateobject.form.data['files'] = result.datas;
+      // console.log('Uploaded files:', contractlineperformupdateobject.form.data['files'],result.datas);
+      return true;
+    };
+
+    contractlineperformupdateobject.onclickStartProcessNow = function (element) {
+      const isChecked = element.checked;
+      if (isChecked) {
+        contractlineperformupdateobject.assignmentcontainer.classList.remove('d-none');
+      } else {
+        contractlineperformupdateobject.assignmentcontainer.classList.add('d-none');
+      }
+    };
+
+    contractlineperformupdateobject.getItem = async function (itemid) {
+      const url = `/contractline/item?ItemId=${itemid}`;
+      const response = await fetch(url, { method: 'GET', });
+      return await response.json();
+    };
+
+    contractlineperformupdateobject.getWorkType = async function () {
+      const urlworkcategory = `/common/lookup?lookupType=workcategory&type=deduction`;
+      const responseworkcategory = await fetch(urlworkcategory, { method: 'GET', });
+      return await responseworkcategory.json();
+    };
+
+    contractlineperformupdateobject.workcatid = contractlineperformupdateobject.model.url.query.itemid || 0;
+    contractlineperformupdateobject.getMember = async function () {
+      //do khong co add nen khong dung contractlineperformupdateobject.model.url.query.worktype
+      const url = `/contractlinemember/list4perform?id=${contractlineperformupdateobject.model.url.query.contractid}&worktype=deduction&itemid=${contractlineperformupdateobject.workcatid}`;
+      const response = await fetch(url, { method: 'GET', });
+      return await response.json();
+    };
+
+    contractlineperformupdateobject.initMember = async function () {
+      //lấy dữ liệu member
+      const resultmember = await contractlineperformupdateobject.getMember();
+      // console.log('Member data:', resultmember);
+      // console.log(JSON.stringify(resultmember, null, 2));
+
+      contractlineperformupdateobject.form.data.Assignment = resultmember.datas.map((item, i) => ({
+        UserId: item.UserId,
+        Role: item.Role,
+        FullName: item.FullName,
+        RoleAction: item.RoleAction,
+        Description: ''
+      }));
+      contractlineperformupdateobject.assignmentcontainer.innerHTML = contractlineperformupdateobject.form.data.Assignment.map((item, index) => `
+      <div class="row align-items-center border-bottom g-2 p-2">
+        
+        <!-- Thông tin user -->
+        <div class="col-md-4">
+          <strong>${item.FullName}</strong><br>
+          <small class="text-muted">
+            ${item.RoleAction}
+          </small>
+        </div>
+
+        <!-- Input mô tả -->
+        <div class="col-md-8">
+          <input
+            type="text"
+            class="form-control"
+            name="Assignment[${index}][Description]"
+            placeholder="Nhập mô tả..."
+          >
+        </div>
+
+      </div>
+    `).join("");
+
+
+    };
+
+    contractlineperformupdateobject.SubmissionTypeChange = async function (element) {
+      const selectedValue = element.value;
+      // console.log('Selected SubmissionType:', selectedValue);
+      // contractlineperformupdateobject.form.data.SubmissionType = selectedValue;
+      const item = contractlineperformupdateobject.workcategorydata.find(wc => wc.Alias === selectedValue);
+      if (item) {
+        contractlineperformupdateobject.workcatid = item.TypeId;
+        await contractlineperformupdateobject.initMember();
+      }
+
+
+    };
+
+    contractlineperformupdateobject.workcategorydata = [];
+    $(async function () {
+      //gán dữ liệu cho WorkCategory
+      const resultworkcategory = await contractlineperformupdateobject.getWorkType();
+      if (resultworkcategory.datas) {
+        contractlineperformupdateobject.workcategorydata = resultworkcategory.datas;
+        const workcategorymeta = contractlineperformupdateobject.form.meta.find(m => m.field === 'SubmissionType');
+        //map trường trước khi return
+        const mappedData = resultworkcategory.datas.map(item => ({
+          id: item.Alias,
+          value: item.Alias,
+          label: item.Description
+        }));
+        workcategorymeta.data = mappedData;
+      }
+      // Populate the WorkCategory select element
+      // console.log('WorkCategory data:', resultworkcategory);
+      // //lấy dữ liệu item
+      // const resultitem = await contractlineperformupdateobject.getItem(contractlineperformupdateobject.model.url.query.itemid);
+      // // console.log('Item data:', resultitem);
+      // if (resultitem) {
+      //   //lấy section với calss sen-label và data-field="ItemName" gán giá trị
+      //   const itemNameSection = contractlineperformupdateobject.container.querySelector('.sen-label[data-field="ItemName"]');
+      //   if (itemNameSection) { itemNameSection.textContent = resultitem.Description || ''; }
+      //   // Gán dữ liệu item vào form        
+      //   contractlineperformupdateobject.form.data.Unit = resultitem.Unit || contractlineperformupdateobject.form.data.Unit;
+      //   contractlineperformupdateobject.form.data.UnitPrice = resultitem.UnitPrice || contractlineperformupdateobject.form.data.UnitPrice;
+      // }
+
+      //lấy section với calss sen-label và data-field="ItemName" gán giá trị
+      const itemNameSection = contractlineperformupdateobject.container.querySelector('.sen-label[data-field="ItemName"]');
+      if (itemNameSection) {
+        //Huỳnh thống nhất lấy WorkName làm ItemName
+        itemNameSection.textContent = contractlineperformupdateobject.model.url.query.workname || '';
+      }
+
+
+      contractlineperformupdateobject.form.data.ItemId = contractlineperformupdateobject.model.url.query.itemid;
+      contractlineperformupdateobject.form.data.WorkType = contractlineperformupdateobject.model.url.query.worktype || '';
+
+      const alias = contractlineperformupdateobject.model.url.query.alias || '';
+      const workname = contractlineperformupdateobject.model.url.query.workname || '';
+      contractlineperformupdateobject.form.data.SubmissionType = alias;
+
+      //khởi tạo member
+      await contractlineperformupdateobject.initMember();
+      await contractlineperformupdateobject.form.initForm();
+
+    });
+
+  </script>
+
+</div>

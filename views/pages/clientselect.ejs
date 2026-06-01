@@ -1,0 +1,49 @@
+<div id="clientselect-section">
+  <div class="row flex-center min-vh-100 py-5">
+    <div class="col-sm-10 col-md-8 col-lg-5 col-xxl-4"><a class="d-flex flex-center text-decoration-none mb-4" href="/">
+        <div class="d-flex align-items-center fw-bolder fs-3 d-inline-block"><img src="<%= model.logo ? model.logo.FilePath : '/assets/img/icons/logo.png' %>"
+            alt="logo" width="58" />
+        </div>
+      </a>
+      <div class="px-xxl-5">
+        <div class="text-center mb-6">
+          <h4 class="text-body-highlight mb-3"><span class="sen-label">Please select a client</span></h4>
+          <form class="" method="POST" action="/client/select">
+            <select class="form-select" id="clientid" name="clientid">
+              <% model.data.forEach(function(client) { %>
+                <option value="<%= client.ClientId %>">
+                  <%= client.CompanyName %>
+                </option>
+                <% }); %>
+            </select>
+
+            <button class="btn btn-primary mt-3" type="submit"><span class="sen-label">Select</span></button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    var clientselectobject = {};
+    // clientselectobject.model = JSON.parse('<%- JSON.stringify(model) %>');
+    clientselectobject.model = <%- JSON.stringify(model) %>;
+    // console.log("clientselectobject.model", clientselectobject.model);
+    clientselectobject.container = document.getElementById("clientselect-section");//khu vực chứa form nghiệp vụ
+
+    //set ngầm định select với value=139
+    const selectElement = document.getElementById('clientid');
+    selectElement.value = '139';
+
+    document.addEventListener("DOMContentLoaded", function () {
+      // senapp.utils.text.initLocaleLabels({ container: clientselectobject.container }); 
+      // const select = document.getElementById('clientid');
+      // const choices = new Choices(select, {
+      //   removeItemButton: true,
+      //   searchEnabled: true,
+      //   placeholder: true,
+      //   placeholderValue: 'Select an option...'
+      // });
+    });
+  </script>
+
+</div>

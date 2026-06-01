@@ -1,0 +1,107 @@
+<div id="moduleupdate-section" class="" style="margin: 0 auto;">
+  <form id="moduleupdate-form">
+
+    <div class="card">
+      <div class="card-header">
+        <h4 class="mb-0">
+          <%= title %>
+        </h4>
+      </div>
+      <div class="card-body">
+        <!-- Thông báo tổng -->
+        <div class="message-all callout d-none" module="alert"></div>
+
+        <div class="row g-3 align-items-center mb-1">
+          <div class="col-md-6">
+            <label for="moduleupdate-Code" field-name="Code" class="control-label">Code:</label>
+            <input type="text" id="moduleupdate-Code" name="Code" class="form-control">
+          </div>
+          <div class="col-md-6">
+            <label for="moduleupdate-Alias" field-name="Alias" class="control-label">Alias:</label>
+            <input type="text" id="moduleupdate-Alias" name="Alias" class="form-control">
+          </div>
+        </div>
+        <div class="row g-3 align-items-center mb-1">
+          <div class="col-md-12">
+            <label for="moduleupdate-Description" field-name="Description" class="control-label">Description:</label>
+            <input type="text" id="moduleupdate-Description" name="Description" class="form-control">
+          </div>
+
+          <div class="col-md-6 d-none">
+            <label for="moduleupdate-ParentAlias" field-name="ParentAlias" class="control-label">Parent Alias:</label>
+            <input type="text" id="moduleupdate-ParentAlias" name="ParentAlias" class="form-control">
+          </div>
+        </div>
+        <div class="row g-3 align-items-center mb-1">
+          <div class="col-md-6">
+            <label for="moduleupdate-ParentId" field-name="ParentId" class="control-label">Parent Id:</label>
+            <select id="moduleupdate-ParentId" name="ParentId" class="form-control"></select>
+          </div>
+          <div class="col-md-6">
+            <label for="moduleupdate-IsActive" field-name="IsActive" class="control-label">Active:</label>
+            <select id="moduleupdate-IsActive" name="IsActive" class="form-control">
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
+          </div>
+        </div>
+        <div class="row g-3 align-items-center d-none">
+          <div class="col-md-6">
+            <label for="moduleupdate-ModuleId" field-name="ModuleId" class="control-label">Module Id:</label>
+            <input type="text" id="moduleupdate-ModuleId" name="ModuleId" class="form-control" readonly>
+          </div>
+
+          <!-- <div class="col-md-6">
+            <label for="moduleupdate-ParentId" field-name="ParentId" class="control-label">Parent Id:</label>
+            <input type="text" id="moduleupdate-ParentId" name="ParentId" class="form-control">
+          </div> -->
+        </div>
+      </div>
+      <div class="card-footer">
+        <button type="submit" class="btn btn-subtle-primary">Save & Close</button>
+        <button type="button" class="btn btn-subtle-secondary"
+          onclick="moduleupdateobject.form.cancel()">Cancel</button>
+      </div>
+    </div>
+  </form>
+
+  <script>
+    var moduleupdateobject = {};
+    moduleupdateobject.model = JSON.parse('<%- JSON.stringify(model) %>');
+    moduleupdateobject.container = document.getElementById("moduleupdate-section");//khu vực chứa form nghiệp vụ
+    console.log(moduleupdateobject.model);
+    // Khởi tạo bảng
+    moduleupdateobject.form = new senapp.utils.form({
+      meta: moduleupdateobject.model.meta,
+      data: moduleupdateobject.model.data,
+      urldata: moduleupdateobject.model.url,
+      container: moduleupdateobject.container,
+      mode: (moduleupdateobject.model.url.path == '/module/edit') ? 'edit' : 'create',
+    });
+
+    $(async function () {
+      // Lấy danh sách Parent Module
+      if (moduleupdateobject.model.data.ParentModule) {
+        // gán label cho ParentId tìm option trong moduleupdate-ParentId theo value và gán lại label
+        let parentSelect = document.getElementById("moduleupdate-ParentId");
+        //tìm option theo value nếu không có thì tạo mới và thêm vào select 
+        let existingOption = parentSelect.querySelector(`option[value="${moduleupdateobject.model.data.ParentId}"]`);
+        if (existingOption) {
+          existingOption.selected = true;
+          existingOption.text = `${moduleupdateobject.model.data.ParentModule.ModuleId} - ${moduleupdateobject.model.data.ParentModule.Description}`;
+        }
+        else {
+          let newOption = document.createElement("option");
+          newOption.value = moduleupdateobject.model.data.ParentId;
+          newOption.text = `${moduleupdateobject.model.data.ParentModule.ModuleId} - ${moduleupdateobject.model.data.ParentModule.Description}`;
+          newOption.selected = true;
+          parentSelect.appendChild(newOption);
+        }
+      }
+
+      await moduleupdateobject.form.initForm();
+    });
+
+  </script>
+
+</div>

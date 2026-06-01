@@ -1,0 +1,538 @@
+<div id="paymentorderipcapproval-section" class="" style="margin: 0 auto;">
+  <form id="paymentorderipcapproval-form">
+    <div class="card">
+      <div class="card-header">
+        <h4 class="mb-0">
+          IPC Approval
+        </h4>
+      </div>
+      <div class="card-body">
+        <!-- Thông báo tổng -->
+        <div class="message-all callout d-none" role="alert"></div>
+        <div class="row mb-3">
+          <div class="col-md-6 mt-3">
+            <label for="paymentorderipcapproval-IPCCode" field-name="IPCCode" class="control-label">IPC Code:</label>
+            <div id="paymentorderipcapproval-IPCCode" name="IPCCode" class="form-control bg-light sen-display">
+              <div style="height:20px;"></div>
+            </div>
+          </div>
+
+          <div class="col-md-6 mt-3">
+            <label for="paymentorderipcapproval-IPCName" field-name="IPCName" class="control-label">IPC Name:</label>
+            <!-- <div id="paymentorderipcapproval-IPCName" name="IPCName" class="form-control bg-light sen-display">
+              <div style="height:20px;"></div>
+            </div> -->
+            <input type="text" id="paymentorderipcapproval-IPCName" name="IPCName" class="form-control">
+          </div>
+
+          <div class="col-md-3 mt-3">
+            <label for="paymentorderipcapproval-PaymentApprovalStatus" field-name="PaymentApprovalStatus"
+              class="control-label">Payment Approval Status:</label>
+            <div id="paymentorderipcapproval-PaymentApprovalStatus" name="PaymentApprovalStatus"
+              class="form-control bg-light sen-display">
+              <div style="height:20px;"></div>
+            </div>
+          </div>
+
+          <div class="col-md-3 mt-3">
+            <label for="paymentorderipcapproval-PaymentDate" field-name="PaymentDate" class="control-label">Payment
+              Date:</label>
+            <input type="date" id="paymentorderipcapproval-PaymentDate" name="PaymentDate" class="form-control">
+            <!-- <div id="paymentorderipcapproval-PaymentDate" name="PaymentDate" class="form-control bg-light sen-display">
+              <div style="height:20px;"></div> -->
+          </div>
+
+          <div class="col-md-6 mt-3">
+            <label for="paymentorderipcapproval-Remarks" field-name="Remarks" class="control-label">Remarks:</label>
+            <!-- <div id="paymentorderipcapproval-Remarks" name="Remarks" class="form-control bg-light sen-display">
+              <div style="height:20px;"></div>
+            </div> -->
+            <input type="text" id="paymentorderipcapproval-Remarks" name="Remarks" class="form-control">
+          </div>
+        </div>
+        <h4>Payment</h4>
+        <hr style="padding-top: 0px;margin-top: 0px;" />
+        <div class="row g-3 align-items-center mb-1">
+          <div class="col-md-12">
+            <div class="row mb-2">
+              <div class="col-md-6">
+                <div class="col-md-12 mt-3">
+                  <label for="paymentorderipcapproval-PerformedAmount" field-name="PerformedAmount"
+                    class="control-label">Performed Amount:</label>
+                  <div id="paymentorderipcapproval-PerformedAmount" name="PerformedAmount"
+                    class="form-control bg-light sen-display">
+                    <div style="height:20px;"></div>
+                  </div>
+                  <!-- <input type="text" id="paymentorderipcapproval-PerformedAmount" name="PerformedAmount"
+                  class="form-control"> -->
+                </div>
+                <div class="col-md-12 mt-3">
+                  <label for="paymentorderipcapproval-PayableAmount" field-name="PayableAmount"
+                    class="control-label">Payable Amount:</label>
+                  <div id="paymentorderipcapproval-PayableAmount" name="PayableAmount"
+                    class="form-control bg-light sen-display">
+                    <div style="height:20px;"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="row">
+                  <div class="col-md-6 mt-3">
+                    <label for="paymentorderipcapproval-AddedAmount" field-name="AddedAmount"
+                      class="control-label">Added
+                      Amount:</label>
+                    <div id="paymentorderipcapproval-AddedAmount" name="AddedAmount"
+                      class="form-control bg-light sen-display">
+                      <div style="height:20px;"></div>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6 mt-3">
+                    <label for="paymentorderipcapproval-DeductedAmount" field-name="DeductedAmount"
+                      class="control-label">Deducted Amount:</label>
+                    <div id="paymentorderipcapproval-DeductedAmount" name="DeductedAmount"
+                      class="form-control bg-light sen-display">
+                      <div style="height:20px;"></div>
+                    </div>
+                  </div>
+                  <div class="col-md-6 mt-3">
+                    <label for="paymentorderipcapproval-PaidAmount" field-name="PaidAmount" class="control-label">Paid
+                      Amount:</label>
+                    <div id="paymentorderipcapproval-PaidAmount" name="PaidAmount"
+                      class="form-control bg-light sen-display">
+                      <div style="height:20px;"></div>
+                    </div>
+                  </div>
+
+                </div>
+
+
+              </div>
+
+            </div>
+            <div class="row">
+              <div class="col-md-3">
+                <label for="paymentorderipcapproval-IsProceed" field-name="IsProceed" class="control-label">Start
+                  Process Now:?</label>
+                <input type="checkbox" id="paymentorderipcapproval-IsProceed" name="IsProceed" class="form-check-input"
+                  value="" checked="" data-load="false"
+                  onclick="paymentorderipcapprovalobject.onclickStartProcessNow(this);">
+              </div>
+              <div class="col-md-3">
+              </div>
+              <div class="col-md-3">
+              </div>
+              <div class="col-md-3">
+                <!-- //hiển thị danh sách files -->
+                <a href="javascript:void(0)" id="paymentorderipcapproval-attachment-link"
+                  class="btn btn-subtle-secondary">All Files</a>
+              </div>
+
+            </div>
+          </div>
+        </div>
+        <div class="card-body d-none" id="paymentorderipcapproval-line-section">
+          <div class="table-responsive">
+            <table class="table table-sm fs-9 mb-5">
+              <tbody class="list"> </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-footer" id="paymentorderipcapproval-edit-section">
+        <button type="submit" class="btn btn-subtle-primary"><span class="sen-label">Save & Close</span></button>
+        <button type="button" class="btn btn-subtle-secondary"
+          onclick="paymentorderipcapprovalobject.form.cancel()"><span class="sen-label">Cancel</span></button>
+      </div>
+    </div>
+
+</div>
+</form>
+
+<script>
+  var paymentorderipcapprovalobject = {};
+  // paymentorderipcapprovalobject.model = <%- JSON.stringify(model) %>;// dùng cách này là ok nhất không bị các trường hợp rớt dòng nhưng bị cảnh báo
+  paymentorderipcapprovalobject.model = JSON.parse(('<%- JSON.stringify(model) %>').replace(/\r?\n|\r/g, "\\n"));//xử lí xuống dòng trong chuỗi json
+  paymentorderipcapprovalobject.container = document.getElementById("paymentorderipcapproval-section");//khu vực chứa form nghiệp vụ
+
+  // Khởi tạo bảng
+  paymentorderipcapprovalobject.form = new senapp.utils.form({
+    meta: paymentorderipcapprovalobject.model.meta.metaprint,
+    data: paymentorderipcapprovalobject.model.data,
+    urldata: paymentorderipcapprovalobject.model.url,
+    container: paymentorderipcapprovalobject.container,
+    mode: (paymentorderipcapprovalobject.model.url.path == '/paymentorderipc/edit') ? 'edit' : 'create',
+  });
+
+  paymentorderipcapprovalobject.form.saveBefore = async function () {
+    this.data.ContractId = parseInt(paymentorderipcapprovalobject.model.url.query.contractid) || 0;//thêm ContractId vào data để gửi lên server
+    this.data.PaymentId = parseInt(paymentorderipcapprovalobject.model.url.query.paymentid) || 0;//thêm PaymentId vào data để gửi lên server
+
+    const Assignment = paymentorderipcapprovalobject.lineobject.tblline.datas;//.filter(l => l.SysDataStatus === 'Update');
+    this.data.Assignment = Assignment;
+    // console.log('Save data:', this.data);
+
+
+    return true;
+  };
+
+  //#region line
+  paymentorderipcapprovalobject.lineobject = { model: {} };
+  paymentorderipcapprovalobject.lineobject.model.meta = paymentorderipcapprovalobject.model.meta.metaassigneeapproval;
+  paymentorderipcapprovalobject.lineobject.urldata = {
+    //lists: '/senobjectline/list',
+    // listnews: '/senobjectline/list',
+    // item: '/senobjectline/item',
+    // create: '/senobjectline/create',
+    // edit: '/senobjectline/edit',
+    // delete: '/senobjectline/delete',
+    // update: '/senobjectline/edit',
+    // meta: '/senobjectline/meta'
+  };
+  paymentorderipcapprovalobject.lineobject.filterRows = [
+    // { field: 'Role', operator: 'equals', value: '' },
+    // { field: 'ApprovalStatus', operator: 'equals', value: '' },
+    // { field: 'MyDuty', operator: 'equals', value: '' },
+  ];
+
+  paymentorderipcapprovalobject.lineobject.tblline = {};
+  paymentorderipcapprovalobject.lineobject.tbllines = [];
+
+  /*
+      paymentorderipcapprovalobject.lineobject.localFilter = function (element) {
+        const searchText = element.value.toLowerCase();
+        const tableobject = this.tblline;
+  
+        //tạo bản sao dữ liệu để lọc
+        let data4filter = tableobject.datas.slice();//sao chép mảng để lọc
+        //xóa tbody nếu có
+        const tbody = tableobject.tableelement.querySelector('tbody.row-datas');
+        if (tbody) { tbody.innerHTML = ''; }
+  
+        //nếu có từ khóa tìm kiếm thì không làm gì cả
+        //lọc dữ liệu từ contractmemberbycontractobject.model.datas
+        //căn cứ vào filterRows để lọc
+  
+        // Tạo điều kiện lọc theo dạng object với function
+        const filterConditions = {};
+  
+        this.filterRows.filter(m => ['Role', 'ApprovalStatus', 'MyDuty'].includes(m.field)).forEach(filter => {
+          if (filter.value && filter.value !== '') {
+            const field = filter.field;
+            const value = filter.value.toLowerCase();
+  
+            switch (filter.operator) {
+              case 'equals':
+                filterConditions[field] = (v) => {
+                  if (v === null || v === undefined) return false;
+                  return v.toString().toLowerCase() === value;
+                };
+                break;
+              // Thêm các toán tử khác nếu cần
+            }
+          }
+        });
+        //console.log(filterConditions);
+        data4filter = tableobject.filterData(data4filter, filterConditions);
+        data4filter.forEach(data => {
+          const tr = tableobject.genRowData({ data: data });
+          tbody.appendChild(tr);
+        });
+      }
+      paymentorderipcapprovalobject.lineobject.accept = async function (element) {
+        //hàm chấp thuận dòng
+        //console.log('Accept line');
+      };
+      paymentorderipcapprovalobject.lineobject.viewfile = async function (element) {
+        // //hàm xem file đính kèm của dòng
+        // const data = paymentorderipcapprovalobject.form.data;
+        // const id = data[paymentorderipcapprovalobject.form.keyfield];
+        // const assignmentid = element.getAttribute('data-assignmentid') || 0;
+        // const url = `${'/common/files?viewname=contractlineperformfiles'}&submissionid=${id}&assignmentid=${assignmentid}&displaymode=by_assignment&worktype=${encodeURIComponent(paymentorderipcapprovalobject.model.url.query.worktype || '')}`;
+        // senapp.window.offcanvas({
+        //   title: `Files of ${data["SubmissionName"] || ''}`,
+        //   url: url,
+        //   size: 'md'
+        // });
+  
+        // //console.log('View Files');
+      };
+  */
+
+  paymentorderipcapprovalobject.lineobject.loadLine = async function () {
+    const formobject = paymentorderipcapprovalobject.form;
+    const masterdata = formobject.data;
+
+    let tblline = new senapp.utils.table({
+      meta: paymentorderipcapprovalobject.lineobject.model.meta,
+      container: formobject.container.querySelector('#paymentorderipcapproval-line-section'),//khu vực chứa danh sách
+      filterrow: false,
+      allowsorting: false, //cho phép sắp xếp hay không
+      addrow: false, // cho phép thêm mới
+      editrow: true, // cho phép sửa
+      deleterow: false, // cho phép xóa
+      addnewfirst: false, //thêm mới vào đầu danh sách
+      readonly: false,
+      actionbuttons: { savenews: false }, //hiển thị các nút hành động
+      loadmoreonvisible: true, // tự động tải thêm dữ liệu khi cuộn đến cuối danh sách   
+      metacolumns: [
+        { field: 'SysAction', visible: false, colorder: -9 },
+      ]
+    });
+
+    /*
+          tblline.genCellDataCustom = function ({ data, metacolumn }) {
+            if (!metacolumn || !metacolumn.field) {
+              return null; // Trả về null nếu không có metacolumn hoặc field
+            }
+            // Hàm này sẽ được sử dụng để tạo dữ liệu cho các cột tùy chỉnh
+            const tableobject = this;
+            const td = document.createElement('td');
+            td.setAttribute('data-field', metacolumn.field);
+            //nếu field.visible là false hoặc field.show là false thì không hiển thị cột này  gán class d-none
+            if (!metacolumn.show || !metacolumn.visible) { td.classList.add('d-none'); }
+            switch (metacolumn.field) {
+              case 'Ext01':
+                td.innerHTML = `<a href="javascript:;" onclick="paymentorderipcapprovalobject.lineobject.accept(this)" title="Accept">Accept</a>`;
+                break;
+              case 'Ext02':
+                td.innerHTML = `<a href="javascript:;" data-assignmentid="${data['AssignmentId'] || 0}" onclick="paymentorderipcapprovalobject.lineobject.viewfile(this)" title="View Files">View</a>`;
+                break;
+              default:
+                //nếu không phải là cột tùy chỉnh thì trả về giá trị của trường đó
+                td.innerHTML = data[metacolumn.field] || '';
+                break;
+            }
+            return td;
+          }
+    */
+
+    //tạm khóa không cần lưu khi thay đổi dòng
+    tblline.synData = async function ({ data, type, mode } = {}) {
+      data.SysDataStatus = 'Update';
+      return { status: 1, message: '', data: {}, errors: {} };
+    };
+
+    // //hàm map quyền editable cho cell dùng cho override
+    // tblline.mapCellEditableExt = function ({ td, data, metacolumn }) {
+    //   // return data['MyDuty'] === 'Yes';
+    // }
+
+    //hàm genCellData để tạo dữ liệu cho bảng
+    tblline.genCellData = function ({ data, metacolumn }) {
+      //nếu metacolumn.field chứa trong customcolumns thì gọi hàm genCellDataCustom
+      if (this.customcolumns && this.customcolumns.includes(metacolumn.field)) {
+        return this.genCellDataCustom({ data, metacolumn });
+      }
+
+      //nếu metacolumn.field là 'SysNo' thì nội dung bằng số dòng trong tbody tr trong bảng
+      if (metacolumn.field === 'SysNo') {
+        return this.genCellDataNo({ data: data, metacolumn: metacolumn });
+      }
+
+      //nếu metacolumn.field là 'SysSelect' thì trả về tdselect
+      if (metacolumn.field === 'SysSelect') {
+        return this.genCellDataSelect({ data: data, metacolumn: metacolumn });
+      }
+
+      //nếu metacolumn.field là 'SysAction' thì trả về tdaction
+      if (metacolumn.field === 'SysAction') {
+        return this.genCellDataAction({ data: data, metacolumn: metacolumn });
+      }
+      if (metacolumn.visible === false) { return null; }
+      const td = document.createElement('td');
+      td.setAttribute('data-field', metacolumn.field);
+      //set tabindex
+      td.setAttribute('tabindex', '0');
+      //nếu field.show là false thì không hiển thị cột này  gán class d-none
+      if (!metacolumn.show) { td.classList.add('d-none'); }
+
+      //nếu trường có tồn tại data thì map giá trị với data 
+      if (metacolumn.data) {
+        const mappedValue = metacolumn.data.find(item => item.id === data[metacolumn.field]);
+        td.textContent = mappedValue ? mappedValue.label : '';
+        //gán quyền chỉnh sửa cho cell
+        this.mapCellEditable({ td: td, data: data, metacolumn: metacolumn });
+        return td;
+      }
+
+      //nếu có inputtype== 'checkbox' 
+      if (metacolumn.inputtype && metacolumn.inputtype === 'checkbox' && (metacolumn.type === 'bool' || metacolumn.type === 'boolean')) {
+        // check của fontawesome  nếu data[metacolumn.field] là true thì checked nếu false thì unchecked
+        // td.innerHTML = `<div class="form-check"> <input style="opacity:1;" class="form-check-input" type="checkbox" disabled ${data[metacolumn.field] ? 'checked' : ''}></div>`;
+        // td.innerHTML = `<div class="form-check form-switch"> <input class="form-check-input" type="checkbox" disabled ${data[metacolumn.field] ? 'checked' : ''}></div>`;
+        // td.innerHTML = `<i class="fa-regular ${data[metacolumn.field] ? 'fa-square-check' : 'fa-square'}"></i>`;
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.className = 'form-check-input';
+        checkbox.classList.add('cell-editor');
+        checkbox.value = data[metacolumn.field];
+        checkbox.style.opacity = '1';
+        //nếu data[metacolumn.field]==true thì checkbox chọn
+        if (data[metacolumn.field] == true) { checkbox.checked = true; }
+        //khi thay đổi thì gọi hàm updateData của  tableobject
+        checkbox.onchange = function () {
+          data[metacolumn.field] = this.checked;
+          // phát sự kiện nếu thay đổi
+          td.dispatchEvent(new CustomEvent("cellchange", {
+            bubbles: true,
+            detail: { oldValue: !data[metacolumn.field], newValue: this.checked, cell: td }
+          }));
+          //tableobject.updateByKey(data[tableobject.keyfield]);
+        };
+        td.appendChild(checkbox);
+        //gán quyền chỉnh sửa cho cell
+        this.mapCellEditable({ td: td, data: data, metacolumn: metacolumn });
+        return td;
+      }
+
+      td.innerHTML = senapp.data.stringifyValue(data[metacolumn.field], metacolumn);
+      //gán quyền chỉnh sửa cho cell
+      this.mapCellEditable({ td: td, data: data, metacolumn: metacolumn });
+      return td;
+    };
+
+    // tblline.genRowDataExtClass = function ({ tr, data }) {
+    //   //nếu data.ApprovalStatus == 'Accepted' thì gán class row-accepted
+    //   if (data.MyDuty !== 'Yes') {
+    //     tr.classList.add('bg-light');
+    //   }
+    // }
+
+    //hàm genRowData để tạo dữ liệu cho bảng
+    tblline.genRowData = function ({ data }) {
+      const tableobject = this;
+      const tr = document.createElement('tr');
+      //gán giá trị keyfield vào thuộc tính data-id của tr
+      tr.setAttribute('data-id', data[tableobject.keyfield]);
+      tr.className = 'row-data';
+
+      this.metacolumns.forEach(column => {
+        const td = tableobject.genCellData({ data: data, metacolumn: column });
+        // Bắt event trực tiếp ở chính cell
+        if (td) {
+          td.addEventListener("cellchange", async (e) => {
+            // //console.log("Old:", e.detail.oldValue, "New:", e.detail.newValue);
+            if (e.detail.oldValue === e.detail.newValue) return;
+            //nếu giá trị cũ khác giá trị mới thì mới thì đánh dấu dòng thay đổi
+            tr.classList.add('edited');
+            await tableobject.onChangeCell({ td: td, data: data });
+          });
+          //gán class kiểu dữ liệu
+          td.classList.add('type-' + (column.type || 'string').toLowerCase());
+          tr.appendChild(td);
+        }
+
+      });
+
+      tr.addEventListener("focusin", () => {
+        // tr.classList.add("table-active");
+        // //console.log("focus in row", tr.rowIndex);
+      });
+
+      tr.addEventListener("focusout", async (e) => {
+        // e.relatedTarget = phần tử chuẩn bị được focus tiếp theo
+        // nếu phần tử đó vẫn nằm trong cùng tr thì KHÔNG xoá active
+        if (!tr.contains(e.relatedTarget)) {
+          // tr.classList.remove("table-active");
+          await tableobject.onChangeRow({ tr: tr, data: data });
+        }
+      });
+
+      this.genRowDataExtClass({ tr: tr, data: data });
+
+      return tr;
+    }
+
+    // //hàm tạo lookupparam để gửi lên server
+    // tblline.lookupparam = function ({ lookup, data }) {
+    //   //console.log('lookupparam:', lookup, data);
+    //   return `lookupType=paymentorderipcapprovalstatusupdate&role=${data.Role}&pagesize=${lookup.pagesize || 0}&filter=${encodeURIComponent(JSON.stringify(lookup.filter))}`;
+    // }
+
+    tblline.loadDataCurrent = async function ({ datas } = {}) {
+      if (!datas) { datas = this.datas; }
+      const tableobject = this;
+      senapp.window.loading.show(tableobject.tableelement.parentElement);
+      try {
+        //gán dữ liệu cho tableobject.datas
+        tableobject.datas.length = 0; //xóa dữ liệu cũ
+        tableobject.datas.push(...datas);
+        //xóa dữ liệu cũ trên giao diện
+        const tbody = tableobject.tableelement.querySelector('tbody.row-datas');
+        datas.forEach(data => {
+          const tr = tableobject.genRowData({ data: data });
+          tbody.appendChild(tr);
+        });
+        senapp.window.loading.hide(tableobject.tableelement.parentElement);
+      } catch (err) {
+        console.error(err);
+        alert("Error loading data");
+        senapp.window.loading.hide(tableobject.tableelement.parentElement);
+      }
+    };
+
+    await tblline.initTable();
+    // tblline.datas.push(...masterdata.datas);
+    tblline.loadDataCurrent({ datas: masterdata.dataext.asigneeapproval || [] });
+
+
+    //console.log(tblline.datas);
+    paymentorderipcapprovalobject.lineobject.tblline = tblline;
+    paymentorderipcapprovalobject.lineobject.tbllines[masterdata[formobject.keyfield]] = tblline;
+  };
+
+
+  //#endregion line
+  paymentorderipcapprovalobject.assignmentcontainer = document.getElementById("paymentorderipcapproval-line-section");//khu vực chứa form nghiệp vụ
+  paymentorderipcapprovalobject.onclickStartProcessNow = function (element) {
+    const isChecked = element.checked;
+    if (isChecked) {
+      paymentorderipcapprovalobject.assignmentcontainer.classList.remove('d-none');
+    } else {
+      paymentorderipcapprovalobject.assignmentcontainer.classList.add('d-none');
+    }
+  };
+
+
+  $(async function () {
+    if (paymentorderipcapprovalobject.model.url.query.edit === 'false') {
+      //nếu không phải là edit mà là view thì ẩn phần footer đi
+      const footer = document.getElementById('paymentorderipcapproval-edit-section');
+      if (footer) { footer.style.display = 'none'; }
+    }
+
+
+    await paymentorderipcapprovalobject.form.initForm();
+    await paymentorderipcapprovalobject.lineobject.loadLine();
+
+    if (paymentorderipcapprovalobject.form.data.IsProceed === true) {
+      paymentorderipcapprovalobject.assignmentcontainer.classList.remove('d-none');
+    } else {
+      paymentorderipcapprovalobject.assignmentcontainer.classList.add('d-none');
+    }
+
+    const attachmentLink = document.getElementById('paymentorderipcapproval-attachment-link');
+    attachmentLink.addEventListener('click', function () {
+      const data = paymentorderipcapprovalobject.form.data;
+      // const id = data[paymentorderipcapprovalobject.form.keyfield];
+      const paymentid = paymentorderipcapprovalobject.model.url.query.paymentid || 0;
+      let url = `/common/files?viewname=paymentorderipcapprovalfiles&submissionid=${paymentid}&assignmentid=0&displaymode=by_submissions&parenttype=edit&worktype=payment_order`;
+      if (paymentorderipcapprovalobject.model.url.query.edit !== 'true') {
+        url = `/common/files?viewname=paymentorderipcapprovalfiles&submissionid=${paymentid}&assignmentid=0&displaymode=by_submissions&parenttype=view&worktype=payment_order`
+      }
+      senapp.window.offcanvas({
+        title: `Files`,
+        url: url,
+        size: 'md'
+      });
+    });
+
+  });
+
+</script>
+
+
+</div>

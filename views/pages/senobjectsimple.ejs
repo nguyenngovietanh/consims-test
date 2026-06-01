@@ -1,0 +1,77 @@
+<div id="senobject-section">
+  <div class="mb-9">
+    <h2 class="mb-4"><%- title %></h2>
+    <div class="mb-1">
+      <div class="">
+        <a onclick="senobjectobject.tbl.create()" class="btn btn-subtle-primary">Create New</a>
+      </div>
+    </div>
+    <div class="row-fluid">
+      <div class="card">
+        <div class="card-body">
+          <div class="search-box mb-3 mx-auto">
+            <div class="position-relative">
+              <input class="form-control search-input search form-control-sm" type="search" placeholder="Search"
+                aria-label="Search" />
+              <span class="fas fa-search search-box-icon"></span>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-sm fs-9 mb-5">
+              <tbody class="list"> </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var senobjectobject = {};
+    senobjectobject.model = JSON.parse('<%- JSON.stringify(model) %>');
+    senobjectobject.container = document.getElementById("senobject-section");//khu vực chứa danh sách
+    senobjectobject.urldata = {
+      lists: '/senobject/list',
+      item: '/senobject/item',
+      create: '/senobject/create?callback=' + encodeURIComponent('senobjectobject.createcallback'),//+'&id=1',
+      edit: '/senobject/edit?callback=' + encodeURIComponent('senobjectobject.editcallback'),
+      delete: '/senobject/delete'
+    };
+
+    senobjectobject.createcallback = function (response) {
+      //nếu response[0] tồn tại thì hiển thị thông báo lỗi
+      if (response[0]) {
+        if (response[0].status == 0) {
+          alert(response[0].message);
+          return;
+        }
+        senobjectobject.tbl.onAddRowData({ data: response[0].data });
+        //senapp.sidebar.menuclickbydatalink('/senobject');
+      }
+    };
+    senobjectobject.editcallback = function (response) {
+      //nếu response[0] tồn tại thì hiển thị thông báo lỗi
+      if (response[0]) {
+        if (response[0].status == 0) {
+          alert(response[0].message);
+          return;
+        }
+        senobjectobject.tbl.onChangeRowData({ data: response[0].data });
+        //senapp.sidebar.menuclickbydatalink('/senobject');
+      }
+    };
+    // Khởi tạo bảng
+    senobjectobject.tbl = new senapp.utils.table({
+      meta: senobjectobject.model.meta,
+      urldata: senobjectobject.urldata,
+      container: senobjectobject.container,
+      tableelement: senobjectobject.container.querySelector('table'),
+      modal: true,
+      selectcolumn: true, // có hiển thị cột chọn hay không      
+      filterrow: true, // hiển thị filter row
+      loadmoreonvisible: true, // tự động tải thêm dữ liệu khi cuộn đến cuối danh sách      
+    });
+
+    $(function () { senobjectobject.tbl.initTable(); });
+  </script>
+</div>

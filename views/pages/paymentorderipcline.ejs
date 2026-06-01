@@ -1,0 +1,408 @@
+<div id="paymentorderipcline-section">
+  <div class="mb-9">
+    <div class="row-fluid">
+      <div class="card">
+        <div class="card-header">
+          <h4 class="mb-0">IPC detail</h4>
+        </div>
+
+        <div class="card-body">
+          <div class="mb-1 d-none" id="paymentorderipcline-action-section">
+            <div class="text-end">
+              <div class="btn-group me-1">
+                <a onclick="paymentorderipclineobject.applyTax()" class="btn btn-subtle-primary">Apply tax</a>
+                <a onclick="paymentorderipclineobject.tbl.savechanged()" class="ms-1 btn btn-subtle-primary">Save
+                  changed</a>
+
+              </div>
+            </div>
+          </div>
+
+          <ul class="nav nav-underline fs-9" role="tablist">
+            <li class="nav-item" role="presentation">
+              <a class="nav-link active" data-bs-toggle="tab" data-bs-target="#paymentorderipcline-tab-1" type="button"
+                role="tab" aria-controls="paymentorderipcline-tab-1" aria-selected="true">IPC Data</a>
+            </li>
+            <li class="nav-item" role="presentation">
+              <a class="nav-link" data-bs-toggle="tab" data-bs-target="#paymentorderipcline-tab-2" type="button"
+                role="tab" aria-controls="paymentorderipcline-tab-2" aria-selected="false">IPC Tax</a>
+            </li>
+            <li class="nav-item" role="presentation">
+              <a class="nav-link" data-bs-toggle="tab" data-bs-target="#paymentorderipcline-tab-3" type="button"
+                role="tab" aria-controls="paymentorderipcline-tab-3" aria-selected="false">IPC View</a>
+            </li>
+            <li class="nav-item" role="presentation">
+              <a class="nav-link" data-bs-toggle="tab" data-bs-target="#paymentorderipcline-tab-5" type="button"
+                role="tab" aria-controls="paymentorderipcline-tab-5" aria-selected="false">IPC Cumulative</a>
+            </li>            
+            <li class="nav-item" role="presentation">
+              <a class="nav-link" data-bs-toggle="tab" data-bs-target="#paymentorderipcline-tab-4" type="button"
+                role="tab" aria-controls="paymentorderipcline-tab-4" aria-selected="false">IPC Docs</a>
+            </li>
+
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane fade show active" id="paymentorderipcline-tab-1" role="tabpanel"
+              aria-labelledby="paymentorderipcline-tab-1" tabindex="0">
+              <div class="table-responsive">
+                <table class="table table-sm fs-9 mb-5" id="paymentorderipcline-table">
+                  <tbody class="list"> </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="tab-pane fade" id="paymentorderipcline-tab-2" role="tabpanel"
+              aria-labelledby="paymentorderipcline-tab-2" tabindex="0">
+              <div id="paymentorderipcline-tab-2-container" class="mt-1">
+                <table class="table table-sm fs-9 mb-5" id="paymentorderipcline-tax-table">
+                  <tbody class="list">
+                    <tr>
+                      <th><label for="paymentorderipcline-tab-2-Invoice" field-name="Invoice"
+                          class="control-label  fw-bold">Invoice:</label></th>
+                      <th><label for="paymentorderipcline-tab-2-Amount" field-name="Amount"
+                          class="control-label  fw-bold">Amount:</label></th>
+                      <th><label for="paymentorderipcline-tab-2-TaxAmount" field-name="TaxAmount"
+                          class="control-label  fw-bold">Tax Amount:</label></th>
+                      <th><label for="paymentorderipcline-tab-2-TotalAmount" field-name="TotalAmount"
+                          class="control-label  fw-bold">Total Amount:</label></th>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="tab-pane fade" id="paymentorderipcline-tab-3" role="tabpanel"
+              aria-labelledby="paymentorderipcline-tab-3" tabindex="0">
+              <div id="paymentorderipcline-tab-3-container" class="mt-1">
+              </div>
+
+            </div>
+            <div class="tab-pane fade" id="paymentorderipcline-tab-4" role="tabpanel"
+              aria-labelledby="paymentorderipcline-tab-4" tabindex="0">
+              <div id="paymentorderipcline-tab-4-container" class="mt-1">
+              </div>
+            </div>
+            <div class="tab-pane fade" id="paymentorderipcline-tab-5" role="tabpanel"
+              aria-labelledby="paymentorderipcline-tab-5" tabindex="0">
+              <div id="paymentorderipcline-tab-5-container" class="mt-1">
+              </div>
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var paymentorderipclineobject = {};
+    paymentorderipclineobject.model = JSON.parse('<%- JSON.stringify(model) %>');
+    paymentorderipclineobject.container = document.getElementById("paymentorderipcline-section");//khu vực chứa danh sách
+    paymentorderipclineobject.urldata = {
+      lists: `/paymentorderipc/ipclinedata?paymentid=${paymentorderipclineobject.model.url.query.paymentid}`,
+      // item: '/paymentorderipc/rejectapplytax/item',
+      // create: '/paymentorderipc/rejectapplytax/create?callback=' + encodeURIComponent('paymentorderipclineobject.createcallback'),//+'&id=1',
+      // edit: '/paymentorderipc/rejectapplytax/edit?callback=' + encodeURIComponent('paymentorderipclineobject.editcallback'),
+      // delete: '/paymentorderipc/rejectapplytax/delete'
+      update: `/paymentorderipc/updateipclinetax?paymentid=${paymentorderipclineobject.model.url.query.paymentid}`
+    };
+
+    // Khởi tạo bảng
+    paymentorderipclineobject.tbl = new senapp.utils.table({
+      meta: paymentorderipclineobject.model.meta,
+      urldata: paymentorderipclineobject.urldata,
+      container: paymentorderipclineobject.container,
+      tableelement: paymentorderipclineobject.container.querySelector('#paymentorderipcline-table'),
+      modal: true,
+      selectcolumn: true, // có hiển thị cột chọn hay không      
+      filterrow: false, // hiển thị filter row
+      loadmoreonvisible: true, // tự động tải thêm dữ liệu khi cuộn đến cuối danh sách      
+      editrow: true, // cho phép sửa
+      metacolumns: [
+        { field: 'SysAction', visible: false, colorder: -9 },
+        { field: 'Ext02', description: 'Review', colorder: -8, visible: true, show: true, gridwidth: 80, readonly: true },
+      ],
+      customcolumns: ['TaxRate', 'Ext02'], // Danh sách các cột tùy chỉnh khi render cell
+      allowformatheader: true, //cho phép định dạng header thông qua customcolumns
+      allowsummary: true, //cho phép hiển thị summary ở header (khi select dữ liệu sẽ có thêm trường _summary để tính toán tổng hợp)
+    });
+
+
+    paymentorderipclineobject.tbl.genCellDataCustom = function ({ data, metacolumn }) {
+      if (!metacolumn || !metacolumn.field) { return null; }
+      // Hàm này sẽ được sử dụng để tạo dữ liệu cho các cột tùy chỉnh
+      const tableobject = this;
+      const td = document.createElement('td');
+      td.setAttribute('data-field', metacolumn.field);
+      td.setAttribute('tabindex', '0');
+      //nếu field.visible là false hoặc field.show là false thì không hiển thị cột này  gán class d-none
+      if (!metacolumn.show || !metacolumn.visible) { td.classList.add('d-none'); }
+
+      switch (metacolumn.field) {
+        case 'TaxRate':
+          if (data.SubmissionId === "") {
+            td.innerHTML = '';
+          }
+          else {
+            td.innerHTML = `${senapp.data.stringifyValue(data[metacolumn.field], metacolumn)}%`;
+          }
+          break;
+        case 'Ext02':
+          if (data.SubmissionId === "") {
+            td.innerHTML = '';
+          }
+          else {
+            td.innerHTML = `<a class="text-muted" href="javascript:;" onclick="paymentorderipclineobject.loadreviewall(this)" title="Review"><i class="fa fa-list"></i></a>`;
+
+          }
+          break;
+        default:
+          //nếu không phải là cột tùy chỉnh thì trả về giá trị của trường đó
+          td.innerHTML = senapp.data.stringifyValue(data[metacolumn.field], metacolumn);
+          break;
+      }
+      //gán quyền chỉnh sửa cho cell
+      this.mapCellEditable({ td: td, data: data, metacolumn: metacolumn });
+      return td;
+    }
+
+    //hàm map quyền editable cho cell dùng cho override
+    paymentorderipclineobject.tbl.mapCellEditableExt = function ({ td, data, metacolumn }) {
+      return data.SubmissionId !== "" || data.SysDataStatus === 'Update';
+    }
+    paymentorderipclineobject.tbl.genRowDataExtClass = function ({ tr, data }) {
+      if (data.SubmissionId === "") {
+        tr.classList.add('bg-light');
+        tr.classList.add('fw-bold');
+      }
+    }
+    //tạm khóa không cần lưu khi thay đổi dòng
+    paymentorderipclineobject.tbl.synData = async function ({ data, type, mode } = {}) {
+      data.SysDataStatus = 'Update';
+      return { status: 1, message: '', data: {}, errors: {} };
+    };
+
+    //hàm lưu dữ liệu đã chỉnh sửa
+    paymentorderipclineobject.tbl.savechanged = async function () {
+      //confirm trước khi lưu
+      if (senapp.window.confirm({ message: `${await senapp.utils.text.t('Are you sure you want to save changes?')}` }) === false) {
+        return;
+      }
+
+      const tableobject = this;
+      const changedRows = tableobject.datas.filter(row => row.SysDataStatus === 'Update');
+      senapp.window.loading.show();
+      const promises = changedRows.map(row =>
+        tableobject.updateByKey(row[tableobject.keyfield])
+          //cập nhật trạng thái về null sau khi lưu
+          .then(() => { row.SysDataStatus = null; })
+      );
+      try {
+        await Promise.all(promises);
+        senapp.window.loading.hide();
+        tableobject.refreshDataDisplay();
+        console.log("Tất cả đã lưu xong!");
+
+        await paymentorderipclineobject.mapipcprint();
+        await paymentorderipclineobject.mapipcprintcumulative();
+        await paymentorderipclineobject.mapipctax();
+
+      } catch (err) {
+        senapp.window.alert({ message: `⚠️ ${await senapp.utils.text.t('Có lỗi khi lưu:')}`, type: 'danger' });
+        console.error("Có lỗi khi lưu:", err);
+      }
+    };
+
+    paymentorderipclineobject.loadreviewall = function (element) {
+      const tableobject = paymentorderipclineobject.tbl;
+      const id = parseInt(element.closest('tr').getAttribute('data-id'));
+      const data = tableobject.datas.find(item => item[tableobject.keyfield] === id);
+
+      const itemworktype = data.Type || '';
+      let url = `/contractlineperform/review?submissionid=${data.SubmissionId}&worktype=${encodeURIComponent(itemworktype)}&itemworktype=${encodeURIComponent(itemworktype)}`;
+      if (['add', 'deduction'].includes(itemworktype)) {
+        url += `&viewname=contractlineperformreview4deduction`;
+      }
+
+      senapp.window.modal({
+        title: `Review of ${data["SubmissionName"] || ''}`,
+        url: url,
+        size: 'xl'
+      });
+    };
+
+    paymentorderipclineobject.mapipctax = async function () {
+      const url = `/paymentorderipc/ipctaxdata?paymentid=${paymentorderipclineobject.model.url.query.paymentid}`;
+      const container = document.getElementById('paymentorderipcline-tab-2-container');
+      const response = await fetch(url);
+      //chuyển thành json
+      const data = await response.json();
+      // console.log("IPCTax data:", data);
+      senapp.utils.meta2labels({ meta: data.meta, container: container });
+
+      if (data && data.datas) {
+        const tbody = container.querySelector('tbody');
+        //xóa các dòng cũ trừ dòng header
+        const oldrows = tbody.querySelectorAll('tr:not(:first-child)');
+        oldrows.forEach(row => row.remove());
+
+        const taxinfos = data.datas;
+        if (taxinfos && taxinfos.length > 0) {
+          taxinfos.forEach((taxinfo, index) => {
+            const tr = document.createElement('tr');
+            tbody.appendChild(tr);
+            if (tr) {
+              tr.innerHTML = `<td field-name="Invoice"></td>
+                              <td field-name="Amount"></td>
+                              <td field-name="TaxAmount"></td>
+                              <td field-name="TotalAmount"></td>`;
+              tr.querySelector('td[field-name="Invoice"]').innerText = senapp.data.stringifyValue(taxinfo.Invoice, data.meta.find(meta => meta.field === 'Invoice')) || '';
+              tr.querySelector('td[field-name="Amount"]').innerText = senapp.data.stringifyValue(taxinfo.Amount, data.meta.find(meta => meta.field === 'Amount')) || '';
+              tr.querySelector('td[field-name="TaxAmount"]').innerText = senapp.data.stringifyValue(taxinfo.TaxAmount, data.meta.find(meta => meta.field === 'TaxAmount')) || '';
+              tr.querySelector('td[field-name="TotalAmount"]').innerText = senapp.data.stringifyValue(taxinfo.TotalAmount, data.meta.find(meta => meta.field === 'TotalAmount')) || '';
+            }
+          });
+        }
+
+        // const taxinfo = data.datas[0];
+        // if (taxinfo) {
+        //   senapp.utils.data2displays({ metas: data.meta, data: taxinfo, container: container });
+        //   //lấy tbody của paymentorderipcline-tax-table
+        //   const tr = tbody.querySelector('tr:nth-child(2)');//lấy dòng thứ 2 để hiển thị dữ liệu
+        //   // container.querySelector('td[field-name="Invoice"]').innerText = taxinfo.Invoice || '';
+        //   // container.querySelector('td[field-name="Amount"]').innerText = taxinfo.Amount != null ? taxinfo.Amount.toLocaleString() : '';
+        //   // container.querySelector('td[field-name="TaxAmount"]').innerText = taxinfo.TaxAmount != null ? taxinfo.TaxAmount.toLocaleString() : '';
+        //   // container.querySelector('td[field-name="TotalAmount"]').innerText = taxinfo.TotalAmount != null ? taxinfo.TotalAmount.toLocaleString() : '';
+        // }
+      }
+
+
+
+    }
+
+    paymentorderipclineobject.mapipcprint = async function () {
+      const url = `/paymentorderipc/ipcprint?paymentid=${paymentorderipclineobject.model.url.query.paymentid}`;
+      //dùng jquery để load nội dung trả về vào container
+      $('#paymentorderipcline-tab-3-container').load(url, function (response, status, xhr) {
+        if (status === "error") {
+          console.error("Error loading IPC print data:", xhr.status, xhr.statusText);
+          $('#paymentorderipcline-tab-3-container').html(`<p class="text-danger">Error loading data</p>`);
+        }
+      });
+    }
+
+    paymentorderipclineobject.mapipcprintcumulative = async function () {
+      const url = `/paymentorderipc/ipcprintcumulative?paymentid=${paymentorderipclineobject.model.url.query.paymentid}`;
+      //dùng jquery để load nội dung trả về vào container
+      $('#paymentorderipcline-tab-5-container').load(url, function (response, status, xhr) {
+        if (status === "error") {
+          console.error("Error loading IPC print cumulative data:", xhr.status, xhr.statusText);
+          $('#paymentorderipcline-tab-5-container').html(`<p class="text-danger">Error loading data</p>`);
+        }
+      });
+    }
+
+    paymentorderipclineobject.mapdocs = async function () {
+      const paymentid = paymentorderipclineobject.model.url.query.paymentid;
+      //let url = `/common/files?viewname=paymentorderipcapprovalfiles&submissionid=${paymentid}&assignmentid=0&displaymode=by_submissions&parenttype=edit&worktype=payment_order`;
+      const url = `/common/files?viewname=paymentorderipclinefiles&submissionid=${paymentid}&assignmentid=0&displaymode=by_ipc&parenttype=view&worktype=payment_order`;
+      //dùng jquery để load nội dung trả về vào container
+      $('#paymentorderipcline-tab-4-container').load(url, function (response, status, xhr) {
+        if (status === "error") {
+          console.error("Error loading IPC docs data:", xhr.status, xhr.statusText);
+          $('#paymentorderipcline-tab-4-container').html(`<p class="text-danger">Error loading data</p>`);
+        }
+      });
+    }
+
+    paymentorderipclineobject.applyTax = async function () {
+      //hàm này dùng để validate trước khi apply tax
+      // console.log('Validate before apply tax for element:', el);
+      senapp.window.loading.show();
+      try {
+        const datapost = {
+          paymentid: parseInt(paymentorderipclineobject.model.url.query.paymentid),
+        };
+        const url = '/paymentorderipc/validateapplytax';
+        const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(datapost) });
+        resdata = await response.json();
+        senapp.window.loading.hide();
+        if (senapp.window.confirm({ message: `${resdata.message}` })) {
+          await paymentorderipclineobject.acceptapplytax();
+        }
+      } catch (error) {
+        console.error(`Error in synServer: ${error}`);
+        resdata = { status: 0, message: error.message || 'Error in synServer', data: {}, errors: {} };
+        senapp.window.loading.hide();
+      }
+    }
+
+    paymentorderipclineobject.acceptapplytax = async function ({ el }) {
+      //hàm này dùng để accept apply tax
+      // console.log('Accept apply tax for element:', el);
+      senapp.window.loading.show();
+      try {
+        //lấy id từ thuộc tính data-id của thẻ cha tr của el
+        const datapost = { paymentid: parseInt(paymentorderipclineobject.model.url.query.paymentid) };
+        const url = '/paymentorderipc/acceptapplytax';
+        const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(datapost) });
+        resdata = await response.json();
+        if (resdata.status == 1) {
+          paymentorderipclineobject.tbl.refreshDataDisplay();
+          await paymentorderipclineobject.mapipcprint();
+          await paymentorderipclineobject.mapipcprintcumulative();
+          await paymentorderipclineobject.mapipctax();
+        }
+        else {
+          senapp.window.toast({ message: resdata.message, type: 'error' });
+        }
+      } catch (error) {
+        console.error(`Error in synServer: ${error}`);
+        resdata = { status: 0, message: error.message || 'Error in synServer', data: {}, errors: {} };
+      }
+      senapp.window.loading.hide();
+
+    }
+
+    paymentorderipclineobject.mapshowaction = async function () {
+      const actionsection = paymentorderipclineobject.container.querySelector('#paymentorderipcline-action-section');
+      if (actionsection) {
+        try {
+          const datapost = {
+            paymentid: parseInt(paymentorderipclineobject.model.url.query.paymentid),
+          };
+          const url = '/paymentorderipc/validateapplytax';
+          const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(datapost) });
+          resdata = await response.json();
+          if (resdata.status == 1) {
+            actionsection.classList.remove('d-none');
+          }
+          else {
+            actionsection.classList.add('d-none');
+          }
+
+          // console.log('Validate apply tax result:', resdata);
+          // senapp.window.loading.hide();
+          // if (senapp.window.confirm({ message: `${resdata.message}` })) {
+          //   await paymentorderipclineobject.acceptapplytax();
+          // }
+        } catch (error) {
+          console.error(`Error in synServer: ${error}`);
+          resdata = { status: 0, message: error.message || 'Error in synServer', data: {}, errors: {} };
+          senapp.window.loading.hide();
+        }
+      }
+    }
+
+    $(async function () {
+      await paymentorderipclineobject.tbl.initTable();
+      await paymentorderipclineobject.mapipcprint();
+      await paymentorderipclineobject.mapipctax();
+      await paymentorderipclineobject.mapdocs();
+      await paymentorderipclineobject.mapshowaction();
+
+      await paymentorderipclineobject.mapipcprintcumulative();
+      //paymentorderipcline-action-section
+
+    });
+  </script>
+</div>

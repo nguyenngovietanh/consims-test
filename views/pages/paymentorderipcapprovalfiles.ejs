@@ -1,0 +1,368 @@
+<div id="paymentorderipcapprovalfiles-section">
+  <div class="mb-9">
+    <!-- <h2 class="mb-4"><%- title %></h2> -->
+    <div class="mb-1" id="paymentorderipcapprovalfiles-menu-section">
+
+      <form id="paymentorderipcapprovalfiles-form" enctype="multipart/form-data">
+        <div class="row g-3 align-items-center mb-3">
+          <div class="col-md-12">
+            <label for="uploadfile-Attachments" field-name="Attachments" class="control-label">Attachments:</label>
+            <!-- <input type="file" id="uploadfile-Attachments" name="Attachments" class="form-control" multiple> -->
+            <div class="input-group">
+              <input type="file" id="uploadfile-Attachments" name="Attachments" class="form-control" multiple>
+              <button class="btn btn-subtle-primary border" type="button"
+                onclick="paymentorderipcapprovalfilesobject.uploadfile(this)">Save</button>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <div id="paymentorderipcapprovalfiles-fileList"></div>
+          </div>
+        </div>
+      </form>
+
+      <div class="">
+        <a onclick="paymentorderipcapprovalfilesobject.tbl.deleteBySelected()" class="btn btn-subtle-secondary">Delete
+          Selected</a>
+        <!-- <a onclick="paymentorderipcapprovalfilesobject.uploadfile()" class="btn btn-subtle-primary">Upload</a> -->
+      </div>
+    </div>
+    <div class="row-fluid">
+      <div class="card">
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-sm fs-9 mb-5">
+              <tbody class="list">
+                <!-- Table datas will be added here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var paymentorderipcapprovalfilesobject = {};
+    paymentorderipcapprovalfilesobject.model = JSON.parse('<%- JSON.stringify(model) %>');
+    paymentorderipcapprovalfilesobject.container = document.getElementById("paymentorderipcapprovalfiles-section");//khu vực chứa danh sách
+    paymentorderipcapprovalfilesobject.worktype = paymentorderipcapprovalfilesobject.model.url.query.worktype || 'construction_work';
+
+    paymentorderipcapprovalfilesobject.urldata = {
+      lists: `/common/get-file-list?submissionid=${paymentorderipcapprovalfilesobject.model.url.query.submissionid}&assignmentid=${paymentorderipcapprovalfilesobject.model.url.query.assignmentid}&pagesize=0&sourcetype=${encodeURIComponent(paymentorderipcapprovalfilesobject.worktype)}&displaymode=${paymentorderipcapprovalfilesobject.model.url.query.displaymode || 'by_submissions'}`,
+      delete: `/common/removefile`,
+      sign: `/common?viewname=contractlineperformcertificate`,
+      uploadfile: `/common?viewname=uploadfile`,
+      checkroleupload: `/contractlineperform/checkroleupload?submissionid=${paymentorderipcapprovalfilesobject.model.url.query.submissionid}&assignmentid=${paymentorderipcapprovalfilesobject.model.url.query.assignmentid}&worktype=${paymentorderipcapprovalfilesobject.model.url.query.sourcetype || 'construction_work'}`,
+    };
+
+    console.log(paymentorderipcapprovalfilesobject.model);
+
+    paymentorderipcapprovalfilesobject.editable = (paymentorderipcapprovalfilesobject.model.url.query.assignmentid !== "0" || paymentorderipcapprovalfilesobject.model.url.query.parenttype == "edit") ? true : false;
+
+    // Khởi tạo bảng
+    paymentorderipcapprovalfilesobject.tbl = new senapp.utils.table({
+      meta: paymentorderipcapprovalfilesobject.model.meta,
+      urldata: paymentorderipcapprovalfilesobject.urldata,
+      container: paymentorderipcapprovalfilesobject.container,
+      tableelement: paymentorderipcapprovalfilesobject.container.querySelector('table'),
+      modal: true,
+      selectcolumn: true,
+      deleterow: true, // cho phép xóa
+      filterrow: false, // không hiển thị filter row
+      //filtercompact: false // hiển thị filter row ở dạng compact
+      loadmoreonvisible: true, // tự động tải thêm dữ liệu khi cuộn đến cuối danh sách
+      //loadmoreshowtoast: true,
+      metacolumns: [
+        { field: 'SysAction', visible: false },
+        { field: 'FileName', description: `<a class="me-2" href="javascript:;" onclick="senapp.utils.downloadallfiles({tblname:'paymentorderipcapprovalfilesobject.tbl'})"><i class="fa-solid fa-download"></i></a> File Name`, colorder: 2, visible: true, show: true, sortable: false },
+        { field: 'Ext01', description: `<a class="me-2" href="javascript:;" onclick="senapp.utils.signallfiles({tblname:'paymentorderipcapprovalfilesobject.tbl'})"><i class="fa-solid fa-signature"></i></a> Sign`, colorder: 810, visible: true, show: true, gridwidth: 120, sortable: false },
+      ],
+      customcolumns: ['FileName', 'Ext01'],
+    });
+
+    paymentorderipcapprovalfilesobject.signfile = function (element, viewonly = false) {
+      // console.log('Sign File function called');
+      const id = element.getAttribute('data-fileid') || 0;
+      const url = `${this.urldata.sign}&fileid=${id}&view=${viewonly}&callback=paymentorderipcapprovalfilesobject.signfilecallback`;
+      senapp.window.offcanvas({
+        title: `Signing status`,
+        url: url,
+        size: 'md'
+      });
+    }
+    paymentorderipcapprovalfilesobject.signfilecallback = function (data) {
+      console.log('Sign file callback data:', data);
+      paymentorderipcapprovalfilesobject.tbl.refreshDataDisplay();
+    };
+
+
+
+    paymentorderipcapprovalfilesobject.uploadfile = async function (element) {
+      const url = `/contractlineperform/uploadfile`;
+      const formData = new FormData();
+
+      formData.append('sourceid', paymentorderipcapprovalfilesobject.model.url.query.submissionid || 0);
+      // formData.append('assignmentid', paymentorderipcapprovalfilesobject.model.url.query.assignmentid || 0);
+      formData.append('displaymode', 'Modified Upload');
+      formData.append('worktype', paymentorderipcapprovalfilesobject.model.url.query.worktype || 'construction_work');
+
+      const input = document.getElementById('uploadfile-Attachments');
+      for (const file of input.files) { formData.append(input.name, file); }
+
+      const response = await fetch(url, { method: 'POST', body: formData });
+      const result = await response.json();
+      console.log('Upload response:', result);
+      if (result.status === 'false' || result.status === 0) {
+        // Gán lại danh sách file url vào dữ liệu form
+        senapp.window.toast({ message: result.message, type: 'danger' });
+        return false;
+      }
+      console.log('Uploaded files:', result.datas);
+      paymentorderipcapprovalfilesobject.tbl.refreshDataDisplay();
+
+      return true;
+
+    }
+
+    paymentorderipcapprovalfilesobject.tbl.genCellDataCustom = function ({ data, metacolumn }) {
+      if (!metacolumn || !metacolumn.field) {
+        return null; // Trả về null nếu không có metacolumn hoặc field
+      }
+      // Hàm này sẽ được sử dụng để tạo dữ liệu cho các cột tùy chỉnh
+      const tableobject = this;
+      const td = document.createElement('td');
+      td.setAttribute('data-field', metacolumn.field);
+      //nếu field.visible là false hoặc field.show là false thì không hiển thị cột này  gán class d-none
+      if (!metacolumn.show || !metacolumn.visible) { td.classList.add('d-none'); }
+      switch (metacolumn.field) {
+        case 'FileName':
+          const filedownload = `${senapp.common.url.filedownload}?params={"FileId": ${data['Id'] || ''},"LogIn": "${senapp.user.username}","SessionId": "${senapp.sessionid}"}`;
+          const fileview = `${senapp.common.url.fileview}?params={"FileId": ${data['Id'] || ''},"LogIn": "${senapp.user.username}","SessionId": "${senapp.sessionid}"}`;
+          td.innerHTML = `<a class="me-2" href='${filedownload}' target="_blank" ><i class="fa-solid fa-download"></i></a>`;
+          td.innerHTML += `<a href='${fileview}' target="_blank" >${data[metacolumn.field] || ''}</a>`;
+          // td.innerHTML = `<a href='https://consims.com/ViewFile.html?params={"FileId": ${data['Id'] || ''},"LogIn": "${senapp.user.username}","SessionId": "${senapp.sessionid}"}' target="_blank" >${data[metacolumn.field] || ''}</a>`;
+          break;
+        case 'Ext01':
+          if (data['Signed'] === 'No') {
+            td.innerHTML = `<a data-fileid="${data['Id'] || ''}" href="javascript:;" onclick="paymentorderipcapprovalfilesobject.signfile(this)" title="Sign">Sign</a>`;
+          }
+          else {
+            td.innerHTML = `<a data-fileid="${data['Id'] || ''}" href="javascript:;" onclick="paymentorderipcapprovalfilesobject.signfile(this, true)" title="View">View</a>`;
+          }
+          break;
+        default:
+          //nếu không phải là cột tùy chỉnh thì trả về giá trị của trường đó
+          td.innerHTML = data[metacolumn.field] || '';
+          break;
+      }
+      return td;
+    }
+
+    // paymentorderipcapprovalfilesobject.tbl.deleteparaext = function (data) {
+    //   //dùng cho override
+    //   return `?Account=${encodeURIComponent(data.Account)}&ContractId=${encodeURIComponent(paymentorderipcapprovalfilesobject.model.url.query.id)}`;
+    // }
+
+
+    paymentorderipcapprovalfilesobject.tbl.delete = async function (row) {
+      if (!this.deleterow || this.readonly) {
+        //senapp.window.toast({ message: 'Bạn không có quyền xóa dòng này', type: 'danger' });
+        senapp.window.toast({ message: 'You do not have permission to delete this row', type: 'danger' });
+        return;
+      }
+
+      const tableobject = this;
+      const id = $(row).attr('data-id');
+      const deletedData = tableobject.datas.find(d => d[tableobject.keyfield] == id);
+      const response = await this.synData({ data: deletedData, type: 'delete' });
+      console.log('Delete response:', response);
+      if (response.status == 'false' || response.status == 0) {
+        senapp.window.toast({ message: response.message, type: 'danger' });
+      } else {
+        senapp.window.toast({ message: response.message, type: 'success' });
+        // Xóa row khỏi DOM
+        $(row).remove();
+        // Cập nhật lại số thứ tự
+        tableobject.resetSysNo();
+        // Lưu vào danh sách deleted
+        if (deletedData) {
+          tableobject.datadeleteds.push(deletedData);
+          // Xóa khỏi mảng datas
+          tableobject.datas.splice(tableobject.datas.indexOf(deletedData), 1);
+        }
+      }
+      //gọi hàm callback nếu có
+      if (this.deletecallback && typeof this.deletecallback === 'function') {
+        await this.deletecallback({ response, data: deletedData, row });
+      }
+
+    };
+
+    //#region UI file upload
+    paymentorderipcapprovalfilesobject.fileInput = document.getElementById('uploadfile-Attachments');
+    paymentorderipcapprovalfilesobject.fileList = document.getElementById('paymentorderipcapprovalfiles-fileList');
+    paymentorderipcapprovalfilesobject.dt = new DataTransfer();
+    /* ===== thêm file ===== */
+    paymentorderipcapprovalfilesobject.addFiles = function (files) {
+      for (const file of files) {
+        // // ví dụ validate 10MB
+        // if (file.size > 10 * 1024 * 1024) {
+        //   alert(file.name + ' > 10MB');
+        //   continue;
+        // }
+        this.dt.items.add(file);
+      }
+      this.fileInput.files = this.dt.files;
+      this.render();
+    }
+    /* ===== render danh sách ===== */
+    paymentorderipcapprovalfilesobject.render = function () {
+      this.fileList.innerHTML = '';
+      [...this.dt.files].forEach((file, i) => {
+        const li = document.createElement('span');
+        //thêm class cho span
+        // badge badge-phoenix fs--2 badge-phoenix-success
+        li.className = 'badge badge-phoenix fs--2 badge-phoenix-secondary m-1 p-2 d-inline-flex align-items-center';
+        li.style.fontSize = '10px';
+        //tạo span gán tên file và kích thước
+        const span = document.createElement('span');
+        span.textContent = `${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+        li.appendChild(span);
+        //tạo nút xóa file bằng thẻ a và gán sự kiện onclick
+        const removeButton = document.createElement('a');
+        removeButton.href = 'javascript:;';
+        removeButton.className = 'ms-2 text-decoration-none text-muted';
+        removeButton.innerHTML = 'x';
+        removeButton.onclick = () => { this.removeFile(i); };
+        li.appendChild(removeButton);
+        // li.innerHTML = `
+        //         <span>${file.name} (${(file.size / 1024).toFixed(1)} KB)</span>
+        //         <button onclick="paymentorderipcapprovalfilesobject.removeFile(${i})">❌</button>
+        //     `;
+        this.fileList.appendChild(li);
+      });
+    }
+
+    /* ===== xóa file ===== */
+    paymentorderipcapprovalfilesobject.removeFile = function (index) {
+      this.dt.items.remove(index);
+      this.fileInput.files = this.dt.files;
+      this.render();
+    }
+    //#endregion UI file upload 
+
+    $(async function () {
+      /* ===== chọn file ===== */
+      paymentorderipcapprovalfilesobject.fileInput.addEventListener('change', e => {
+        paymentorderipcapprovalfilesobject.addFiles(e.target.files);
+      });
+
+      const menu = paymentorderipcapprovalfilesobject.container.querySelector('#paymentorderipcapprovalfiles-menu-section');
+      if (paymentorderipcapprovalfilesobject.model.url.query.parenttype !== 'edit') {
+        const roleuploadresponse = await fetch(paymentorderipcapprovalfilesobject.urldata.checkroleupload);
+        const roleuploadresult = await roleuploadresponse.json();
+        if (roleuploadresult.IsAbleToAddFile === "No") { menu.style.display = 'none'; }
+      }
+
+      if (paymentorderipcapprovalfilesobject.editable === false) { menu.style.display = 'none'; }
+      paymentorderipcapprovalfilesobject.tbl.initTable();
+    });
+
+  </script>
+
+  <!-- <script>
+    const fileInput = document.getElementById('fileInput');
+    const dropZone = document.getElementById('dropZone');
+    const fileList = document.getElementById('fileList');
+
+    let dt = new DataTransfer();
+
+    /* ===== chọn file ===== */
+    fileInput.addEventListener('change', e => {
+      addFiles(e.target.files);
+    });
+
+    /* ===== drag & drop ===== */
+    dropZone.addEventListener('dragover', e => {
+      e.preventDefault();
+      dropZone.classList.add('dragover');
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.classList.remove('dragover');
+    });
+
+    dropZone.addEventListener('drop', e => {
+      e.preventDefault();
+      dropZone.classList.remove('dragover');
+      addFiles(e.dataTransfer.files);
+    });
+
+    /* ===== thêm file ===== */
+    function addFiles(files) {
+      for (const file of files) {
+        // ví dụ validate 10MB
+        if (file.size > 10 * 1024 * 1024) {
+          alert(file.name + ' > 10MB');
+          continue;
+        }
+        dt.items.add(file);
+      }
+      fileInput.files = dt.files;
+      render();
+    }
+
+    /* ===== render danh sách ===== */
+    function render() {
+      fileList.innerHTML = '';
+      [...dt.files].forEach((file, i) => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+                <span>${file.name} (${(file.size / 1024).toFixed(1)} KB)</span>
+                <button onclick="removeFile(${i})">❌</button>
+            `;
+        fileList.appendChild(li);
+      });
+    }
+
+    /* ===== xóa file ===== */
+    function removeFile(index) {
+      dt.items.remove(index);
+      fileInput.files = dt.files;
+      render();
+    }
+
+    /* ===== upload từng file ===== */
+    async function uploadAll() {
+      if (dt.files.length === 0) {
+        alert('Chưa chọn file');
+        return;
+      }
+
+      for (const file of dt.files) {
+        await uploadSingle(file);
+      }
+
+      alert('Upload xong!');
+      resetAll();
+    }
+
+    async function uploadSingle(file) {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      // demo – đổi URL theo API của bạn
+      await fetch('/api/upload', {
+        method: 'POST',
+        body: formData
+      });
+    }
+
+    function resetAll() {
+      dt = new DataTransfer();
+      fileInput.value = '';
+      render();
+    }
+  </script> -->
+
+</div>

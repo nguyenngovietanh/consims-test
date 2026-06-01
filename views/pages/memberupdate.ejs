@@ -1,0 +1,129 @@
+<div id="memberupdate-section" class="" style="margin: 0 auto;">
+  <form id="memberupdate-form">
+
+    <div class="card">
+      <div class="card-header"><h4 class="mb-0"><%= title %></h4></div>
+      <div class="card-body">
+        <!-- Thông báo tổng -->
+        <div class="message-all callout d-none" member="alert"></div>
+
+        <div class="row g-3 align-items-center mb-1">
+          <div class="col-md-6">
+            <label for="memberupdate-FullName" class="control-label" field-name="FullName">Full Name:</label>
+            <input type="text" id="memberupdate-FullName" name="FullName" class="form-control">
+          </div>
+          <div class="col-md-6">
+            <label for="memberupdate-PhoneDirect" class="control-label" field-name="PhoneDirect">Phone Direct:</label>
+            <input type="text" id="memberupdate-PhoneDirect" name="PhoneDirect" class="form-control">
+          </div>
+        </div>
+        <div class="row g-3 align-items-center mb-1">
+          <div class="col-md-12">
+            <label for="memberupdate-Address" class="control-label" field-name="Address">Address:</label>
+            <input type="text" id="memberupdate-Address" name="Address" class="form-control">
+          </div>
+        </div>
+
+
+
+
+        <div class="row g-3 align-items-center mb-1">
+          <div class="col-md-6">
+            <label for="memberupdate-Sex" class="control-label" field-name="Sex">Sex:</label>
+            <select id="memberupdate-Sex" name="Sex" class="form-control"> </select>
+          </div>
+          <div class="col-md-6">
+            <label for="memberupdate-BirthDay" class="control-label" field-name="BirthDay">Birthday:</label>
+            <input type="date" id="memberupdate-BirthDay" name="BirthDay" class="form-control">
+          </div>
+
+
+
+        </div>
+        <div class="row g-3 align-items-center mb-1">
+
+          <div class="col-md-6">
+            <label for="memberupdate-Email" class="control-label" field-name="Email">Email:</label>
+            <input type="email" id="memberupdate-Email" name="Email" class="form-control">
+          </div>
+
+          <div class="col-md-6">
+            <label for="memberupdate-Password" class="control-label" field-name="Password">Password:</label>
+            <input type="text" id="memberupdate-Password" name="Password" class="form-control">
+          </div>
+        </div>
+
+
+        <div id="memberupdate-section-edit">
+          <div class="row g-3 align-items-center mb-1">
+            <div class="col-md-6">
+              <label for="memberupdate-JobTitle" class="control-label" field-name="JobTitle">Job Title:</label>
+              <input type="text" id="memberupdate-JobTitle" name="JobTitle" class="form-control">
+            </div>
+            <div class="col-md-6">
+              <label for="memberupdate-Account" class="control-label" field-name="Account">Account:</label>
+              <input type="text" id="memberupdate-Account" name="Account" class="form-control">
+            </div>
+
+            <div class="col-md-6">
+              <label for="memberupdate-IsPrimary" class="control-label" field-name="IsPrimary">Primary:</label>
+              <select id="memberupdate-IsPrimary" name="IsPrimary" class="form-control">
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label for="memberupdate-Gmail" class="control-label" field-name="Gmail">Gmail:</label>
+              <input type="email" id="memberupdate-Gmail" name="Gmail" class="form-control">
+            </div>
+          </div>
+          <div class="row g-3 align-items-center mb-1">
+            <div class="col-md-6">
+              <label for="memberupdate-NativeLanguage" class="control-label" field-name="NativeLanguage">Native
+                Language:</label>
+              <input type="text" id="memberupdate-NativeLanguage" name="NativeLanguage" class="form-control">
+            </div>
+            <div class="col-md-6">
+              <label for="memberupdate-IsActive" class="control-label" field-name="IsActive">Active:</label>
+              <select id="memberupdate-IsActive" name="IsActive" class="form-control">
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <button type="submit" class="btn btn-subtle-primary">Save & Close</button>
+        <button type="button" class="btn btn-subtle-secondary"
+          onclick="memberupdateobject.form.cancel()">Cancel</button>
+      </div>
+    </div>
+  </form>
+
+  <script>
+    var memberupdateobject = {};
+    memberupdateobject.model = JSON.parse('<%- JSON.stringify(model) %>');
+    memberupdateobject.container = document.getElementById("memberupdate-section");//khu vực chứa form nghiệp vụ
+    console.log(memberupdateobject.model);
+    // Khởi tạo bảng
+    memberupdateobject.form = new senapp.utils.form({
+      meta: memberupdateobject.model.meta,
+      data: memberupdateobject.model.data,
+      urldata: memberupdateobject.model.url,
+      container: memberupdateobject.container,
+      mode: (memberupdateobject.model.url.path == '/member/edit') ? 'edit' : 'create',
+    });
+
+    $(function () { 
+      memberupdateobject.form.initForm();
+    if (memberupdateobject.form.mode == 'edit') {
+      document.getElementById("memberupdate-section-edit").style.display = "block";
+    } else {
+      document.getElementById("memberupdate-section-edit").style.display = "none";
+    }
+  });
+
+  </script>
+
+</div>

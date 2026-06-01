@@ -1,0 +1,355 @@
+<div id="contractlinememberbycontractline-section">
+  <div class="mb-9">
+    <!-- <h2 class="mb-4"><%- title %></h2> -->
+    <div class="mb-1 text-end">
+      <div>
+        <div class="form-check form-switch form-check-inline d-none">
+          <input class="form-check-input" id="flexSwitchApplyInheritance" type="checkbox" checked
+            onchange="contractlinememberbycontractlineobject.inheritchange(this)" />
+          <label class="form-check-label" for="flexSwitchApplyInheritance">Apply Inheritance</label>
+        </div>
+      </div>
+      <div class="">
+        <!-- <a onclick="contractlinememberbycontractlineobject.tbl.create()" class="btn btn-subtle-primary">Create New</a> -->
+        <a onclick="contractlinememberbycontractlineobject.tbl.deleteBySelected()"
+          class="btn btn-subtle-secondary">Delete Selected</a>
+        <a onclick="contractlinememberbycontractlineobject.lineassignToUser(this)"
+          class="btn btn-subtle-secondary me-3">Assign Users</a>
+
+
+        <a onclick="contractlinememberbycontractlineobject.tbl.saveChange(this)" class="btn btn-subtle-secondary">Save
+          changes</a>
+
+        <!-- <a onclick="contractlinememberbycontractlineobject.inherit()" class="btn btn-subtle-secondary">Inherit</a>           -->
+      </div>
+    </div>
+    <div class="row-fluid">
+      <div class="card">
+        <div class="card-body">
+          <div class="search-box mb-3 mx-auto d-none">
+            <div class="position-relative">
+              <input class="form-control search-input search form-control-sm" type="search" placeholder="Search"
+                aria-label="Search" />
+              <span class="fas fa-search search-box-icon"></span>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-sm fs-9 mb-5">
+              <tbody class="list">
+                <!-- Table datas will be added here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var contractlinememberbycontractlineobject = {};
+    contractlinememberbycontractlineobject.model = JSON.parse('<%- JSON.stringify(model) %>');
+    contractlinememberbycontractlineobject.container = document.getElementById("contractlinememberbycontractline-section");//khu vực chứa danh sách
+    contractlinememberbycontractlineobject.urldata = {
+      lists: `/contractmember/memberbypaymentorder?contractid=${contractlinememberbycontractlineobject.model.url.query.id}&pagesize=0&worktype=${encodeURIComponent(contractlinememberbycontractlineobject.model.url.query.itemworktype || '')} `,
+      item: '/contractmember/item',
+      // create: '/contractmember/create?callback=' + encodeURIComponent('contractlinememberbycontractlineobject.createcallback'),
+      // edit: '/contractmember/edit?callback=' + encodeURIComponent('contractlinememberbycontractlineobject.editcallback'),
+      delete: `/contractmember/deletepaymentorder?contractid=${contractlinememberbycontractlineobject.model.url.query.id}&worktype=${encodeURIComponent(contractlinememberbycontractlineobject.model.url.query.itemworktype || '')}`,
+      update0: `/contractmember/racipaymentorder?contractid=${contractlinememberbycontractlineobject.model.url.query.id}&worktype=${encodeURIComponent(contractlinememberbycontractlineobject.model.url.query.itemworktype || '')}`,
+      update: `/contractmember/racipaymentorder?contractid=${contractlinememberbycontractlineobject.model.url.query.id}&worktype=${encodeURIComponent(contractlinememberbycontractlineobject.model.url.query.itemworktype || '')}&isinherit=yes`,
+      inherit: '/contractmember/inheritpaymentorder',
+      memberbycontract: '/contractmember/memberbycontract',
+      assignToPaymentOrder: `/contractmember/racipaymentorder?contractid=${contractlinememberbycontractlineobject.model.url.query.id}&worktype=${encodeURIComponent(contractlinememberbycontractlineobject.model.url.query.itemworktype || '')}&isinherit=yes`
+    };
+
+    contractlinememberbycontractlineobject.contractid = contractlinememberbycontractlineobject.model.url.query.parentid;
+    contractlinememberbycontractlineobject.itemid = contractlinememberbycontractlineobject.model.url.query.id;
+    contractlinememberbycontractlineobject.worktype = contractlinememberbycontractlineobject.model.url.query.itemworktype || '';
+
+    contractlinememberbycontractlineobject.isinherit = true;
+    contractlinememberbycontractlineobject.inheritchange = function (element) {
+      contractlinememberbycontractlineobject.isinherit = !contractlinememberbycontractlineobject.isinherit;
+      contractlinememberbycontractlineobject.urldata.update = contractlinememberbycontractlineobject.urldata.update0 + `&isinherit=${contractlinememberbycontractlineobject.isinherit ? 'yes' : 'no'}`;
+    }
+
+    //console.log(contractlinememberbycontractlineobject.model);
+    contractlinememberbycontractlineobject.createcallback = function (response) {
+      //nếu response[0] tồn tại thì hiển thị thông báo lỗi
+      if (response[0]) {
+        if (response[0].status == 0) {
+          alert(response[0].message);
+          return;
+        }
+        //contractlinememberbycontractlineobject.tbl.onAddRowData({ data: response[0].data.data });
+        senapp.sidebar.menuclickbydatalink('/contractlinememberbycontractline');
+      }
+    };
+
+    contractlinememberbycontractlineobject.editcallback = function (response) {
+      //nếu response[0] tồn tại thì hiển thị thông báo lỗi
+      if (response[0]) {
+        if (response[0].status == 0) {
+          alert(response[0].message);
+          return;
+        }
+        //contractlinememberbycontractlineobject.tbl.onChangeRowData({ data: response[0].data.data });
+        senapp.sidebar.menuclickbydatalink('/contractlinememberbycontractline');
+      }
+    };
+    //ẩn hết các trường chỉ để lại trường cần thiết
+    contractlinememberbycontractlineobject.model.meta.forEach(element => {
+      const excludedFields = ['Alias']; // Danh sách các trường không cần thiết
+      if (!excludedFields.includes(element.field)) { element.visible = false; }
+    });
+
+    // Khởi tạo bảng
+    contractlinememberbycontractlineobject.tbl = new senapp.utils.table({
+      meta: contractlinememberbycontractlineobject.model.meta,
+      urldata: contractlinememberbycontractlineobject.urldata,
+      container: contractlinememberbycontractlineobject.container,
+      tableelement: contractlinememberbycontractlineobject.container.querySelector('table'),
+      modal: true,
+      selectcolumn: true,
+      filterrow: false, // không hiển thị filter row
+      //filtercompact: false // hiển thị filter row ở dạng compact
+      loadmoreonvisible: true, // tự động tải thêm dữ liệu khi cuộn đến cuối danh sách
+      //loadmoreshowtoast: true,
+      deleterow: true, // cho phép xóa dòng
+      metacolumns: [
+        { field: 'SysAction', visible: false },
+        { field: 'Id', type: 'bigint', description: 'Id', key: true, isnullable: true, show: false, visible: false },
+        // { field: 'ContractId', type: 'bigint', description: 'Contract Id', key: false, isnullable: true, show: false, visible: true },
+        // { field: 'ItemId', type: 'bigint', description: 'Item Id', key: false, isnullable: true, show: true, visible: true },
+        // { field: 'RoleAction', type: 'string', description: 'Role Action', key: false, isnullable: true, show: true, visible: true },
+        { field: 'Account', type: 'string', description: 'Account', key: false, isnullable: true, show: true, visible: true },
+        { field: 'FullName', type: 'string', description: 'Full Name', key: false, isnullable: true, show: false, visible: true },
+        { field: 'R', description: 'Responsible', colorder: 100, visible: true, show: true },
+        { field: 'A', description: 'Accountable', colorder: 103, visible: true, show: true },
+        { field: 'C', description: 'Consulted', colorder: 104, visible: true, show: true },
+        { field: 'I', description: 'Informed', colorder: 105, visible: true, show: true },
+
+      ],
+      customcolumns: ['R', 'A', 'C', 'I'],
+
+    });
+
+    contractlinememberbycontractlineobject.tbl.deleteparaext = function (data) {
+      //dùng cho override
+      return `?Account=${encodeURIComponent(data.Account)}&Role=${encodeURIComponent(data.RoleAction)}&ItemId=${encodeURIComponent(contractlinememberbycontractlineobject.model.url.query.id)}&ContractId=${encodeURIComponent(contractlinememberbycontractlineobject.model.url.query.parentid)}`;
+    }
+
+    contractlinememberbycontractlineobject.inherit = async function () {
+      //gọi api để kế thừa từ hợp đồng cha
+      const contractId = contractlinememberbycontractlineobject.model.url.query.parentid;
+      const itemId = contractlinememberbycontractlineobject.model.url.query.id;
+      const url = `${contractlinememberbycontractlineobject.urldata.inherit}?ContractId=${encodeURIComponent(contractId)}&ItemId=${encodeURIComponent(itemId)}`;
+      try {
+        // Tạo mảng Promise bất đồng bộ
+        const promises = contractlinememberbycontractlineobject.tbl.datas.flatMap(async memberraci => {
+          const res = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(memberraci)
+          });
+          if (!res.ok) { throw new Error(`HTTP error! status: ${res.status}`); }
+          const response = await res.json(); // hoặc .text() nếu API không trả JSON
+          if (response.status == 0) {
+            senapp.window.toast({ message: response.message, type: 'danger' });
+          } else {
+            senapp.window.toast({ message: response.message, type: 'success' });
+          }
+        });
+        await Promise.all(promises);
+        senapp.window.loading.hide();
+        console.log("Tất cả đã xong!");
+      } catch (err) {
+        senapp.window.loading.hide();
+        senapp.window.alert({ message: `⚠️ ${await senapp.utils.text.t('An error occurred while processing:')}`, type: 'danger' });
+        console.error("Có lỗi :", err);
+      }
+
+    };
+
+    contractlinememberbycontractlineobject.tbl.saveChange = async function () {
+      const tableobject = this;
+      if (senapp.window.confirm({ message: `⚠️ ${await senapp.utils.text.t('Are you sure you want to save changes?')}` })) {
+        senapp.window.loading.show();
+        const changedRows = tableobject.datas.filter(row => row.SysDataStatus === 'Update' || row.SysDataStatus === 'Create' || row.SysDataStatus === 'Delete');
+
+        const promises = changedRows.map(row =>
+          tableobject.updateByKey(row[tableobject.keyfield])
+            //cập nhật trạng thái về null sau khi lưu
+            .then(() => { row.SysDataStatus = null; })
+        );
+        try {
+          await Promise.all(promises);
+          senapp.window.loading.hide();
+          console.log("Tất cả đã lưu xong!");
+          contractlinememberbycontractlineobject.tbl.refreshDataDisplay();
+        } catch (err) {
+          senapp.window.alert({ message: `⚠️ ${await senapp.utils.text.t('Có lỗi khi lưu:')}`, type: 'danger' });
+          console.error("Có lỗi khi lưu:", err);
+        }
+      }
+
+    };
+
+    // //mở rộng
+    // contractlinememberbycontractlineobject.tbl.updateparaext = function (data) {
+    //   //dùng cho override
+    //   return `?RoleId=${encodeURIComponent(contractlinememberbycontractlineobject.model.url.query.id)}`;
+    // }
+
+    contractlinememberbycontractlineobject.tbl.genCellDataCustom = function ({ data, metacolumn }) {
+      if (!metacolumn || !metacolumn.field) {
+        return null; // Trả về null nếu không có metacolumn hoặc field
+      }
+      // Hàm này sẽ được sử dụng để tạo dữ liệu cho các cột tùy chỉnh
+      const tableobject = this;
+      const td = document.createElement('td');
+      td.setAttribute('data-field', metacolumn.field);
+      //nếu field.visible là false hoặc field.show là false thì không hiển thị cột này  gán class d-none
+      if (!metacolumn.show) { td.classList.add('d-none'); }
+      // ['R', 'A', 'C', 'I']
+      switch (metacolumn.field) {
+        case "R":
+        case "A":
+        case "C":
+        case "I":
+          // console.log('Gen cell for RACI column:', metacolumn.field, data[metacolumn.field]);
+          const checkbox = document.createElement('input');
+          checkbox.type = 'checkbox';
+          checkbox.className = 'form-check-input';
+          checkbox.value = data[metacolumn.field] === true;
+          //nếu data[metacolumn.field]==true thì checkbox chọn
+          if (data[metacolumn.field] === true) { checkbox.checked = true; }
+          //khi thay đổi thì gọi hàm updateData của  tableobject
+          checkbox.onchange = function () {
+            data[metacolumn.field] = this.checked ? true : false;
+            data['SysDataStatus'] = 'Update';
+            // tableobject.updateByKey(data[tableobject.keyfield]);
+          };
+          td.appendChild(checkbox);
+          break;
+        default:
+          //nếu không phải là cột tùy chỉnh thì trả về giá trị của trường đó
+          td.innerHTML = data[metacolumn.field] || '';
+          break;
+      }
+
+      return td;
+    }
+
+    contractlinememberbycontractlineobject.lineassignToUsercallback = async function (response) {
+      if (response && response.length > 0) {
+        // Process the selected roles
+        console.log('Selected members:', response);
+        senapp.window.loading.show();
+        const ContractId = contractlinememberbycontractlineobject.model.url.query.parentid;
+        const ItemId = contractlinememberbycontractlineobject.model.url.query.id;
+        const tableobject = contractlinememberbycontractlineobject.tbl;
+        // const selectedKeys = contractobject.contractlineobject.getKeySelected();
+        const selectedKeys = [ItemId];
+        try {
+          // Tạo mảng Promise bất đồng bộ
+          const promises = selectedKeys.flatMap(async id => {
+            const selectusers = response[0]; // Lấy danh sách người dùng từ phần tử đầu tiên của response
+            const selectroles = response[1]; // Lấy danh sách vai trò từ phần tử thứ hai của response
+            //quét từng user
+            for (const u of selectusers) {
+              const newcontractlinemember = {
+                Id: senapp.data.sessionAutoId(),
+                ContractId: ItemId,
+                ItemId: ItemId,
+                Account: u,
+                A: false,
+                I: false,
+                C: false,
+                R: false
+              };
+
+              //quét từng role
+              for (const r of selectroles) {
+                if (r === 'R') { newcontractlinemember.R = true; }
+                if (r === 'A') { newcontractlinemember.A = true; }
+                if (r === 'C') { newcontractlinemember.C = true; }
+                if (r === 'I') { newcontractlinemember.I = true; }
+              }
+
+              // console.log('Adding contract line member:', newcontractlinemember);
+              const res = await fetch(contractlinememberbycontractlineobject.urldata.assignToPaymentOrder, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newcontractlinemember)
+              });
+              if (!res.ok) { throw new Error(`HTTP error! status: ${res.status}`); }
+              const response = await res.json(); // hoặc .text() nếu API không trả JSON
+              if (response.status == 0) {
+                senapp.window.toast({ message: response.message, type: 'danger' });
+              } else {
+                senapp.window.toast({ message: response.message, type: 'success' });
+              }
+
+            }
+
+          });
+          await Promise.all(promises);
+          senapp.window.loading.hide();
+          contractlinememberbycontractlineobject.tbl.refreshDataDisplay();
+          console.log("Tất cả đã xong!");
+        } catch (err) {
+          senapp.window.alert({ message: `⚠️ ${await senapp.utils.text.t('An error occurred while processing:')}`, type: 'danger' });
+          console.error("Có lỗi :", err);
+        }
+      }
+      else {
+        senapp.window.alert({ message: `⚠️ ${await senapp.utils.text.t('No roles selected.')}`, type: 'warning' });
+      }
+    };
+
+    contractlinememberbycontractlineobject.lineassignToUser = async function (element) {
+      const id = contractlinememberbycontractlineobject.model.url.query.id;
+
+      const lookupfilter = {
+        url: '/common/lookup',
+        fields: { id: '`${item.Email}`', value: '`${item.Email}`', label: '`${item.Email}`' },
+        //filter: { logic: "and", conditions: [{ field: "Description", op: "includes", value: '' }] }
+        filter: { logic: "and", conditions: [{ field: "searchTerm", op: "includes", value: '' }] },
+        extparam: `&lookupType=memberincontract&id=${id}`
+      };
+
+      const lookupfilterraci = {
+        url: '/common/lookup', fields: { id: '`${item.Role}`', value: '`${item.Role}`', label: '`${item.RoleName}`' },
+        //filter: { logic: "and", conditions: [{ field: "Description", op: "includes", value: '' }] }
+        filter: { logic: "and", conditions: [{ field: "searchTerm", op: "includes", value: '' }] },
+        extparam: '&lookupType=raci_list'
+      };
+
+      senapp.window.lookups({
+        options: [
+          { title: 'Assign Member', titleselect: 'Select Users', multiple: true, callback: 'contractlinememberbycontractlineobject.lineassignToUsercallback', lookup: lookupfilter },
+          { title: 'Assign Member', titleselect: 'Select Roles', multiple: true, callback: 'contractlinememberbycontractlineobject.lineassignToUsercallback', lookup: lookupfilterraci }
+        ]
+      });
+    };
+
+    $(async function () {
+      //lấy danh sách RACI
+      const racilistres = await fetch(`/common/lookup?lookupType=raci_list`);
+      const racilistdata = await racilistres.json();
+      contractlinememberbycontractlineobject.racilist = racilistdata.datas;
+      //console.log('RACI List:', racilist);
+      //map labels cho các cột RACI trong metacolumns
+      contractlinememberbycontractlineobject.tbl.metacolumns.forEach(metacolumn => {
+        if (['R', 'A', 'C', 'I'].includes(metacolumn.field)) {
+          metacolumn.description = contractlinememberbycontractlineobject.racilist.find(r => r.Role === metacolumn.field)?.RoleName || metacolumn.description;
+          metacolumn.colorder = 100 + (['R', 'A', 'C', 'I'].indexOf(metacolumn.field) * 10);
+        }
+      });
+
+      contractlinememberbycontractlineobject.tbl.initTable();
+    });
+
+  </script>
+
+</div>
