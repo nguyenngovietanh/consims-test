@@ -80,7 +80,7 @@
         <div><span>Approved</span><strong class="text-success">$6.10M</strong></div>
         <div><span>Pending Approval</span><strong class="text-warning">$6.10M</strong></div>
         <div><span>Rejected</span><strong class="text-danger">$6.10M</strong></div>
-        <div><span>Avg Approval Time</span><strong>18 Ngay</strong></div>
+        <div><span>Avg Approval Time</span><strong>18 Days</strong></div>
       </div>
       <div class="dashboard-section-body two-cols">
         <div class="dashboard-panel dashboard-panel-inside">
@@ -164,7 +164,7 @@
         <div><span>Actual Wastage % / Loss %</span><strong class="text-success">$6.10M</strong></div>
         <div><span>Material Inventory / Stock</span><strong class="text-warning">$6.10M</strong></div>
         <div><span>Equipment Readiness Rate</span><strong class="text-danger">$6.10M</strong></div>
-        <div><span>Outsourcing Costs / Month</span><strong>18 Ngay</strong></div>
+        <div><span>Outsourcing Costs / Month</span><strong>18 Days</strong></div>
       </div>
       <div class="dashboard-section-body two-cols">
         <div class="dashboard-panel dashboard-panel-inside">
@@ -270,7 +270,7 @@
 
     <section class="dashboard-section">
       <h2>8. Materials &amp; Equipment</h2>
-      <div class="dashboard-stat-row"><div><span>Total Cumulative Import Value</span><strong class="text-info">$6.10M</strong></div><div><span>Actual Wastage % / Loss %</span><strong class="text-success">$6.10M</strong></div><div><span>Material Inventory / Stock</span><strong class="text-warning">$6.10M</strong></div><div><span>Equipment Readiness Rate</span><strong class="text-danger">$6.10M</strong></div><div><span>Outsourcing Costs / Month</span><strong>18 Ngay</strong></div></div>
+      <div class="dashboard-stat-row"><div><span>Total Cumulative Import Value</span><strong class="text-info">$6.10M</strong></div><div><span>Actual Wastage % / Loss %</span><strong class="text-success">$6.10M</strong></div><div><span>Material Inventory / Stock</span><strong class="text-warning">$6.10M</strong></div><div><span>Equipment Readiness Rate</span><strong class="text-danger">$6.10M</strong></div><div><span>Outsourcing Costs / Month</span><strong>18 Days</strong></div></div>
       <div class="dashboard-section-body two-cols"><div class="dashboard-panel dashboard-panel-inside"><table class="dashboard-table"><thead><tr><th>Month</th><th class="text-center">Import Value</th><th class="text-center">Actual Consumption Value</th><th class="text-end">Wastage %</th></tr></thead><tbody data-dashboard-table="project-materials"></tbody></table></div><div class="dashboard-panel dashboard-panel-inside"><h3>Actual Consumption</h3><div class="dashboard-chart" data-dashboard-chart="project-materials"></div></div></div>
     </section>
 
@@ -362,7 +362,13 @@
 
     <section class="dashboard-section">
       <h2 class="dashboard-company-action-title"><span>6. Claims &amp; Disputes Overview</span><a href="#!" class="dashboard-section-action">View all</a></h2>
-      <div class="dashboard-stat-row five"><div><span>EOT Claims</span><strong>12</strong><small>$62.7M</small></div><div><span>Claims Approved</span><strong>9</strong><small>$22.1M</small></div><div><span>Cost Claims</span><strong class="text-success">$15.2M</strong><small>(-58%)</small></div><div><span>Claims Pending &gt; 30 Days</span><strong class="text-danger">$9.3M</strong></div><div><span>Disputes / Arbitration</span><strong>3</strong></div><div><span></span><strong></strong></div></div>
+      <div class="dashboard-stat-row five">
+        <div><span>EOT Claims</span><strong>12</strong><small>$62.7M</small></div>
+        <div><span>Claims Approved</span><strong>9</strong><small>$22.1M</small></div>
+        <div><span>Cost Claims</span><strong class="text-success">$15.2M</strong><small>(-58%)</small></div>
+        <div><span>Claims Pending &gt; 30 Days</span><strong class="text-danger">$9.3M</strong></div>
+        <div><span>Disputes / Arbitration</span><strong>3</strong></div>
+      </div>
       <div class="dashboard-section-body two-cols"><div class="dashboard-panel dashboard-panel-inside"><h3>Claims &amp; disputes overview</h3><div class="dashboard-chart" data-dashboard-chart="company-claims-overview"></div></div><div class="dashboard-panel dashboard-panel-inside"><h3>Claims Success Ratio</h3><div class="dashboard-chart" data-dashboard-chart="company-claims-success"></div></div></div>
     </section>
 
@@ -532,9 +538,9 @@
       return {
         color: [palette.blue],
         tooltip: { trigger: "axis" },
-        grid: { left: 132, right: 24, top: 14, bottom: 30 },
+        grid: { left: 10, right: 24, top: 14, bottom: 30, containLabel: true },
         xAxis: { type: "value", min: 0, max: maxValue || 1, splitLine: { lineStyle: { color: palette.grid, type: "dashed" } } },
-        yAxis: { type: "category", data: categories, axisTick: { show: false }, axisLine: { show: false }, axisLabel: { fontSize: 10, lineHeight: 12, width: 110, overflow: "truncate", formatter: wrapAxisLabel } },
+        yAxis: { type: "category", data: categories, axisTick: { show: false }, axisLine: { show: false }, axisLabel: { margin: 8, fontSize: 10, lineHeight: 12, width: 72, overflow: "truncate", formatter: wrapAxisLabel } },
         series: [{ type: "bar", data: values, barWidth: 18, label: { show: true, position: "insideRight", color: "#fff" } }]
       };
     }
@@ -657,7 +663,7 @@
             right: "12%",
             bottom: 8,
             style: {
-              text: "{value|$6.9M} {label|Approved}",
+              text: "{value|$6.9M} {label|Pending/Rejected}",
               align: "right",
               rich: {
                 value: { fill: palette.red, fontSize: 11, fontWeight: 700 },
@@ -705,11 +711,11 @@
       chart("project-finance-trend", lineOption([{ name: "Planned %", data: [44, 62, 69, 83, 84, 75] }, { name: "Actual %", data: [25, 39, 41, 54, 62, 43] }, { name: "Forecast %", data: [25, 39, 41, 54, 62, 43] }]));
       chart("project-profit-waterfall", waterfallOption());
       chart("project-variation-status", donutOption([{ value: 34, name: "Pending" }, { value: 33, name: "Approved" }, { value: 33, name: "Rejected" }], [palette.yellow, "#23a84a", palette.red]));
-      chart("project-variation-causes", horizontalBarOption(["Residential Towers", "Highway Expansion", "School Complex", "Hospital Project", "Industrial Plant"], [0, 0, 0, 0, 0], 1));
+      chart("project-variation-causes", horizontalBarOption(["$0.00", "$0.00", "$0.00", "$0.00", "$0.00"], [1, 1, 1, 1, 1], 1));
       chart("project-receivables-aging", donutOption([{ value: 26.3, name: "0-20 days" }, { value: 24.2, name: "31-60 days" }, { value: 28, name: "61-90 days" }, { value: 21.5, name: "> 90 days" }], ["#1296ed", "#23a84a", palette.yellow, palette.red]));
       chart("project-billing-trend", lineOption([{ name: "Billed", data: [25, 39, 41, 54, 62, 43] }, { name: "Collected", data: [44, 62, 69, 83, 84, 75] }, { name: "Collection %", data: [25, 39, 41, 54, 62, 43] }], ["[MM-YYYY]", "[MM-YYYY]", "[MM-YYYY]", "[MM-YYYY]", "[MM-YYYY]", "[MM-YYYY]"]));
       chart("project-claims-status", donutOption([{ value: 34, name: "Pending" }, { value: 33, name: "Approved" }, { value: 33, name: "Rejected" }], [palette.yellow, "#23a84a", palette.red]));
-      chart("project-claims-type", horizontalBarOption(["", "", "", "", ""], [0, 0, 0, 0, 0], 1));
+      chart("project-claims-type", horizontalBarOption(["$0.00", "$0.00", "$0.00", "$0.00", "$0.00"], [1, 1, 1, 1, 1], 1));
       comboChart("project-personnel", longMonths, [100, 150, 200, 250, 270, 280, 300, 320], [95, 140, 210, 245, 230, 260, 290, 310], [2, 5, 12, 20, 25, 32, 45, 55]);
       comboChart("project-materials", longMonths, [250, 420, 810, 125, 900, 750, 520, 400], [240, 390, 780, 118, 850, 700, 450, 300], [5, 11, 23, 44, 51, 58, 65, 72]);
     }
@@ -783,6 +789,65 @@
       }, currentView ? 130 : 0);
     }
 
+    function enhanceConsimsSelects() {
+      root.querySelectorAll(".dashboard-filter-row select.form-select").forEach(function (select) {
+        if (select.dataset.consimsEnhanced === "true") return;
+        select.dataset.consimsEnhanced = "true";
+        select.classList.add("consims-select-native");
+
+        const wrapper = document.createElement("div");
+        wrapper.className = "dropdown consims-select";
+        wrapper.setAttribute("data-consims-select", "");
+        select.parentNode.insertBefore(wrapper, select);
+        wrapper.appendChild(select);
+
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "consims-select-control";
+        button.setAttribute("data-bs-toggle", "dropdown");
+        button.setAttribute("aria-expanded", "false");
+        button.setAttribute("aria-label", select.getAttribute("aria-label") || "Select");
+
+        const label = document.createElement("span");
+        label.className = "consims-select-label";
+        button.appendChild(label);
+
+        const menu = document.createElement("div");
+        menu.className = "dropdown-menu consims-select-menu";
+
+        function updateSelectedOption() {
+          const currentOption = select.options[select.selectedIndex] || select.options[0];
+          label.textContent = currentOption ? currentOption.textContent : (select.getAttribute("aria-label") || "Select");
+          menu.querySelectorAll(".consims-select-option").forEach(function (item) {
+            item.classList.toggle("active", item.dataset.value === select.value);
+          });
+        }
+
+        Array.from(select.options).forEach(function (option) {
+          const item = document.createElement("button");
+          item.type = "button";
+          item.className = "dropdown-item consims-select-option";
+          item.dataset.value = option.value;
+          item.textContent = option.textContent;
+          item.addEventListener("click", function () {
+            select.value = option.value;
+            select.dispatchEvent(new Event("change", { bubbles: true }));
+            updateSelectedOption();
+            if (window.bootstrap && window.bootstrap.Dropdown) {
+              window.bootstrap.Dropdown.getOrCreateInstance(button).hide();
+            }
+          });
+          menu.appendChild(item);
+        });
+
+        wrapper.insertBefore(button, select);
+        wrapper.appendChild(menu);
+        select.addEventListener("change", updateSelectedOption);
+        updateSelectedOption();
+      });
+    }
+
+    enhanceConsimsSelects();
     seedTables();
     tabButtons.forEach(function (button) {
       button.addEventListener("click", function () { activateTab(button.dataset.dashboardTab); });

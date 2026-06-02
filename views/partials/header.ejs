@@ -1,3 +1,4 @@
+<% const consimsCurrentLang = env?.lang === 'vi' ? 'vi' : 'en'; %>
 <nav class="navbar navbar-top fixed-top navbar-expand consims-topbar" id="navbarDefault">
   <div class="collapse navbar-collapse justify-content-between">
     <div class="consims-topbar-left">
@@ -18,11 +19,34 @@
       </div>
     </div>
     <ul class="navbar-nav navbar-nav-icons flex-row consims-topbar-actions">
-      <li class="nav-item consims-topbar-search-item">
-        <form class="consims-topbar-search" role="search">
-          <span data-feather="search"></span>
-          <input type="search" placeholder="Search..." aria-label="Search" />
-        </form>
+      <li class="nav-item consims-language-item">
+        <label class="consims-language-native" aria-label="Language">
+          <span class="consims-language-flag consims-language-flag-<%= consimsCurrentLang %>" aria-hidden="true"></span>
+          <select class="consims-language-control" name="consims-language"
+            onchange="window.location.href='/change-language?language=' + this.value">
+            <option value="en" <%= consimsCurrentLang === 'en' ? 'selected' : '' %>>English</option>
+            <option value="vi" <%= consimsCurrentLang === 'vi' ? 'selected' : '' %>>Tiếng Việt</option>
+          </select>
+        </label>
+        <div class="dropdown consims-language-switcher">
+          <button class="consims-language-control" type="button" data-bs-toggle="dropdown" aria-expanded="false"
+            aria-label="Language">
+            <span class="consims-language-flag consims-language-flag-<%= consimsCurrentLang %>" aria-hidden="true"></span>
+            <span class="consims-language-label"><%- consimsCurrentLang === 'vi' ? 'Ti&#7871;ng Vi&#7879;t' : 'English' %></span>
+          </button>
+          <div class="dropdown-menu dropdown-menu-end consims-language-menu">
+            <a class="dropdown-item consims-language-option <%= consimsCurrentLang === 'en' ? 'active' : '' %>"
+              href="/change-language?language=en">
+              <span class="consims-language-flag consims-language-flag-en" aria-hidden="true"></span>
+              <span>English</span>
+            </a>
+            <a class="dropdown-item consims-language-option <%= consimsCurrentLang === 'vi' ? 'active' : '' %>"
+              href="/change-language?language=vi">
+              <span class="consims-language-flag consims-language-flag-vi" aria-hidden="true"></span>
+              <span>Ti&#7871;ng Vi&#7879;t</span>
+            </a>
+          </div>
+        </div>
       </li>
       <li class="nav-item dropdown">
         <a class="nav-link consims-icon-button consims-notification-button" href="#" role="button"
