@@ -31,7 +31,7 @@ const filecontroller = require("../controllers/filecontroller.js");
 module.exports = function (route) {
     // Trang chủ
     route.get("/", (req, res) => {
-        res.render('pages/dashboard', { layout: 'layout', title: senserver.utils.text.t({ req, text: 'Contract Dashboard' }) });
+        res.render('pages/consims_dashboard', { layout: 'layout', title: senserver.utils.text.t({ req, text: 'Contract Dashboard' }) });
     });
 
     //ngôn ngữ
