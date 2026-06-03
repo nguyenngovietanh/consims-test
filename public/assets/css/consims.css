@@ -1632,4 +1632,8 @@ body {
     padding: calc(var(--phoenix-navbar-top-height) + 2rem) 1.5rem 6.375rem 1.5rem;
 }
 
+div.dropdown-menu.py-2{
+  width: fit-content;
+}
+
 
