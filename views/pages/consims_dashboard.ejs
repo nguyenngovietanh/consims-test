@@ -63,7 +63,13 @@
           </table>
         </div>
         <div class="dashboard-panel dashboard-panel-inside">
-          <h3>Planned vs Actual Process (S-Curve)</h3>
+          <div class="consims-chart-panel-header">
+            <h3>Planned vs Actual Process (S-Curve)</h3>
+            <select class="form-select consims-scurve-select" aria-label="S-Curve data type" data-contract-scurve-select data-consims-select-source="true" data-consims-select-size="sm">
+              <option value="revenue">Revenue</option>
+              <option value="cost">Cost</option>
+            </select>
+          </div>
           <div class="dashboard-chart" data-dashboard-chart="contract-planned-actual"></div>
         </div>
         <div class="dashboard-panel dashboard-panel-inside">
@@ -412,6 +418,19 @@
     };
     const months = ["2/2026", "3/2026", "4/2026", "5/2026", "6/2026", "7/2026"];
     const longMonths = ["9/2025", "10/2025", "11/2025", "12/2025", "1/2026", "2/2026", "3/2026", "4/2026"];
+    const contractScurveSelect = root.querySelector("[data-contract-scurve-select]");
+    const contractScurveSeries = {
+      revenue: [
+        { name: "Planned", data: [39, 54, 63, 66, 76, 78] },
+        { name: "Actual", data: [23, 34, 44, 57, 62, 70] },
+        { name: "Forecast", data: [14, 28, 33, 42, 54, 61] }
+      ],
+      cost: [
+        { name: "Planned", data: [31, 45, 56, 64, 72, 80] },
+        { name: "Actual", data: [12, 24, 32, 40, 51, 59] },
+        { name: "Forecast", data: [18, 29, 41, 52, 65, 73] }
+      ]
+    };
 
     function fillTable(selector, rows) {
       const body = root.querySelector(selector);
@@ -459,6 +478,20 @@
         yAxis: { type: "value", min: 0, max: 100, splitLine: { lineStyle: { color: palette.grid, type: "dashed" } } },
         series: series.map(function (item) { return { name: item.name, type: "line", smooth: true, symbolSize: 8, lineStyle: { width: 2 }, data: item.data }; })
       };
+    }
+
+    function contractScurveOption() {
+      const metric = contractScurveSelect ? contractScurveSelect.value : "revenue";
+      return lineOption(contractScurveSeries[metric] || contractScurveSeries.revenue);
+    }
+
+    function renderContractScurveChart() {
+      const option = contractScurveOption();
+      if (chartInstances["contract-planned-actual"]) {
+        chartInstances["contract-planned-actual"].setOption(option, true);
+        return;
+      }
+      chart("contract-planned-actual", option);
     }
 
     function donutOption(data, colors, center) {
@@ -694,7 +727,7 @@
 
     function initContractCharts() {
       chart("contract-revenue-cost", lineOption([{ name: "Revenue", data: [10, 10, 14, 34, 19, 14] }, { name: "Cost", data: [25, 39, 41, 54, 62, 43] }, { name: "Forecast EAC", data: [44, 62, 69, 83, 84, 75] }]));
-      chart("contract-planned-actual", lineOption([{ name: "Planned", data: [39, 54, 63, 66, 76, 78] }, { name: "Actual", data: [15, 28, 33, 42, 54, 61] }, { name: "Forecast", data: [14, 28, 33, 42, 54, 61] }]));
+      renderContractScurveChart();
       chart("contract-milestone", donutOption([{ value: 46, name: "Completed" }, { value: 82, name: "On track" }, { value: 10, name: "Overdue" }], [palette.green, "#1296ed", palette.orange]));
       chart("contract-variation-aging", horizontalBarOption(["0-30 days", "31-60 days", "61-90 days", "> 90 days"], [0.40, 0.71, 0.63, 0.51]));
       chart("contract-variation-cause", donutOption([{ value: 32, name: "Design Changes" }, { value: 26, name: "Client Requests" }, { value: 18, name: "Site Conditions" }, { value: 14, name: "Regulatory" }, { value: 10, name: "Others" }]));
@@ -790,13 +823,14 @@
     }
 
     function enhanceConsimsSelects() {
-      root.querySelectorAll(".dashboard-filter-row select.form-select").forEach(function (select) {
+      root.querySelectorAll(".dashboard-filter-row select.form-select, select[data-consims-select-source='true']").forEach(function (select) {
         if (select.dataset.consimsEnhanced === "true") return;
         select.dataset.consimsEnhanced = "true";
         select.classList.add("consims-select-native");
 
         const wrapper = document.createElement("div");
         wrapper.className = "dropdown consims-select";
+        if (select.dataset.consimsSelectSize) wrapper.classList.add("consims-select-" + select.dataset.consimsSelectSize);
         wrapper.setAttribute("data-consims-select", "");
         select.parentNode.insertBefore(wrapper, select);
         wrapper.appendChild(select);
@@ -848,6 +882,7 @@
     }
 
     enhanceConsimsSelects();
+    if (contractScurveSelect) contractScurveSelect.addEventListener("change", renderContractScurveChart);
     seedTables();
     tabButtons.forEach(function (button) {
       button.addEventListener("click", function () { activateTab(button.dataset.dashboardTab); });

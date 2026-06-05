@@ -549,6 +549,34 @@ body {
   color: #fff;
 }
 
+.consims-select-sm {
+  flex: 0 0 92px;
+  width: 92px;
+}
+
+.consims-select-sm::after {
+  right: 10px;
+  width: 6px;
+  height: 6px;
+}
+
+.consims-select-sm .consims-select-control {
+  height: 28px;
+  padding: 0 26px 0 10px;
+  border-radius: 6px;
+  font-size: 11px;
+}
+
+.consims-select-sm .consims-select-menu {
+  min-width: 92px;
+}
+
+.consims-select-sm .consims-select-option {
+  min-height: 28px;
+  padding: 0 10px;
+  font-size: 11px;
+}
+
 .consims-topbar .form-control:focus,
 .consims-topbar .form-select:focus,
 .consims-topbar .btn:focus,
@@ -1086,6 +1114,19 @@ body {
   font-weight: 800;
   display: flex;
   align-items: center;
+}
+
+.consims-chart-panel-header {
+  min-height: 28px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.consims-chart-panel-header h3 {
+  margin: 0;
 }
 
 .dashboard-chart {
@@ -1635,5 +1676,4 @@ body {
 div.dropdown-menu.py-2{
   width: fit-content;
 }
-
 
