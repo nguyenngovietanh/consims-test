@@ -21,7 +21,16 @@
       <select class="form-select" aria-label="Project manager"><option>Project manager</option></select>
       <select class="form-select" aria-label="Contract type"><option>Contract type</option></select>
       <select class="form-select" aria-label="Status"><option>Status</option></select>
-      <select class="form-select" aria-label="Data as on"><option>Data as on</option></select>
+      <div class="consims-date-range" aria-label="Data date range">
+        <div class="consims-datepicker consims-datepicker-range" data-consims-datepicker data-consims-datepicker-mode="range">
+          <input class="consims-datepicker-input" type="text" placeholder="DD/MM/YYYY - DD/MM/YYYY" aria-label="Date range" data-consims-datepicker-input readonly>
+          <button class="consims-datepicker-toggle" type="button" aria-label="Open date range picker" data-consims-datepicker-toggle></button>
+        </div>
+      </div>
+      <div class="consims-last-updated" aria-label="Last data update">
+        <span>Cập nhật lần cuối</span>
+        <strong>31 May 2025 11:30 AM</strong>
+      </div>
     </div>
 
     <div class="dashboard-kpi-grid contract" aria-label="Contract summary">
@@ -58,7 +67,7 @@
       <div class="dashboard-section-body three-cols">
         <div class="dashboard-panel dashboard-panel-inside">
           <table class="dashboard-table">
-            <thead><tr><th>Description</th><th class="text-end">% of RCV</th></tr></thead>
+            <thead><tr><th>Description</th><th class="text-end">Value</th></tr></thead>
             <tbody data-dashboard-table="contract-progress"></tbody>
           </table>
         </div>
@@ -116,13 +125,13 @@
     </section>
 
     <section class="dashboard-section">
-      <h2>5. Payments &amp; Cash Flow</h2>
+      <h2>5. Main contract Payments &amp; Cash Flow</h2>
       <div class="dashboard-stat-row">
-        <div><span>Invoices Submitted YTD</span><strong class="text-info">2</strong></div>
-        <div><span>Certified Amount</span><strong class="text-success">3</strong></div>
-        <div><span>Claims Approval</span><strong class="text-warning">1</strong></div>
-        <div><span>Claims Pending</span><strong class="text-danger">4</strong></div>
-        <div><span>Disputes / Arbitration</span><strong>0</strong></div>
+        <div><span>Invoices Submitted YTD</span><strong class="text-info">18</strong></div>
+        <div><span>Certified Amount</span><strong class="text-success">$42.8M</strong></div>
+        <div><span>Payments Received</span><strong class="text-warning">$36.4M</strong></div>
+        <div><span>Retention Held</span><strong class="text-danger">$2.7M</strong></div>
+        <div><span>DSO</span><strong>46 Days</strong></div>
       </div>
       <div class="dashboard-section-body two-cols">
         <div class="dashboard-panel dashboard-panel-inside"><h3>Receivables Aging</h3><div class="dashboard-chart" data-dashboard-chart="contract-receivables-aging"></div></div>
@@ -131,7 +140,22 @@
     </section>
 
     <section class="dashboard-section">
-      <h2>6. Risk Overview</h2>
+      <h2>6. Sub contract Payments &amp; Cash Flow</h2>
+      <div class="dashboard-stat-row">
+        <div><span>Invoices Submitted YTD</span><strong class="text-info">11</strong></div>
+        <div><span>Certified Amount</span><strong class="text-success">$18.6M</strong></div>
+        <div><span>Payments Received</span><strong class="text-warning">$15.2M</strong></div>
+        <div><span>Retention Held</span><strong class="text-danger">$1.4M</strong></div>
+        <div><span>DSO</span><strong>39 Days</strong></div>
+      </div>
+      <div class="dashboard-section-body two-cols">
+        <div class="dashboard-panel dashboard-panel-inside"><h3>Receivables Aging</h3><div class="dashboard-chart" data-dashboard-chart="contract-sub-receivables-aging"></div></div>
+        <div class="dashboard-panel dashboard-panel-inside"><h3>Billing vs Collection (Cumulative)</h3><div class="dashboard-chart" data-dashboard-chart="contract-sub-billing-collection"></div></div>
+      </div>
+    </section>
+
+    <section class="dashboard-section">
+      <h2>7. Risk Overview</h2>
       <div class="dashboard-section-body two-cols">
         <div class="dashboard-panel"><div class="risk-matrix" aria-label="Risk matrix"><span>High</span><div class="risk-yellow">1</div><div class="risk-orange">2</div><div class="risk-red">2</div><span>Medium</span><div class="risk-yellow">1</div><div class="risk-orange">3</div><div class="risk-orange">1</div><span>Low</span><div class="risk-green">2</div><div class="risk-green">1</div><div class="risk-green">0</div></div></div>
         <div class="dashboard-panel dashboard-panel-inside">
@@ -149,7 +173,7 @@
     </section>
 
     <section class="dashboard-section">
-      <h2>7. Personnel</h2>
+      <h2>8. Personnel</h2>
       <div class="dashboard-stat-row three">
         <div><span>Total Actual Personnel</span><strong class="text-info">1.300</strong></div>
         <div><span>Planned staffing levels</span><strong class="text-danger">1.380</strong></div>
@@ -164,7 +188,7 @@
     </section>
 
     <section class="dashboard-section">
-      <h2>8. Materials &amp; Equipment</h2>
+      <h2>9. Materials &amp; Equipment</h2>
       <div class="dashboard-stat-row">
         <div><span>Total Cumulative Import Value</span><strong class="text-info">$6.10M</strong></div>
         <div><span>Actual Wastage % / Loss %</span><strong class="text-success">$6.10M</strong></div>
@@ -181,10 +205,10 @@
     </section>
 
     <div class="dashboard-bottom-grid">
-      <section class="dashboard-section"><h2>9. Compliance &amp; Contract Admin</h2><div class="dashboard-panel"><table class="dashboard-table compact"><tbody><tr><td>Valid Insurance</td><td class="status-check"><img src="/assets/img/Checked-icon.png" alt=""></td><td class="status-ok">Yes</td></tr><tr><td>Valid Performance Guarantee</td><td class="status-check"><img src="/assets/img/Checked-icon.png" alt=""></td><td class="status-ok">Yes</td></tr><tr><td>Advance Payment Guarantee</td><td class="status-check"><img src="/assets/img/Checked-icon.png" alt=""></td><td class="status-ok">Yes</td></tr><tr><td>Notifications Sent on Time</td><td class="status-check"><img src="/assets/img/Checked-icon.png" alt=""></td><td class="status-ok">92%</td></tr><tr><td>Contract Deliverables Due</td><td class="status-warning"><img src="/assets/img/Warning-icon.png" alt=""></td><td class="status-ok">3</td></tr><tr><td>Missing Notices / Missing Documents</td><td class="status-warning"><img src="/assets/img/Warning-icon.png" alt=""></td><td class="status-ok">2</td></tr></tbody></table></div></section>
-      <section class="dashboard-section"><h2>10. Key Activities (This month)</h2><div class="dashboard-panel"><table class="dashboard-table compact"><thead><tr><th>Key Activity</th><th>Due Date</th><th class="text-end">Status</th></tr></thead><tbody><tr><td>Submit Monthly Progress Report</td><td>5 Jun 2025</td><td class="text-end status-ok">Yes</td></tr><tr><td>Concrete Pouring - Floor 20 Tower B</td><td>6 Jun 2025</td><td class="text-end status-ok">Yes</td></tr><tr><td>MEP Rough-in - Level 15</td><td>7 Jun 2025</td><td class="text-end status-ok">92%</td></tr><tr><td>Temporary Facilities Installation (Facade)</td><td>8 Jun 2025</td><td class="text-end status-ok">3</td></tr><tr><td>Client Review Meeting</td><td>9 Jun 2025</td><td class="text-end status-ok">2</td></tr></tbody></table></div></section>
-      <section class="dashboard-section"><h2>11. Procurement &amp; Subcontracts</h2><div class="dashboard-panel"><table class="dashboard-table compact"><tbody><tr><td>Principal Subcontracts Awarded</td><td class="text-end status-ok">82%</td></tr><tr><td>Subcontract Commitments</td><td class="text-end status-ok">$18.65M</td></tr><tr><td>Committed Value to Date</td><td class="text-end status-ok">$15.25M</td></tr><tr><td>Volume of Subcontracts</td><td class="text-end status-ok">2</td></tr><tr><td>Percentage of Outstanding Clauses</td><td class="text-end status-ok">94%</td></tr></tbody></table></div></section>
-      <section class="dashboard-section"><h2>12. Actions Required</h2><div class="dashboard-panel"><table class="dashboard-table compact"><thead><tr><th>Key Activity</th><th>Responsible Person</th><th>Due Date</th><th class="text-end">Status</th></tr></thead><tbody><tr><td>Approve Variation Order / Change Order - VR-045</td><td>Client</td><td>5 Jun 2025</td><td class="text-end status-ok">Yes</td></tr><tr><td>Provide Structural Drawings</td><td>Consultant</td><td>5 Jun 2025</td><td class="text-end status-ok">Yes</td></tr><tr><td>Pay Pending Invoice #INV-125</td><td>Client</td><td>5 Jun 2025</td><td class="text-end status-ok">92%</td></tr><tr><td>Conduct Site Inspection - QA/QC</td><td>QA/QC Manager</td><td>5 Jun 2025</td><td class="text-end status-ok">3</td></tr><tr><td>Submit EOT Claim - 02</td><td>QA/QC Manager</td><td>5 Jun 2025</td><td class="text-end status-ok">2</td></tr></tbody></table></div></section>
+      <section class="dashboard-section"><h2>10. Compliance &amp; Contract Admin</h2><div class="dashboard-panel"><table class="dashboard-table compact"><tbody><tr><td>Valid Insurance</td><td class="status-check"><img src="/assets/img/Checked-icon.png" alt=""></td><td class="status-ok">Yes</td></tr><tr><td>Valid Performance Guarantee</td><td class="status-check"><img src="/assets/img/Checked-icon.png" alt=""></td><td class="status-ok">Yes</td></tr><tr><td>Advance Payment Guarantee</td><td class="status-check"><img src="/assets/img/Checked-icon.png" alt=""></td><td class="status-ok">Yes</td></tr><tr><td>Notifications Sent on Time</td><td class="status-check"><img src="/assets/img/Checked-icon.png" alt=""></td><td class="status-ok">92%</td></tr><tr><td>Contract Deliverables Due</td><td class="status-warning"><img src="/assets/img/Warning-icon.png" alt=""></td><td class="status-ok">3</td></tr><tr><td>Missing Notices / Missing Documents</td><td class="status-warning"><img src="/assets/img/Warning-icon.png" alt=""></td><td class="status-ok">2</td></tr></tbody></table></div></section>
+      <section class="dashboard-section"><h2>11. Key Activities (This month)</h2><div class="dashboard-panel"><table class="dashboard-table compact"><thead><tr><th>Key Activity</th><th>Due Date</th><th class="text-end">Status</th></tr></thead><tbody><tr><td>Submit Monthly Progress Report</td><td>5 Jun 2025</td><td class="text-end status-ok">Yes</td></tr><tr><td>Concrete Pouring - Floor 20 Tower B</td><td>6 Jun 2025</td><td class="text-end status-ok">Yes</td></tr><tr><td>MEP Rough-in - Level 15</td><td>7 Jun 2025</td><td class="text-end status-ok">92%</td></tr><tr><td>Temporary Facilities Installation (Facade)</td><td>8 Jun 2025</td><td class="text-end status-ok">3</td></tr><tr><td>Client Review Meeting</td><td>9 Jun 2025</td><td class="text-end status-ok">2</td></tr></tbody></table></div></section>
+      <section class="dashboard-section"><h2>12. Procurement &amp; Subcontracts</h2><div class="dashboard-panel"><table class="dashboard-table compact"><tbody><tr><td>Principal Subcontracts Awarded</td><td class="text-end status-ok">82%</td></tr><tr><td>Subcontract Commitments</td><td class="text-end status-ok">$18.65M</td></tr><tr><td>Committed Value to Date</td><td class="text-end status-ok">$15.25M</td></tr><tr><td>Volume of Subcontracts</td><td class="text-end status-ok">2</td></tr><tr><td>Percentage of Outstanding Clauses</td><td class="text-end status-ok">94%</td></tr></tbody></table></div></section>
+      <section class="dashboard-section"><h2>13. Actions Required</h2><div class="dashboard-panel"><table class="dashboard-table compact"><thead><tr><th>Key Activity</th><th>Responsible Person</th><th>Due Date</th><th class="text-end">Status</th></tr></thead><tbody><tr><td>Approve Variation Order / Change Order - VR-045</td><td>Client</td><td>5 Jun 2025</td><td class="text-end status-ok">Yes</td></tr><tr><td>Provide Structural Drawings</td><td>Consultant</td><td>5 Jun 2025</td><td class="text-end status-ok">Yes</td></tr><tr><td>Pay Pending Invoice #INV-125</td><td>Client</td><td>5 Jun 2025</td><td class="text-end status-ok">92%</td></tr><tr><td>Conduct Site Inspection - QA/QC</td><td>QA/QC Manager</td><td>5 Jun 2025</td><td class="text-end status-ok">3</td></tr><tr><td>Submit EOT Claim - 02</td><td>QA/QC Manager</td><td>5 Jun 2025</td><td class="text-end status-ok">2</td></tr></tbody></table></div></section>
     </div>
   </section>
 
@@ -195,7 +219,16 @@
       <select class="form-select" aria-label="Client"><option>Client</option></select>
       <select class="form-select" aria-label="Region"><option>Region</option></select>
       <select class="form-select" aria-label="Status"><option>Status</option></select>
-      <input class="form-control dashboard-date-input" type="text" aria-label="Data as on" value="[DD/MM/YYYY]">
+      <div class="consims-date-range" aria-label="Project date range">
+        <div class="consims-datepicker consims-datepicker-range" data-consims-datepicker data-consims-datepicker-mode="range">
+          <input class="consims-datepicker-input" type="text" placeholder="DD/MM/YYYY - DD/MM/YYYY" aria-label="Date range" data-consims-datepicker-input readonly>
+          <button class="consims-datepicker-toggle" type="button" aria-label="Open date range picker" data-consims-datepicker-toggle></button>
+        </div>
+      </div>
+      <div class="consims-last-updated" aria-label="Last data update">
+        <span>Cập nhật lần cuối</span>
+        <strong>31 May 2025 11:30 AM</strong>
+      </div>
     </div>
 
     <div class="dashboard-kpi-grid project" aria-label="Project summary">
@@ -305,7 +338,16 @@
       <select class="form-select" aria-label="Project manager"><option>Project manager</option></select>
       <select class="form-select" aria-label="Contract type"><option>Contract type</option></select>
       <select class="form-select" aria-label="Status"><option>Status</option></select>
-      <select class="form-select" aria-label="Data as on"><option>Data as on</option></select>
+      <div class="consims-date-range" aria-label="Company date range">
+        <div class="consims-datepicker consims-datepicker-range" data-consims-datepicker data-consims-datepicker-mode="range">
+          <input class="consims-datepicker-input" type="text" placeholder="DD/MM/YYYY - DD/MM/YYYY" aria-label="Date range" data-consims-datepicker-input readonly>
+          <button class="consims-datepicker-toggle" type="button" aria-label="Open date range picker" data-consims-datepicker-toggle></button>
+        </div>
+      </div>
+      <div class="consims-last-updated" aria-label="Last data update">
+        <span>Cập nhật lần cuối</span>
+        <strong>31 May 2025 11:30 AM</strong>
+      </div>
     </div>
 
     <div class="dashboard-kpi-grid company" aria-label="Company summary">
@@ -437,13 +479,41 @@
       if (body) body.innerHTML = rows.join("");
     }
 
+    function valueCell(value, className) {
+      const text = String(value);
+      const negativeClass = text.trim().charAt(0) === "-" ? " consims-negative-value" : "";
+      return '<td class="' + (className || "text-end") + negativeClass + '">' + text + '</td>';
+    }
+
     function seedTables() {
-      const financeRows = ["Original Contract Value", "Approved Variations", "Pending Variations", "Revised Contract Value", "Revenue Recognized (To date)", "Cost Incurred (To date)", "Forecast Final Cost (EAC)", "Forecast Profit", "Tender Margin", "Forecast Profit"];
+      const financeRows = [
+        { label: "Original Contract Value", amount: "$52.600.000", rcv: "100%" },
+        { label: "Approved Variations", amount: "$3.150.000", rcv: "6%" },
+        { label: "Pending Variations", amount: "-$850.000", rcv: "-1.6%" },
+        { label: "Revised Contract Value", amount: "$55.750.000", rcv: "106%" },
+        { label: "Revenue Recognized (To date)", amount: "$31.840.000", rcv: "57.1%" },
+        { label: "Cost Incurred (To date)", amount: "$25.640.000", rcv: "46%" },
+        { label: "Forecast Final Cost (EAC)", amount: "$48.200.000", rcv: "86.5%" },
+        { label: "Forecast Profit", amount: "$7.550.000", rcv: "13.5%" },
+        { label: "Tender Margin", amount: "-$1.200.000", rcv: "-2.2%" },
+        { label: "Forecast Profit", amount: "$6.900.000", rcv: "12.4%" }
+      ];
+      const progressRows = [
+        { label: "Planned Progress (Baseline)", value: "78%" },
+        { label: "Actual Progress (To Date)", value: "61%" },
+        { label: "SPI (Schedule Performance Index)", value: "0.92" },
+        { label: "Behind Schedule", value: "-17%" },
+        { label: "Delay (Days)", value: "18 Days" },
+        { label: "Completion Date (Planned)", value: "30/09/2026" },
+        { label: "Completion Date (Forecast)", value: "15/10/2026" },
+        { label: "Milestones Due", value: "12" },
+        { label: "Milestones Overdue", value: "-3" }
+      ];
       const personnelRows = [["9/2025", 100, 95, "2%"], ["10/2025", 150, 140, "5%"], ["11/2025", 200, 210, "12%"], ["12/2025", 250, 245, "20%"], ["1/2026", 270, 230, "25%"], ["2/2026", 280, 260, "32%"], ["3/2026", 300, 290, "45%"], ["4/2026", 320, 310, "55%"]];
       const materialRows = [["9/2025", 2.5, 2.4, "0.5%"], ["10/2025", 4.2, 3.9, "1.5%"], ["11/2025", 8.1, 7.8, "1.2%"], ["12/2025", 12.5, 11.8, "3.5%"], ["1/2026", 9.0, 8.5, "2.8%"], ["2/2026", 7.5, 7.0, "3.2%"], ["3/2026", 15.2, 14.5, "4.5%"], ["4/2026", 10.4, 13.0, "2.5%"]];
 
-      fillTable('[data-dashboard-table="contract-finance"]', financeRows.map(function (label) { return '<tr><td>' + label + '</td><td class="text-end">$52.600.000</td><td class="text-end">100%</td></tr>'; }));
-      fillTable('[data-dashboard-table="contract-progress"]', financeRows.map(function (label) { return '<tr><td>' + label + '</td><td class="text-end">100%</td></tr>'; }));
+      fillTable('[data-dashboard-table="contract-finance"]', financeRows.map(function (row) { return '<tr><td>' + row.label + '</td>' + valueCell(row.amount) + valueCell(row.rcv) + '</tr>'; }));
+      fillTable('[data-dashboard-table="contract-progress"]', progressRows.map(function (row) { return '<tr><td>' + row.label + '</td>' + valueCell(row.value) + '</tr>'; }));
 
       ["contract", "project"].forEach(function (prefix) {
         fillTable('[data-dashboard-table="' + prefix + '-personnel"]', personnelRows.map(function (row) { return '<tr><td>' + row[0] + '</td><td class="text-center">' + row[1] + '</td><td class="text-center">' + row[2] + '</td><td class="text-end">' + row[3] + '</td></tr>'; }));
@@ -735,6 +805,8 @@
       chart("contract-claims-type", donutOption([{ value: 30, name: "EOT" }, { value: 28, name: "Cost" }, { value: 32, name: "Disruption" }, { value: 10, name: "Others" }], [palette.blue, palette.green, palette.cyan, palette.yellow]));
       chart("contract-receivables-aging", donutOption([{ value: 4.2, name: "0-20 days" }, { value: 3.1, name: "31-60 days" }, { value: 2.05, name: "61-90 days" }, { value: 2.1, name: "> 90 days" }], [palette.blue, palette.green, palette.cyan, palette.orange]));
       chart("contract-billing-collection", { color: [palette.blue, palette.green, palette.orange], tooltip: { trigger: "axis" }, legend: { bottom: 4, itemWidth: 10, itemHeight: 10 }, grid: baseGrid(), xAxis: { type: "category", data: ["11/2025", "12/2025", "1/2026", "2/2026", "3/2026", "4/2026"] }, yAxis: [{ type: "value", min: 0, max: 100 }, { type: "value", min: 0, max: 100 }], series: [{ name: "Billed", type: "bar", data: [55, 65, 80, 84, 70, 35], barWidth: 18 }, { name: "Collected", type: "bar", data: [40, 80, 38, 45, 66, 26], barWidth: 18 }, { name: "Collection %", type: "line", yAxisIndex: 1, smooth: true, data: [45, 47, 59, 73, 92, 70] }] });
+      chart("contract-sub-receivables-aging", donutOption([{ value: 2.8, name: "0-20 days" }, { value: 1.9, name: "31-60 days" }, { value: 1.25, name: "61-90 days" }, { value: 0.95, name: "> 90 days" }], [palette.blue, palette.green, palette.cyan, palette.orange]));
+      chart("contract-sub-billing-collection", { color: [palette.blue, palette.green, palette.orange], tooltip: { trigger: "axis" }, legend: { bottom: 4, itemWidth: 10, itemHeight: 10 }, grid: baseGrid(), xAxis: { type: "category", data: ["11/2025", "12/2025", "1/2026", "2/2026", "3/2026", "4/2026"] }, yAxis: [{ type: "value", min: 0, max: 100 }, { type: "value", min: 0, max: 100 }], series: [{ name: "Billed", type: "bar", data: [34, 48, 52, 61, 58, 42], barWidth: 18 }, { name: "Collected", type: "bar", data: [28, 36, 43, 50, 46, 35], barWidth: 18 }, { name: "Collection %", type: "line", yAxisIndex: 1, smooth: true, data: [38, 44, 52, 64, 78, 83] }] });
       comboChart("contract-personnel", longMonths, [100, 150, 200, 250, 270, 280, 300, 320], [95, 140, 210, 245, 230, 260, 290, 310], [2, 5, 12, 20, 25, 32, 45, 55]);
       comboChart("contract-materials", longMonths, [250, 420, 810, 125, 900, 750, 520, 400], [240, 390, 780, 118, 850, 700, 450, 300], [5, 11, 23, 44, 51, 58, 65, 72]);
     }
@@ -839,6 +911,7 @@
         button.type = "button";
         button.className = "consims-select-control";
         button.setAttribute("data-bs-toggle", "dropdown");
+        button.setAttribute("data-bs-offset", "0,4");
         button.setAttribute("aria-expanded", "false");
         button.setAttribute("aria-label", select.getAttribute("aria-label") || "Select");
 
@@ -881,7 +954,320 @@
       });
     }
 
+    function initConsimsDatepickers() {
+      const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+      const weekdays = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
+      const widgets = Array.from(root.querySelectorAll("[data-consims-datepicker]"));
+
+      function pad(value) {
+        return String(value).padStart(2, "0");
+      }
+
+      function formatDate(date) {
+        return pad(date.getDate()) + "/" + pad(date.getMonth() + 1) + "/" + date.getFullYear();
+      }
+
+      function isSameDate(left, right) {
+        return left && right && left.getFullYear() === right.getFullYear() && left.getMonth() === right.getMonth() && left.getDate() === right.getDate();
+      }
+
+      function isBetweenDates(day, start, end) {
+        return start && end && day.getTime() > start.getTime() && day.getTime() < end.getTime();
+      }
+
+      function closeDatepickers(exceptPanel) {
+        widgets.forEach(function (widget) {
+          const panel = widget.querySelector("[data-consims-datepicker-panel]");
+          if (panel && panel !== exceptPanel) panel.hidden = true;
+        });
+      }
+
+      widgets.forEach(function (widget) {
+        if (widget.dataset.consimsDatepickerReady === "true") return;
+        widget.dataset.consimsDatepickerReady = "true";
+
+        const input = widget.querySelector("[data-consims-datepicker-input]");
+        const toggle = widget.querySelector("[data-consims-datepicker-toggle]");
+        const isRange = widget.dataset.consimsDatepickerMode === "range";
+        const display = document.createElement("span");
+        display.className = "consims-datepicker-display";
+        display.setAttribute("aria-hidden", "true");
+        widget.insertBefore(display, toggle);
+        const today = new Date();
+        let selectedDate = null;
+        let rangeStart = null;
+        let rangeEnd = null;
+        let viewDate = new Date(today.getFullYear(), today.getMonth(), 1);
+        let pickerMode = null;
+        const panel = document.createElement("div");
+        panel.className = "consims-datepicker-panel";
+        panel.hidden = true;
+        panel.setAttribute("data-consims-datepicker-panel", "");
+        widget.appendChild(panel);
+
+        function updateInputValue() {
+          if (!isRange) {
+            input.value = selectedDate ? formatDate(selectedDate) : "";
+            display.innerHTML = selectedDate ? '<span>' + formatDate(selectedDate) + '</span>' : '<span class="consims-datepicker-display-placeholder">' + input.placeholder + '</span>';
+            return;
+          }
+
+          if (rangeStart && rangeEnd) {
+            input.value = formatDate(rangeStart) + " - " + formatDate(rangeEnd);
+            display.innerHTML = '<span>' + formatDate(rangeStart) + '</span><span>&nbsp;-&nbsp;</span><span>' + formatDate(rangeEnd) + '</span>';
+          } else if (rangeStart) {
+            input.value = formatDate(rangeStart) + " - DD/MM/YYYY";
+            display.innerHTML = '<span>' + formatDate(rangeStart) + '</span><span>&nbsp;-&nbsp;</span><span class="consims-datepicker-display-placeholder">DD/MM/YYYY</span>';
+          } else {
+            input.value = "";
+            display.innerHTML = '<span class="consims-datepicker-display-placeholder">' + input.placeholder + '</span>';
+          }
+        }
+
+        updateInputValue();
+
+        function renderCalendar() {
+          const year = viewDate.getFullYear();
+          const month = viewDate.getMonth();
+          const firstDay = new Date(year, month, 1);
+          const startOffset = (firstDay.getDay() + 6) % 7;
+          const firstGridDate = new Date(year, month, 1 - startOffset);
+          const days = [];
+
+          for (let index = 0; index < 42; index += 1) {
+            days.push(new Date(firstGridDate.getFullYear(), firstGridDate.getMonth(), firstGridDate.getDate() + index));
+          }
+
+          const pickerContent = pickerMode === "month"
+            ? '<div class="consims-datepicker-picker consims-datepicker-month-picker">' +
+                monthNames.map(function (monthName, monthIndex) {
+                  const activeClass = monthIndex === month ? " is-active" : "";
+                  return '<button class="consims-datepicker-picker-option' + activeClass + '" type="button" data-consims-datepicker-month-option="' + monthIndex + '">' + monthName + '</button>';
+                }).join("") +
+              '</div>'
+            : pickerMode === "year"
+              ? '<div class="consims-datepicker-picker consims-datepicker-year-picker">' +
+                  Array.from({ length: 12 }, function (_, index) {
+                    const optionYear = year - 5 + index;
+                    const activeClass = optionYear === year ? " is-active" : "";
+                    return '<button class="consims-datepicker-picker-option' + activeClass + '" type="button" data-consims-datepicker-year-option="' + optionYear + '">' + optionYear + '</button>';
+                  }).join("") +
+                '</div>'
+              : '<div class="consims-datepicker-weekdays">' + weekdays.map(function (day) { return '<span>' + day + '</span>'; }).join("") + '</div>' +
+                '<div class="consims-datepicker-days">' +
+                  days.map(function (day) {
+                    const mutedClass = day.getMonth() === month ? "" : " is-muted";
+                    const selectedClass = isRange
+                      ? (isSameDate(day, rangeStart) || isSameDate(day, rangeEnd) ? " is-selected" : "")
+                      : (isSameDate(day, selectedDate) ? " is-selected" : "");
+                    const rangeClass = isRange && isBetweenDates(day, rangeStart, rangeEnd) ? " is-in-range" : "";
+                    return '<button class="consims-datepicker-day' + mutedClass + selectedClass + rangeClass + '" type="button" data-consims-datepicker-day="' + day.getTime() + '">' + day.getDate() + '</button>';
+                  }).join("") +
+                '</div>';
+
+          panel.innerHTML =
+            '<div class="consims-datepicker-head">' +
+              '<button class="consims-datepicker-nav" type="button" data-consims-datepicker-prev aria-label="Previous month"><svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-left"><polyline points="15 18 9 12 15 6"></polyline></svg></button>' +
+              '<button class="consims-datepicker-current" type="button" data-consims-datepicker-month>' + monthNames[month] + '</button>' +
+              '<button class="consims-datepicker-current" type="button" data-consims-datepicker-year>' + year + '</button>' +
+              '<button class="consims-datepicker-nav" type="button" data-consims-datepicker-next aria-label="Next month"><svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg></button>' +
+            '</div>' +
+            pickerContent;
+
+          bindCalendarControls();
+        }
+
+        function openCalendar() {
+          closeDatepickers(panel);
+          renderCalendar();
+          panel.hidden = false;
+        }
+
+        function toggleCalendar() {
+          if (panel.hidden) {
+            openCalendar();
+          } else {
+            panel.hidden = true;
+          }
+        }
+
+        function moveView(direction) {
+          if (pickerMode === "year") {
+            viewDate = new Date(viewDate.getFullYear() + (direction * 12), viewDate.getMonth(), 1);
+          } else if (pickerMode === "month") {
+            viewDate = new Date(viewDate.getFullYear() + direction, viewDate.getMonth(), 1);
+          } else {
+            viewDate = new Date(viewDate.getFullYear(), viewDate.getMonth() + direction, 1);
+          }
+          renderCalendar();
+        }
+
+        function chooseMonth(monthIndex) {
+          pickerMode = null;
+          viewDate = new Date(viewDate.getFullYear(), monthIndex, 1);
+          renderCalendar();
+        }
+
+        function chooseYear(year) {
+          pickerMode = null;
+          viewDate = new Date(year, viewDate.getMonth(), 1);
+          renderCalendar();
+        }
+
+        function bindCalendarControls() {
+          const prevButton = panel.querySelector("[data-consims-datepicker-prev]");
+          const nextButton = panel.querySelector("[data-consims-datepicker-next]");
+          const monthButton = panel.querySelector("[data-consims-datepicker-month]");
+          const yearButton = panel.querySelector("[data-consims-datepicker-year]");
+
+          if (prevButton) {
+            prevButton.addEventListener("click", function (event) {
+              event.preventDefault();
+              event.stopPropagation();
+              moveView(-1);
+            });
+          }
+
+          if (nextButton) {
+            nextButton.addEventListener("click", function (event) {
+              event.preventDefault();
+              event.stopPropagation();
+              moveView(1);
+            });
+          }
+
+          if (monthButton) {
+            monthButton.addEventListener("click", function (event) {
+              event.preventDefault();
+              event.stopPropagation();
+              pickerMode = pickerMode === "month" ? null : "month";
+              renderCalendar();
+            });
+          }
+
+          if (yearButton) {
+            yearButton.addEventListener("click", function (event) {
+              event.preventDefault();
+              event.stopPropagation();
+              pickerMode = pickerMode === "year" ? null : "year";
+              renderCalendar();
+            });
+          }
+
+          panel.querySelectorAll("[data-consims-datepicker-month-option]").forEach(function (button) {
+            button.addEventListener("click", function (event) {
+              event.preventDefault();
+              event.stopPropagation();
+              chooseMonth(Number(button.dataset.consimsDatepickerMonthOption));
+            });
+          });
+
+          panel.querySelectorAll("[data-consims-datepicker-year-option]").forEach(function (button) {
+            button.addEventListener("click", function (event) {
+              event.preventDefault();
+              event.stopPropagation();
+              chooseYear(Number(button.dataset.consimsDatepickerYearOption));
+            });
+          });
+        }
+
+        input.addEventListener("click", toggleCalendar);
+        toggle.addEventListener("click", toggleCalendar);
+        panel.addEventListener("click", function (event) {
+          const prev = event.target.closest("[data-consims-datepicker-prev]");
+          const next = event.target.closest("[data-consims-datepicker-next]");
+          const monthToggle = event.target.closest("[data-consims-datepicker-month]");
+          const yearToggle = event.target.closest("[data-consims-datepicker-year]");
+          const monthOption = event.target.closest("[data-consims-datepicker-month-option]");
+          const yearOption = event.target.closest("[data-consims-datepicker-year-option]");
+          const dayButton = event.target.closest("[data-consims-datepicker-day]");
+
+          if (prev) {
+            if (pickerMode === "year") {
+              viewDate = new Date(viewDate.getFullYear() - 12, viewDate.getMonth(), 1);
+            } else if (pickerMode === "month") {
+              viewDate = new Date(viewDate.getFullYear() - 1, viewDate.getMonth(), 1);
+            } else {
+              viewDate = new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1);
+            }
+            renderCalendar();
+            return;
+          }
+
+          if (next) {
+            if (pickerMode === "year") {
+              viewDate = new Date(viewDate.getFullYear() + 12, viewDate.getMonth(), 1);
+            } else if (pickerMode === "month") {
+              viewDate = new Date(viewDate.getFullYear() + 1, viewDate.getMonth(), 1);
+            } else {
+              viewDate = new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1);
+            }
+            renderCalendar();
+            return;
+          }
+
+          if (monthToggle) {
+            pickerMode = pickerMode === "month" ? null : "month";
+            renderCalendar();
+            return;
+          }
+
+          if (yearToggle) {
+            pickerMode = pickerMode === "year" ? null : "year";
+            renderCalendar();
+            return;
+          }
+
+          if (monthOption) {
+            pickerMode = null;
+            viewDate = new Date(viewDate.getFullYear(), Number(monthOption.dataset.consimsDatepickerMonthOption), 1);
+            renderCalendar();
+            return;
+          }
+
+          if (yearOption) {
+            pickerMode = null;
+            viewDate = new Date(Number(yearOption.dataset.consimsDatepickerYearOption), viewDate.getMonth(), 1);
+            renderCalendar();
+            return;
+          }
+
+          if (dayButton) {
+            const pickedDate = new Date(Number(dayButton.dataset.consimsDatepickerDay));
+            viewDate = new Date(pickedDate.getFullYear(), pickedDate.getMonth(), 1);
+
+            if (isRange) {
+              if (!rangeStart || rangeEnd || pickedDate.getTime() < rangeStart.getTime()) {
+                rangeStart = pickedDate;
+                rangeEnd = null;
+                updateInputValue();
+                input.dispatchEvent(new Event("change", { bubbles: true }));
+                renderCalendar();
+                return;
+              }
+
+              rangeEnd = pickedDate;
+              updateInputValue();
+              input.dispatchEvent(new Event("change", { bubbles: true }));
+              panel.hidden = true;
+              return;
+            }
+
+            selectedDate = pickedDate;
+            updateInputValue();
+            input.dispatchEvent(new Event("change", { bubbles: true }));
+            panel.hidden = true;
+          }
+        });
+      });
+
+      document.addEventListener("click", function (event) {
+        if (!event.target.closest("[data-consims-datepicker]")) closeDatepickers();
+      });
+    }
+
     enhanceConsimsSelects();
+    initConsimsDatepickers();
     if (contractScurveSelect) contractScurveSelect.addEventListener("change", renderContractScurveChart);
     seedTables();
     tabButtons.forEach(function (button) {
