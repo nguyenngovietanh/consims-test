@@ -564,6 +564,7 @@ body {
 .consims-select-sm {
   flex: 0 0 92px;
   width: 92px;
+  height: 28px;
 }
 
 .consims-select-sm::after {
@@ -576,9 +577,20 @@ body {
 
 .consims-select-sm .consims-select-control {
   height: 28px;
+  min-height: 28px;
+  display: flex;
   padding: 0 26px 0 10px;
   border-radius: 6px;
   font-size: 11px;
+  line-height: 1;
+  align-items: center;
+}
+
+.consims-select-sm .consims-select-label {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  line-height: 1;
 }
 
 .consims-select-sm .consims-select-menu {
