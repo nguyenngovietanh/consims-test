@@ -17,21 +17,27 @@ body {
 }
 
 .consims-sidebar.navbar-vertical {
+  position: fixed !important;
+  left: 0 !important;
   top: 0 !important;
   bottom: 0 !important;
   width: var(--consims-sidebar-width);
   max-width: var(--consims-sidebar-width);
   height: 100vh !important;
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   padding: 0;
   border-right: 1px solid var(--consims-border);
   background: #fff;
   box-shadow: none;
+  overflow: visible;
   transition: width var(--consims-shell-transition), min-width var(--consims-shell-transition), max-width var(--consims-shell-transition);
   will-change: width, min-width, max-width;
 }
 
 .consims-sidebar-brand {
+  width: 100%;
   height: 88px;
   display: flex;
   align-items: center;
@@ -100,11 +106,21 @@ body {
 
 .consims-sidebar .navbar-collapse,
 .consims-sidebar .navbar-vertical-content {
-  height: calc(100vh - 88px);
+  min-height: 0;
+}
+
+.consims-sidebar .navbar-collapse {
+  flex: 1 1 auto;
+  width: 100%;
+  height: auto !important;
+}
+
+.consims-sidebar .navbar-vertical-content {
+  height: 100% !important;
 }
 
 .consims-sidebar-content {
-  padding: 0 0 84px;
+  padding: 0;
   overflow-y: auto;
 }
 
@@ -211,10 +227,9 @@ body {
 }
 
 .consims-sidebar-footer {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  position: relative;
+  flex: 0 0 auto;
+  width: 100%;
   display: flex;
   align-items: center;
   margin: 0;
@@ -684,7 +699,6 @@ body {
 
 .navbar-vertical-collapsed .consims-sidebar-brand {
   height: 88px;
-  padding: 16px 7px;
 }
 
 .navbar-vertical-collapsed .consims-brand-link {
@@ -708,8 +722,8 @@ body {
 
 .navbar-vertical-collapsed .consims-sidebar .navbar-vertical-content,
 .navbar-vertical-collapsed .consims-sidebar-content {
-  height: calc(100vh - 88px) !important;
-  padding: 0 0 84px !important;
+  height: 100% !important;
+  padding: 0 !important;
   overflow-x: visible;
   overflow-y: auto;
 }
@@ -793,6 +807,11 @@ body {
   line-height: 1.5;
 }
 
+.navbar-vertical.navbar-expand-lg ~ .navbar-top ~ .content {
+  padding-left: 24px !important;
+  padding-right: 24px !important;
+}
+
 @media (max-width: 991.98px) {
   .consims-sidebar.navbar-vertical {
     width: var(--consims-sidebar-width);
@@ -847,7 +866,8 @@ body {
 }
 
 .navbar-vertical-collapsed .consims-sidebar .navbar-vertical-content {
-  padding: 1rem 0;
+  height: 100% !important;
+  padding: 0 !important;
 }
 
 .navbar-vertical-collapsed .consims-sidebar .nav-heading-text {
@@ -945,6 +965,29 @@ body {
   gap: 20px;
 }
 
+.dashboard-view[data-dashboard-view="contract"] .consims-contract-filter-row {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.dashboard-view[data-dashboard-view="contract"] .consims-contract-filter-row > * {
+  min-width: 0;
+}
+
+.dashboard-view[data-dashboard-view="contract"] .consims-contract-filter-project {
+  grid-column: span 2;
+}
+
+.dashboard-view[data-dashboard-view="contract"] .consims-contract-filter-project .consims-select,
+.dashboard-view[data-dashboard-view="contract"] .consims-contract-filter-status .consims-select,
+.dashboard-view[data-dashboard-view="contract"] .consims-contract-filter-date .consims-datepicker,
+.dashboard-view[data-dashboard-view="contract"] .consims-contract-filter-updated {
+  width: 100%;
+}
+
+.dashboard-view[data-dashboard-view="contract"] .consims-contract-filter-empty {
+  min-height: 38px;
+}
+
 #dashboard-overview section {
   padding: 0;
 }
@@ -959,14 +1002,16 @@ body {
   outline: none;
 }
 
-.consims-date-range {
+.consims-date-range,
+.consims-date-single {
   min-width: 0;
   height: 38px;
   display: block;
   position: relative;
 }
 
-.consims-date-range span {
+.consims-date-range span,
+.consims-date-single span {
   color: #8a98bf;
   font-size: 12px;
   line-height: 1;
@@ -979,6 +1024,10 @@ body {
 }
 
 .consims-datepicker-range {
+  width: 100%;
+}
+
+.consims-datepicker-single {
   width: 100%;
 }
 
@@ -1872,6 +1921,19 @@ body {
     grid-template-columns: repeat(2, minmax(180px, 1fr));
   }
 
+  .dashboard-view[data-dashboard-view="contract"] .consims-contract-filter-row {
+    grid-template-columns: repeat(2, minmax(180px, 1fr));
+  }
+
+  .dashboard-view[data-dashboard-view="contract"] .consims-contract-filter-project,
+  .dashboard-view[data-dashboard-view="contract"] .consims-contract-filter-updated {
+    grid-column: 1 / -1;
+  }
+
+  .dashboard-view[data-dashboard-view="contract"] .consims-contract-filter-empty {
+    display: none;
+  }
+
   .consims-last-updated {
     align-items: flex-start;
     text-align: left;
@@ -1924,6 +1986,15 @@ body {
   .dashboard-filter-row {
     grid-template-columns: 1fr;
     gap: 8px;
+  }
+
+  .dashboard-view[data-dashboard-view="contract"] .consims-contract-filter-row {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-view[data-dashboard-view="contract"] .consims-contract-filter-project,
+  .dashboard-view[data-dashboard-view="contract"] .consims-contract-filter-updated {
+    grid-column: auto;
   }
 
   .consims-last-updated {

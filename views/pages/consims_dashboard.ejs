@@ -15,19 +15,21 @@
   </div>
 
   <section class="dashboard-view active" data-dashboard-view="contract">
-    <div class="dashboard-filter-row" aria-label="Contract dashboard filters">
-      <select class="form-select" aria-label="Project or contract"><option>Project/Contract</option></select>
-      <select class="form-select" aria-label="Client"><option>Client</option></select>
-      <select class="form-select" aria-label="Project manager"><option>Project manager</option></select>
-      <select class="form-select" aria-label="Contract type"><option>Contract type</option></select>
-      <select class="form-select" aria-label="Status"><option>Status</option></select>
-      <div class="consims-date-range" aria-label="Data date range">
-        <div class="consims-datepicker consims-datepicker-range" data-consims-datepicker data-consims-datepicker-mode="range">
-          <input class="consims-datepicker-input" type="text" placeholder="DD/MM/YYYY - DD/MM/YYYY" aria-label="Date range" data-consims-datepicker-input readonly>
-          <button class="consims-datepicker-toggle" type="button" aria-label="Open date range picker" data-consims-datepicker-toggle></button>
+    <div class="dashboard-filter-row consims-contract-filter-row" aria-label="Contract dashboard filters">
+      <div class="consims-contract-filter-project">
+        <select class="form-select" aria-label="Project or contract"><option>Project/Contract</option></select>
+      </div>
+      <div class="consims-contract-filter-status">
+        <select class="form-select" aria-label="Status"><option>Status</option></select>
+      </div>
+      <div class="consims-date-single consims-contract-filter-date" aria-label="Data date">
+        <div class="consims-datepicker consims-datepicker-single" data-consims-datepicker>
+          <input class="consims-datepicker-input" type="text" placeholder="DD/MM/YYYY" aria-label="Data date" data-consims-datepicker-input readonly>
+          <button class="consims-datepicker-toggle" type="button" aria-label="Open date picker" data-consims-datepicker-toggle></button>
         </div>
       </div>
-      <div class="consims-last-updated" aria-label="Last data update">
+      <div class="consims-contract-filter-empty" aria-hidden="true"></div>
+      <div class="consims-last-updated consims-contract-filter-updated" aria-label="Last data update">
         <span>Data as on</span>
         <strong>31 May 2025 11:30 AM</strong>
       </div>
@@ -295,7 +297,7 @@
 
     <section class="dashboard-section">
       <h2>4. Variations Summary (All contracts)</h2>
-      <div class="dashboard-stat-row"><div><span>Variations Raised (YTD)</span><strong class="text-info">2</strong></div><div><span>Approved Variations</span><strong class="text-success">3</strong></div><div><span>Pending Approval</span><strong class="text-warning">1</strong></div><div><span>Rejected / Not Approved</span><strong class="text-danger">4</strong></div><div><span>Avg Approval Time</span><strong>0</strong></div></div>
+      <div class="dashboard-stat-row"><div><span>Variations Raised (YTD)</span><strong class="text-info">$2,00</strong></div><div><span>Approved Variations</span><strong class="text-success">$3,00</strong></div><div><span>Pending Approval</span><strong class="text-warning">$1,00</strong></div><div><span>Rejected / Not Approved</span><strong class="text-danger">$4,00</strong></div><div><span>Avg Approval Time</span><strong>$0,00node </strong></div></div>
       <div class="dashboard-section-body two-cols"><div class="dashboard-panel dashboard-panel-inside"><h3>Variations by Status (Value)</h3><div class="dashboard-chart" data-dashboard-chart="project-variation-status"></div></div><div class="dashboard-panel dashboard-panel-inside"><h3>Top Variation Causes (Value)</h3><div class="dashboard-chart" data-dashboard-chart="project-variation-causes"></div></div></div>
     </section>
 
