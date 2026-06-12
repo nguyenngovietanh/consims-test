@@ -523,6 +523,10 @@ body {
   box-shadow: none;
 }
 
+.consims-select.consims-select-has-value .consims-select-control {
+  color: #333333;
+}
+
 .consims-select-label {
   min-width: 0;
   display: block;
@@ -551,6 +555,12 @@ body {
   gap: 4px;
 }
 
+.consims-contract-select-wrapper .consims-select-menu.show {
+  max-height: 320px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
 .consims-select-option {
   min-height: 32px;
   display: flex;
@@ -562,6 +572,13 @@ body {
   line-height: 1.2;
   white-space: normal;
   transition: background-color 160ms ease, color 160ms ease;
+}
+
+.consims-contract-select-wrapper .consims-select-option {
+  justify-content: flex-start;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .consims-select-option:hover,
@@ -1087,11 +1104,15 @@ body {
   align-items: center;
   min-width: 0;
   overflow: hidden;
-  color: #454b5f;
+  color: #999a9f;
   font-size: 13px;
   line-height: 1.2;
   white-space: nowrap;
   pointer-events: none;
+}
+
+.consims-datepicker.consims-datepicker-has-value .consims-datepicker-display {
+  color: #333333;
 }
 
 .consims-datepicker-display-placeholder {

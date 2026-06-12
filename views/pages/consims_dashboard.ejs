@@ -17,7 +17,7 @@
   <section class="dashboard-view active" data-dashboard-view="contract">
     <div class="dashboard-filter-row consims-contract-filter-row" aria-label="Contract dashboard filters">
       <div class="consims-contract-filter-project">
-        <select class="form-select" aria-label="Project or contract" data-consims-contract-select><option value="">Project/Contract</option></select>
+        <select class="form-select consims-contract-select" aria-label="Contract" data-consims-contract-select><option value="">Contract</option></select>
       </div>
       <div class="consims-contract-filter-status">
         <select class="form-select" aria-label="Status"><option>Status</option></select>
@@ -240,7 +240,7 @@
 
   <section class="dashboard-view" data-dashboard-view="project">
     <div class="dashboard-filter-row project-filter-row" aria-label="Project dashboard filters">
-      <select class="form-select" aria-label="Project or contract"><option>Project/Contract</option></select>
+      <select class="form-select" aria-label="Project or contract"><option>Project</option></select>
       <select class="form-select" aria-label="Project manager"><option>Project manager</option></select>
       <select class="form-select" aria-label="Client"><option>Client</option></select>
       <select class="form-select" aria-label="Region"><option>Region</option></select>
@@ -516,6 +516,17 @@
         { name: "Forecast", data: [18, 29, 41, 52, 65, 73] }
       ]
     };
+    const consimsDefaultContractProgressRows = [
+      { label: "Planned Progress (Baseline)", value: "78%" },
+      { label: "Actual Progress (To Date)", value: "61%" },
+      { label: "SPI (Schedule Performance Index)", value: "0.92" },
+      { label: "Behind Schedule", value: "-17%" },
+      { label: "Delay (Days)", value: "18 Days" },
+      { label: "Completion Date (Planned)", value: "30/09/2026" },
+      { label: "Completion Date (Forecast)", value: "15/10/2026" },
+      { label: "Milestones Due", value: "12" },
+      { label: "Milestones Overdue", value: "-3" }
+    ];
 
     function fillTable(selector, rows) {
       const body = root.querySelector(selector);
@@ -628,6 +639,71 @@
       consimsRenderContractKpiFromFinanceRows(rows);
     }
 
+    function consimsReadFirstValue(row, keys) {
+      for (let index = 0; index < keys.length; index += 1) {
+        const value = row[keys[index]];
+        if (value !== undefined && value !== null && value !== "") return value;
+      }
+      return "";
+    }
+
+    function consimsFormatContractProgressNumber(value) {
+      const parsed = typeof value === "number" ? value : Number(String(value ?? "").replace(",", "."));
+      if (!Number.isFinite(parsed)) return String(value ?? "").trim();
+      return parsed.toLocaleString("en-US", { maximumFractionDigits: 2 });
+    }
+
+    function consimsFormatContractProgressPercent(value) {
+      const text = String(value ?? "").trim();
+      if (!text) return "0%";
+      if (text.includes("%")) return text;
+
+      const parsed = typeof value === "number" ? value : Number(text.replace(",", "."));
+      if (!Number.isFinite(parsed)) return text;
+      return consimsTrimCompactNumber(parsed) + "%";
+    }
+
+    function consimsFormatContractProgressValue(row, label) {
+      const rawValue = consimsReadFirstValue(row, ["Value", "value", "ProgressValue", "progressValue"]);
+      const rawAmount = consimsReadFirstValue(row, ["Amount", "amount"]);
+      const sourceValue = rawValue !== "" ? rawValue : rawAmount;
+      const text = String(sourceValue ?? "").trim();
+      const key = consimsMetricKey(label);
+
+      if (!text) return "0";
+
+      if (key.includes("completiondate")) {
+        const date = consimsParseApiDate(text);
+        return date ? consimsFormatShortDate(date, true) : consimsFormatContractProgressNumber(sourceValue);
+      }
+
+      if (key.includes("delay") && key.includes("days")) return consimsFormatContractProgressNumber(sourceValue) + " Days";
+      if (key.includes("spi")) return consimsFormatContractProgressNumber(sourceValue);
+      if (key.includes("milestones")) return consimsFormatContractProgressNumber(sourceValue);
+      if (key.includes("progress") || key.includes("schedule")) return consimsFormatContractProgressPercent(sourceValue);
+
+      return consimsFormatContractProgressNumber(sourceValue);
+    }
+
+    function consimsMapContractProgressRows(rows) {
+      return rows.map(function (row) {
+        const label = row.label || row.Description || row.Label || row.Name || "";
+        return {
+          label: label,
+          value: consimsFormatContractProgressValue(row, label)
+        };
+      }).filter(function (row) {
+        return row.label !== "";
+      });
+    }
+
+    function consimsRenderContractProgressRows(rows) {
+      const safeRows = rows && rows.length ? rows : consimsDefaultContractProgressRows;
+      fillTable('[data-dashboard-table="contract-progress"]', safeRows.map(function (row) {
+        return '<tr><td>' + consimsEscapeHtml(row.label) + '</td>' + valueCell(consimsEscapeHtml(row.value ?? "0")) + '</tr>';
+      }));
+    }
+
     function consimsFormatApiPercent(value) {
       if (value === null || value === undefined || value === "") return "";
       const text = String(value).trim();
@@ -686,6 +762,16 @@
       return [];
     }
 
+    function consimsReadContractList(payload) {
+      const list = consimsReadList(payload, "ProjectList");
+      if (list.length) return list;
+
+      const contractList = consimsReadList(payload, "ContractList");
+      if (contractList.length) return contractList;
+
+      return consimsReadList(payload, "Data");
+    }
+
     function consimsRefreshSelect(select) {
       if (select && typeof select.consimsRefreshOptions === "function") select.consimsRefreshOptions();
     }
@@ -698,13 +784,18 @@
       return item.Description || item.ContractName || item.ProjectName || item.Name || item.Text || item.text || consimsReadContractId(item);
     }
 
+    function consimsReadContractCode(item) {
+      return item.ContractCode || item.Code || item.ProjectCode || "";
+    }
+
     function consimsSetContractOptions(items, preferredContractId) {
       if (!contractProjectSelect || !Array.isArray(items) || !items.length) return;
 
       const options = items.map(function (item) {
         return {
           id: consimsReadContractId(item),
-          name: consimsReadContractName(item)
+          name: consimsReadContractName(item),
+          code: consimsReadContractCode(item)
         };
       }).filter(function (item) {
         return item.id !== "" && item.name !== "";
@@ -712,11 +803,13 @@
 
       if (!options.length) return;
 
-      contractProjectSelect.innerHTML = '<option value="">Project/Contract</option>';
+      contractProjectSelect.innerHTML = '<option value="">Contract</option>';
       options.forEach(function (item) {
         const option = document.createElement("option");
         option.value = String(item.id);
         option.textContent = item.name;
+        option.title = item.code ? item.name + " - " + item.code : item.name;
+        if (item.code) option.dataset.consimsContractCode = item.code;
         contractProjectSelect.appendChild(option);
       });
 
@@ -767,7 +860,7 @@
           return;
         }
 
-        const projectList = consimsReadList(payload, "ProjectList");
+        const projectList = consimsReadContractList(payload);
         if (projectList.length && contractProjectSelect && contractProjectSelect.options.length <= 1) {
           consimsSetContractOptions(projectList, selectedContractId);
         }
@@ -782,7 +875,7 @@
 
         const progressRows = consimsReadList(payload, "ProgressPerformance");
         if (progressRows.length) {
-          consimsRenderContractFinanceRows(consimsMapContractFinanceRows(progressRows));
+          consimsRenderContractProgressRows(consimsMapContractProgressRows(progressRows));
         }
 
         const revenueCostRows = consimsReadList(payload, "RevenueVSCost");
@@ -810,7 +903,7 @@
           return;
         }
 
-        const projectList = consimsReadList(payload, "ProjectList");
+        const projectList = consimsReadContractList(payload);
         consimsSetContractOptions(projectList);
       } catch (error) {
         console.warn("Could not load contract project list", error);
@@ -847,23 +940,13 @@
         { label: "Tender Margin", amount: "-$1.200.000", rcv: "-2.2%" },
         { label: "Forecasted Profit Margin", amount: "12.1%", rcv: "-1.2%" }
       ];
-      const progressRows = [
-      { "Description": "Planned Progress (Baseline)", "Amount": null, "Value": null},
-      { "Description": "Actual Progress (To Date)", "Amount": null, "Value": null },
-      { "Description": "SPI (Schedule Performance Index)", "Amount": null, "Value": null},
-      { "Description": "Behind Schedule", "Amount": null, "Value": 100 },
-      { "Description": "Delay (Days)", "Amount": 12490.553813112, "Value": null },
-      { "Description": "Completion Date (Planned)", "Amount": 2434.79224653636, "Value": null },
-      { "Description": "Completion Date (Forecast)", "Amount": null, "Value": null },
-      { "Description": "Milestones Due", "Amount": null, "Value": null },
-      { "Description": "Milestones Overdue", "Amount": null, "Value": null }
-    ];
+      const progressRows = consimsDefaultContractProgressRows;
       const personnelRows = [["9/2025", 100, 95, "2%"], ["10/2025", 150, 140, "5%"], ["11/2025", 200, 210, "12%"], ["12/2025", 250, 245, "20%"], ["1/2026", 270, 230, "25%"], ["2/2026", 280, 260, "32%"], ["3/2026", 300, 290, "45%"], ["4/2026", 320, 310, "55%"]];
       const materialRows = [["9/2025", 2.5, 2.4, "0.5%"], ["10/2025", 4.2, 3.9, "1.5%"], ["11/2025", 8.1, 7.8, "1.2%"], ["12/2025", 12.5, 11.8, "3.5%"], ["1/2026", 9.0, 8.5, "2.8%"], ["2/2026", 7.5, 7.0, "3.2%"], ["3/2026", 15.2, 14.5, "4.5%"], ["4/2026", 10.4, 13.0, "2.5%"]];
 
       fillTable('[data-dashboard-table="contract-information"]', contractInformationRows.map(function (row) { return '<tr><td>' + row[0] + '</td><td class="text-end consims-contract-info-value">' + row[1] + '</td></tr>'; }));
       consimsRenderContractFinanceRows(financeRows);
-      fillTable('[data-dashboard-table="contract-progress"]', progressRows.map(function (row) { return '<tr><td>' + row.label + '</td>' + valueCell(row.value) + '</tr>'; }));
+      consimsRenderContractProgressRows(progressRows);
 
       ["contract", "project"].forEach(function (prefix) {
         fillTable('[data-dashboard-table="' + prefix + '-personnel"]', personnelRows.map(function (row) { return '<tr><td>' + row[0] + '</td><td class="text-center">' + row[1] + '</td><td class="text-center">' + row[2] + '</td><td class="text-end">' + row[3] + '</td></tr>'; }));
@@ -1484,6 +1567,7 @@
         const wrapper = document.createElement("div");
         wrapper.className = "dropdown consims-select";
         if (select.dataset.consimsSelectSize) wrapper.classList.add("consims-select-" + select.dataset.consimsSelectSize);
+        if (select.hasAttribute("data-consims-contract-select")) wrapper.classList.add("consims-contract-select-wrapper");
         wrapper.setAttribute("data-consims-select", "");
         select.parentNode.insertBefore(wrapper, select);
         wrapper.appendChild(select);
@@ -1506,6 +1590,8 @@
         function updateSelectedOption() {
           const currentOption = select.options[select.selectedIndex] || select.options[0];
           label.textContent = currentOption ? currentOption.textContent : (select.getAttribute("aria-label") || "Select");
+          button.title = currentOption ? currentOption.textContent : "";
+          wrapper.classList.toggle("consims-select-has-value", Boolean(select.value));
           menu.querySelectorAll(".consims-select-option").forEach(function (item) {
             item.classList.toggle("active", item.dataset.value === select.value);
           });
@@ -1519,6 +1605,7 @@
             item.className = "dropdown-item consims-select-option";
             item.dataset.value = option.value;
             item.textContent = option.textContent;
+            item.title = option.title || option.textContent;
             item.addEventListener("click", function () {
               select.value = option.value;
               select.dispatchEvent(new Event("change", { bubbles: true }));
@@ -1592,22 +1679,28 @@
         widget.appendChild(panel);
 
         function updateInputValue() {
+          let hasValue = false;
           if (!isRange) {
             input.value = selectedDate ? formatDate(selectedDate) : "";
             display.innerHTML = selectedDate ? '<span>' + formatDate(selectedDate) + '</span>' : '<span class="consims-datepicker-display-placeholder">' + input.placeholder + '</span>';
+            hasValue = Boolean(selectedDate);
+            widget.classList.toggle("consims-datepicker-has-value", hasValue);
             return;
           }
 
           if (rangeStart && rangeEnd) {
             input.value = formatDate(rangeStart) + " - " + formatDate(rangeEnd);
             display.innerHTML = '<span>' + formatDate(rangeStart) + '</span><span>&nbsp;-&nbsp;</span><span>' + formatDate(rangeEnd) + '</span>';
+            hasValue = true;
           } else if (rangeStart) {
             input.value = formatDate(rangeStart) + " - DD/MM/YYYY";
             display.innerHTML = '<span>' + formatDate(rangeStart) + '</span><span>&nbsp;-&nbsp;</span><span class="consims-datepicker-display-placeholder">DD/MM/YYYY</span>';
+            hasValue = true;
           } else {
             input.value = "";
             display.innerHTML = '<span class="consims-datepicker-display-placeholder">' + input.placeholder + '</span>';
           }
+          widget.classList.toggle("consims-datepicker-has-value", hasValue);
         }
 
         updateInputValue();

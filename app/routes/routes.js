@@ -45,10 +45,17 @@ module.exports = function (route) {
 
     const getDashboardBaseParams = (req) => ({
         "WSId": getDashboardWsId(req),
-        "LogIn": req.session.user?.username || "",
-        "SessionId": req.session.sessionid || "",
+        "LogIn": req.query.login || req.session.user?.username || req.app.locals.env.api.LogIn || "",
+        "SessionId": req.query.sessionId || req.query.SessionId || req.session.sessionid || req.app.locals.env.api.SessionId || "",
         "Language": req.app.locals.env.lang || "en"
     });
+
+    const fetchDashboardApi = async (req, endpoint, params) => {
+        const para = JSON.stringify(params);
+        const url = `${req.app.locals.env.api.host}/api/${endpoint}?params=${encodeURIComponent(para)}`;
+        const response = await fetch(url);
+        return response.json();
+    };
 
     const addDashboardDebug = (req, data, params) => {
         if (req.query.debug !== "1") return data;
@@ -77,17 +84,27 @@ module.exports = function (route) {
     route.get("/consims-dashboard/project-list", async (req, res) => {
         const params = {
             ...getDashboardBaseParams(req),
-            "DisplayMode": req.query.displayMode || "contract_to_dashboard",
-            "Keyword": req.query.keyword || "",
-            "PageNum": Number(req.query.page) || 1,
-            "PageSize": Number(req.query.pageSize) || 1000
+            "DisplayMode": req.query.displayMode || "contract_to_dashboard"
         };
-        const para = JSON.stringify(params);
-        const url = `${req.app.locals.env.api.host}/api/get-project-list?params=${encodeURIComponent(para)}`;
+        if (req.query.keyword) params.Keyword = req.query.keyword;
+        if (req.query.page) params.PageNum = Number(req.query.page);
+        if (req.query.pageSize) params.PageSize = Number(req.query.pageSize);
 
         try {
-            const response = await fetch(url);
-            const data = await response.json();
+            let data = await fetchDashboardApi(req, "get-project-list", params);
+            if (data.Success !== true && data.Success !== "true") {
+                const fallbackParams = {
+                    "LogIn": params.LogIn,
+                    "SessionId": params.SessionId,
+                    "Keyword": req.query.keyword || "",
+                    "ContractType": "All",
+                    "DisplayMode": "brief_contracts_by_user",
+                    "PageNum": Number(req.query.page) || 1,
+                    "PageSize": Number(req.query.pageSize) || 1000
+                };
+                data = await fetchDashboardApi(req, "get-contract-list", fallbackParams);
+                data.FallbackSource = "get-contract-list";
+            }
             if (data.Success !== true && data.Success !== "true") {
                 logDashboardApiWarning("[consims-dashboard/project-list]", data, params);
             }
@@ -106,12 +123,9 @@ module.exports = function (route) {
             "ContractId": contractId,
             "SummaryMode": "by_contract"
         };
-        const para = JSON.stringify(params);
-        const url = `${req.app.locals.env.api.host}/api/get-dashboard-data?params=${encodeURIComponent(para)}`;
 
         try {
-            const response = await fetch(url);
-            const data = await response.json();
+            const data = await fetchDashboardApi(req, "get-dashboard-data", params);
             if (data.Success !== true && data.Success !== "true") {
                 logDashboardApiWarning("[consims-dashboard/contract-data]", data, params);
             }
