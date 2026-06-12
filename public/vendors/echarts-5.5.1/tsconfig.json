@@ -25,5 +25,9 @@
         "extension-src/**/*.ts",
         "ssr/client/**/*.ts",
         "test/lib/myTransform/src/**/*.ts"
+    ],
+        "exclude": [
+        "node_modules",
+        "public/vendors/**/*" 
     ]
 }
