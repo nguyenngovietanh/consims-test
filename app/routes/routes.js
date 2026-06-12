@@ -34,6 +34,93 @@ module.exports = function (route) {
         res.render('pages/consims_dashboard', { layout: 'layout', title: senserver.utils.text.t({ req, text: 'Contract Dashboard' }) });
     });
 
+    const getDashboardWsId = (req) => (
+        req.query.wsId ||
+        req.session.client?.WSId ||
+        req.session.client?.WorkspaceId ||
+        req.session.client?.WorkSpaceId ||
+        req.app.locals.env.api.WSId ||
+        ""
+    );
+
+    const getDashboardBaseParams = (req) => ({
+        "WSId": getDashboardWsId(req),
+        "LogIn": req.session.user?.username || "",
+        "SessionId": req.session.sessionid || "",
+        "Language": req.app.locals.env.lang || "en"
+    });
+
+    const addDashboardDebug = (req, data, params) => {
+        if (req.query.debug !== "1") return data;
+        return {
+            ...data,
+            Debug: {
+                SentParams: {
+                    ...params,
+                    SessionId: params.SessionId ? "[present]" : "[missing]"
+                },
+                TopLevelKeys: data && typeof data === "object" ? Object.keys(data) : [],
+                HeadingKeys: data?.Headings && typeof data.Headings === "object" ? Object.keys(data.Headings) : [],
+                DataKeys: data?.Data && typeof data.Data === "object" && !Array.isArray(data.Data) ? Object.keys(data.Data) : []
+            }
+        };
+    };
+
+    const logDashboardApiWarning = (label, data, params) => {
+        console.warn(label, data?.Message || "API returned false", {
+            WSId: params.WSId,
+            LogIn: params.LogIn,
+            HasSessionId: Boolean(params.SessionId)
+        });
+    };
+
+    route.get("/consims-dashboard/project-list", async (req, res) => {
+        const params = {
+            ...getDashboardBaseParams(req),
+            "DisplayMode": req.query.displayMode || "contract_to_dashboard",
+            "Keyword": req.query.keyword || "",
+            "PageNum": Number(req.query.page) || 1,
+            "PageSize": Number(req.query.pageSize) || 1000
+        };
+        const para = JSON.stringify(params);
+        const url = `${req.app.locals.env.api.host}/api/get-project-list?params=${encodeURIComponent(para)}`;
+
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+            if (data.Success !== true && data.Success !== "true") {
+                logDashboardApiWarning("[consims-dashboard/project-list]", data, params);
+            }
+            return res.json(addDashboardDebug(req, data, params));
+        } catch (error) {
+            return res.status(502).json({ Success: "false", Message: `api error: ${error.message}` });
+        }
+    });
+
+    route.get("/consims-dashboard/contract-data", async (req, res) => {
+        const contractId = Number(req.query.contractId) || 17244;
+        const params = {
+            ...getDashboardBaseParams(req),
+            "UnitToDisplay": req.query.unit || "Billion",
+            "Category": "contract",
+            "ContractId": contractId,
+            "SummaryMode": "by_contract"
+        };
+        const para = JSON.stringify(params);
+        const url = `${req.app.locals.env.api.host}/api/get-dashboard-data?params=${encodeURIComponent(para)}`;
+
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+            if (data.Success !== true && data.Success !== "true") {
+                logDashboardApiWarning("[consims-dashboard/contract-data]", data, params);
+            }
+            return res.json(addDashboardDebug(req, data, params));
+        } catch (error) {
+            return res.status(502).json({ Success: "false", Message: `api error: ${error.message}` });
+        }
+    });
+
     //ngôn ngữ
     route.get("/change-language", (req, res, next) => {
         if (req.query.language) {

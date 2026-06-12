@@ -17,7 +17,7 @@
   <section class="dashboard-view active" data-dashboard-view="contract">
     <div class="dashboard-filter-row consims-contract-filter-row" aria-label="Contract dashboard filters">
       <div class="consims-contract-filter-project">
-        <select class="form-select" aria-label="Project or contract"><option>Project/Contract</option></select>
+        <select class="form-select" aria-label="Project or contract" data-consims-contract-select><option value="">Project/Contract</option></select>
       </div>
       <div class="consims-contract-filter-status">
         <select class="form-select" aria-label="Status"><option>Status</option></select>
@@ -28,7 +28,13 @@
           <button class="consims-datepicker-toggle" type="button" aria-label="Open date picker" data-consims-datepicker-toggle></button>
         </div>
       </div>
-      <div class="consims-contract-filter-empty" aria-hidden="true"></div>
+      <div class="consims-contract-filter-currency">
+        <select class="form-select consims-contract-currency-select" aria-label="Currency display unit" data-consims-contract-currency-unit data-consims-select-source="true">
+          <option value="Billion">Billion</option>
+          <option value="Million">Million</option>
+        </select>
+        <span class="consims-contract-currency-suffix" aria-hidden="true">VNĐ</span>
+      </div>
       <div class="consims-last-updated consims-contract-filter-updated" aria-label="Last data update">
         <span>Data as on</span>
         <strong>31 May 2025 11:30 AM</strong>
@@ -36,36 +42,54 @@
     </div>
 
     <div class="dashboard-kpi-grid contract" aria-label="Contract summary">
-      <article class="dashboard-kpi"><h3>Original Contract Value</h3><strong>0</strong></article>
-      <article class="dashboard-kpi"><h3>Approved Variations</h3><strong>0</strong></article>
-      <article class="dashboard-kpi"><h3>Revised Contract Value</h3><strong>0</strong></article>
-      <article class="dashboard-kpi"><h3>Revenue Recognized<br>(To date)</h3><strong>0</strong><span class="positive">57.1%</span>&nbsp;<span> of RCV</span></article>
-      <article class="dashboard-kpi"><h3>Cost Incurred<br>(To date)</h3><strong>0</strong><span class="positive">46%</span>&nbsp;<span> of RCV</span></article>
-      <article class="dashboard-kpi"><h3>Forecast Final Cost<br>(EAC)</h3><strong>0</strong></article>
-      <article class="dashboard-kpi"><h3>Forecast<br>Profit</h3><strong>0</strong><span class="positive">46%</span>&nbsp;<span> of RCV</span></article>
-      <article class="dashboard-kpi"><h3>Forecast<br>Margin</h3><strong>0</strong><span class="negative">-1.2%</span>&nbsp;<span> of RCV</span></article>
-      <article class="dashboard-kpi"><h3>Cash Collected<br>(To date)</h3><strong>0</strong><span class="positive">46%</span>&nbsp;<span> of RCV</span></article>
-      <article class="dashboard-kpi"><h3>Outstanding<br>Receivables</h3><strong>0</strong></article>
+      <article class="dashboard-kpi" data-consims-contract-kpi="Original Contract Value"><h3>Original Contract Value</h3><strong data-consims-kpi-amount>0</strong></article>
+      <article class="dashboard-kpi" data-consims-contract-kpi="Approved Variations"><h3>Approved Variations</h3><strong data-consims-kpi-amount>0</strong></article>
+      <article class="dashboard-kpi" data-consims-contract-kpi="Revised Contract Value"><h3>Revised Contract Value</h3><strong data-consims-kpi-amount>0</strong></article>
+      <article class="dashboard-kpi" data-consims-contract-kpi="Revenue Recognized (To date)"><h3>Revenue Recognized (To date)</h3><strong data-consims-kpi-amount>0</strong><span class="positive" data-consims-kpi-rcv>57.1%</span>&nbsp;<span> of RCV</span></article>
+      <article class="dashboard-kpi" data-consims-contract-kpi="Cost Incurred (To date)"><h3>Cost Incurred (To date)</h3><strong data-consims-kpi-amount>0</strong><span class="positive" data-consims-kpi-rcv>46%</span>&nbsp;<span> of RCV</span></article>
+      <article class="dashboard-kpi" data-consims-contract-kpi="Forecast Final Cost (EAC)"><h3>Forecast Final Cost (EAC)</h3><strong data-consims-kpi-amount>0</strong></article>
+      <article class="dashboard-kpi" data-consims-contract-kpi="Forecast Profit"><h3>Forecast Profit</h3><strong data-consims-kpi-amount>0</strong><span class="positive" data-consims-kpi-rcv>46%</span>&nbsp;<span> of RCV</span></article>
+      <article class="dashboard-kpi" data-consims-contract-kpi="Forecasted Profit Margin"><h3>Forecast Margin</h3><strong data-consims-kpi-amount>0</strong><span class="negative" data-consims-kpi-rcv>-1.2%</span>&nbsp;<span> of RCV</span></article>
+      <article class="dashboard-kpi"><h3>Cash Collected (To date)</h3><strong>0</strong><span class="positive">46%</span>&nbsp;<span> of RCV</span></article>
+      <article class="dashboard-kpi"><h3>Outstanding Receivables</h3><strong>0</strong></article>
+    </div>
+
+    <div class="consims-contract-info-finance-row">
+      <section class="dashboard-section consims-contract-info-section">
+        <h2>1. Contract Information</h2>
+        <div class="dashboard-panel consims-contract-info-panel">
+          <table class="dashboard-table compact consims-contract-info-table">
+            <tbody data-dashboard-table="contract-information"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="dashboard-section consims-contract-finance-section">
+        <h2>2. Finance Performance</h2>
+        <div class="dashboard-section-body two-cols">
+          <div class="dashboard-panel dashboard-panel-inside">
+            <table class="dashboard-table consims-contract-finance-table">
+              <thead><tr><th>Description</th><th class="text-end">Amount</th><th class="text-end">% of RCV</th></tr></thead>
+              <tbody data-dashboard-table="contract-finance"></tbody>
+            </table>
+          </div>
+          <div class="dashboard-panel dashboard-panel-inside">
+            <div class="consims-chart-panel-header">
+              <h3>Revenue vs Cost (Cumulative)</h3>
+              <select class="form-select consims-revenue-cost-grain-select" aria-label="Revenue vs Cost date grouping" data-contract-revenue-cost-grain data-consims-select-source="true" data-consims-select-size="sm">
+                <option value="month">Month</option>
+                <option value="week">Week</option>
+                <option value="day">Day</option>
+              </select>
+            </div>
+            <div class="dashboard-chart consims-revenue-cost-chart" data-dashboard-chart="contract-revenue-cost"></div>
+          </div>
+        </div>
+      </section>
     </div>
 
     <section class="dashboard-section">
-      <h2>1. Finance Performance</h2>
-      <div class="dashboard-section-body two-cols">
-        <div class="dashboard-panel dashboard-panel-inside">
-          <table class="dashboard-table">
-            <thead><tr><th>Description</th><th class="text-end">Amount</th><th class="text-end">% of RCV</th></tr></thead>
-            <tbody data-dashboard-table="contract-finance"></tbody>
-          </table>
-        </div>
-        <div class="dashboard-panel dashboard-panel-inside">
-          <h3>Revenue vs Cost (Cumulative)</h3>
-          <div class="dashboard-chart" data-dashboard-chart="contract-revenue-cost"></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="dashboard-section">
-      <h2>2. Progress &amp; Time Performance</h2>
+      <h2>3. Progress &amp; Time Performance</h2>
       <div class="dashboard-section-body three-cols">
         <div class="dashboard-panel dashboard-panel-inside">
           <table class="dashboard-table">
@@ -91,7 +115,7 @@
     </section>
 
     <section class="dashboard-section">
-      <h2>3. Variations (Change Orders)</h2>
+      <h2>4. Variations (Change Orders)</h2>
       <div class="dashboard-stat-row">
         <div><span>Raised (YTD)</span><strong class="text-info">$6.10M</strong></div>
         <div><span>Approved</span><strong class="text-success">$6.10M</strong></div>
@@ -112,7 +136,7 @@
     </section>
 
     <section class="dashboard-section">
-      <h2>4. Main contract Claims &amp; Disputes</h2>
+      <h2>5. Main contract Claims &amp; Disputes</h2>
       <div class="dashboard-stat-row">
         <div><span>EOT Claims</span><strong class="text-info">2</strong></div>
         <div><span>Cost Claims</span><strong class="text-success">3</strong></div>
@@ -127,7 +151,7 @@
     </section>
 
     <section class="dashboard-section">
-      <h2>5. Main contract Payments &amp; Cash Flow</h2>
+      <h2>6. Main contract Payments &amp; Cash Flow</h2>
       <div class="dashboard-stat-row">
         <div><span>Invoices Submitted YTD</span><strong class="text-info">18</strong></div>
         <div><span>Certified Amount</span><strong class="text-success">$42.8M</strong></div>
@@ -142,7 +166,7 @@
     </section>
 
     <section class="dashboard-section">
-      <h2>6. Sub contract Payments &amp; Cash Flow</h2>
+      <h2>7. Sub contract Payments &amp; Cash Flow</h2>
       <div class="dashboard-stat-row">
         <div><span>Invoices Submitted YTD</span><strong class="text-info">11</strong></div>
         <div><span>Certified Amount</span><strong class="text-success">$18.6M</strong></div>
@@ -157,7 +181,7 @@
     </section>
 
     <section class="dashboard-section">
-      <h2>7. Risk Overview</h2>
+      <h2>8. Risk Overview</h2>
       <div class="dashboard-section-body two-cols">
         <div class="dashboard-panel"><div class="risk-matrix" aria-label="Risk matrix"><span>High</span><div class="risk-yellow">1</div><div class="risk-orange">2</div><div class="risk-red">2</div><span>Medium</span><div class="risk-yellow">1</div><div class="risk-orange">3</div><div class="risk-orange">1</div><span>Low</span><div class="risk-green">2</div><div class="risk-green">1</div><div class="risk-green">0</div></div></div>
         <div class="dashboard-panel dashboard-panel-inside">
@@ -175,7 +199,7 @@
     </section>
 
     <section class="dashboard-section">
-      <h2>8. Personnel</h2>
+      <h2>9. Personnel</h2>
       <div class="dashboard-stat-row three">
         <div><span>Total Actual Personnel</span><strong class="text-info">1.300</strong></div>
         <div><span>Planned staffing levels</span><strong class="text-danger">1.380</strong></div>
@@ -190,7 +214,7 @@
     </section>
 
     <section class="dashboard-section">
-      <h2>9. Materials &amp; Equipment</h2>
+      <h2>10. Materials &amp; Equipment</h2>
       <div class="dashboard-stat-row">
         <div><span>Total Cumulative Import Value</span><strong class="text-info">$6.10M</strong></div>
         <div><span>Actual Wastage % / Loss %</span><strong class="text-success">$6.10M</strong></div>
@@ -207,10 +231,10 @@
     </section>
 
     <div class="dashboard-bottom-grid">
-      <section class="dashboard-section"><h2>10. Compliance &amp; Contract Admin</h2><div class="dashboard-panel"><table class="dashboard-table compact"><tbody><tr><td>Insurance Valid</td><td class="status-check"><img src="/assets/img/Checked-icon.png" alt=""></td><td class="status-ok">Yes</td></tr><tr><td>Performance Bond Valid</td><td class="status-check"><img src="/assets/img/Checked-icon.png" alt=""></td><td class="status-ok">Yes</td></tr><tr><td>Advance Payment Bond</td><td class="status-check"><img src="/assets/img/Checked-icon.png" alt=""></td><td class="status-ok">Yes</td></tr><tr><td>Notifications Sent on Time</td><td class="status-check"><img src="/assets/img/Checked-icon.png" alt=""></td><td class="status-ok">92%</td></tr><tr><td>Contractual Deliverables Due</td><td class="status-warning"><img src="/assets/img/Warning-icon.png" alt=""></td><td class="status-ok">3</td></tr><tr><td>Missing Notices / Docs</td><td class="status-warning"><img src="/assets/img/Warning-icon.png" alt=""></td><td class="status-ok">2</td></tr></tbody></table></div></section>
-      <section class="dashboard-section"><h2>11. Key Activities (This month)</h2><div class="dashboard-panel"><table class="dashboard-table compact"><thead><tr><th>Activity</th><th>Due Date</th><th class="text-end">Status</th></tr></thead><tbody><tr><td>Submit Monthly Progress Claim</td><td>5 Jun 2025</td><td class="text-end text-info" style="font-weight: bold;">Inprogress</td></tr><tr><td>Concrete Pour - Floor 20 Tower B</td><td>6 Jun 2025</td><td class="text-end text-success" style="font-weight: bold;">On track</td></tr><tr><td>MEP Rough-in - Level 15</td><td>7 Jun 2025</td><td class="text-end text-success" style="font-weight: bold;">On track</td></tr><tr><td>Facade Panel Installation</td><td>8 Jun 2025</td><td class="text-end text-danger">Not Started</td></tr><tr><td>Client Review Meeting</td><td>9 Jun 2025</td><td class="text-end text-warning">In Progress</td></tr></tbody></table></div></section>
-      <section class="dashboard-section"><h2>12. Procurement &amp; Subcontracts</h2><div class="dashboard-panel"><table class="dashboard-table compact"><tbody><tr><td>Major Subcontracts Awarded</td><td class="text-end status-ok">82%</td></tr><tr><td>Subcontract Commitments</td><td class="text-end status-ok">$18.65M</td></tr><tr><td>Committed to Date</td><td class="text-end status-ok">$15.25M</td></tr><tr><td>Subcontract Claims</td><td class="text-end status-ok">2</td></tr><tr><td>Back-to-back Coverage</td><td class="text-end status-ok">94%</td></tr></tbody></table></div></section>
-      <section class="dashboard-section"><h2>13. Actions Required</h2><div class="dashboard-panel"><table class="dashboard-table compact"><thead><tr><th>Activity</th><th>Owner</th><th>Due Date</th><th class="text-end">Status</th></tr></thead><tbody><tr><td>Approve Variation - VR-045</td><td>Client</td><td>5 Jun 2025</td><td class="text-end text-danger" style="font-weight: bold;">High</td></tr><tr><td>Provide Structural Drawings</td><td>Consultant</td><td>5 Jun 2025</td><td class="text-end text-danger" style="font-weight: bold;">High</td></tr><tr><td>Clear Pending Invoice #INV-125</td><td>Client</td><td>5 Jun 2025</td><td class="text-end text-danger" style="font-weight: bold;">High</td></tr><tr><td>Site Inspection - QA/QC</td><td>QA/QC Manager</td><td>5 Jun 2025</td><td class="text-end text-warning" style="font-weight: bold;">Medium</td></tr><tr><td>Submit EOT Claim - 02</td><td>PM</td><td>5 Jun 2025</td><td class="text-end text-warning" style="font-weight: bold;">Medium</td></tr></tbody></table></div></section>
+      <section class="dashboard-section"><h2>11. Compliance &amp; Contract Admin</h2><div class="dashboard-panel"><table class="dashboard-table compact"><tbody><tr><td>Insurance Valid</td><td class="status-check"><img src="/assets/img/Checked-icon.png" alt=""></td><td class="status-ok">Yes</td></tr><tr><td>Performance Bond Valid</td><td class="status-check"><img src="/assets/img/Checked-icon.png" alt=""></td><td class="status-ok">Yes</td></tr><tr><td>Advance Payment Bond</td><td class="status-check"><img src="/assets/img/Checked-icon.png" alt=""></td><td class="status-ok">Yes</td></tr><tr><td>Notifications Sent on Time</td><td class="status-check"><img src="/assets/img/Checked-icon.png" alt=""></td><td class="status-ok">92%</td></tr><tr><td>Contractual Deliverables Due</td><td class="status-warning"><img src="/assets/img/Warning-icon.png" alt=""></td><td class="status-ok">3</td></tr><tr><td>Missing Notices / Docs</td><td class="status-warning"><img src="/assets/img/Warning-icon.png" alt=""></td><td class="status-ok">2</td></tr></tbody></table></div></section>
+      <section class="dashboard-section"><h2>12. Key Activities (This month)</h2><div class="dashboard-panel"><table class="dashboard-table compact"><thead><tr><th>Activity</th><th>Due Date</th><th class="text-end">Status</th></tr></thead><tbody><tr><td>Submit Monthly Progress Claim</td><td>5 Jun 2025</td><td class="text-end text-info" style="font-weight: bold;">Inprogress</td></tr><tr><td>Concrete Pour - Floor 20 Tower B</td><td>6 Jun 2025</td><td class="text-end text-success" style="font-weight: bold;">On track</td></tr><tr><td>MEP Rough-in - Level 15</td><td>7 Jun 2025</td><td class="text-end text-success" style="font-weight: bold;">On track</td></tr><tr><td>Facade Panel Installation</td><td>8 Jun 2025</td><td class="text-end text-danger">Not Started</td></tr><tr><td>Client Review Meeting</td><td>9 Jun 2025</td><td class="text-end text-warning">In Progress</td></tr></tbody></table></div></section>
+      <section class="dashboard-section"><h2>13. Procurement &amp; Subcontracts</h2><div class="dashboard-panel"><table class="dashboard-table compact"><tbody><tr><td>Major Subcontracts Awarded</td><td class="text-end status-ok">82%</td></tr><tr><td>Subcontract Commitments</td><td class="text-end status-ok">$18.65M</td></tr><tr><td>Committed to Date</td><td class="text-end status-ok">$15.25M</td></tr><tr><td>Subcontract Claims</td><td class="text-end status-ok">2</td></tr><tr><td>Back-to-back Coverage</td><td class="text-end status-ok">94%</td></tr></tbody></table></div></section>
+      <section class="dashboard-section"><h2>14. Actions Required</h2><div class="dashboard-panel"><table class="dashboard-table compact"><thead><tr><th>Activity</th><th>Owner</th><th>Due Date</th><th class="text-end">Status</th></tr></thead><tbody><tr><td>Approve Variation - VR-045</td><td>Client</td><td>5 Jun 2025</td><td class="text-end text-danger" style="font-weight: bold;">High</td></tr><tr><td>Provide Structural Drawings</td><td>Consultant</td><td>5 Jun 2025</td><td class="text-end text-danger" style="font-weight: bold;">High</td></tr><tr><td>Clear Pending Invoice #INV-125</td><td>Client</td><td>5 Jun 2025</td><td class="text-end text-danger" style="font-weight: bold;">High</td></tr><tr><td>Site Inspection - QA/QC</td><td>QA/QC Manager</td><td>5 Jun 2025</td><td class="text-end text-warning" style="font-weight: bold;">Medium</td></tr><tr><td>Submit EOT Claim - 02</td><td>PM</td><td>5 Jun 2025</td><td class="text-end text-warning" style="font-weight: bold;">Medium</td></tr></tbody></table></div></section>
     </div>
   </section>
 
@@ -472,7 +496,14 @@
     };
     const months = ["2/2026", "3/2026", "4/2026", "5/2026", "6/2026", "7/2026"];
     const longMonths = ["9/2025", "10/2025", "11/2025", "12/2025", "1/2026", "2/2026", "3/2026", "4/2026"];
+    const contractProjectSelect = root.querySelector("[data-consims-contract-select]");
+    const consimsDefaultContractId = "18251";
+    let contractDataRequestId = 0;
     const contractScurveSelect = root.querySelector("[data-contract-scurve-select]");
+    const contractRevenueCostGrainSelect = root.querySelector("[data-contract-revenue-cost-grain]");
+    const contractCurrencyUnitSelect = root.querySelector("[data-consims-contract-currency-unit]");
+    let contractRevenueCostRows = [];
+    let contractFinanceReference = {};
     const contractScurveSeries = {
       revenue: [
         { name: "Planned", data: [39, 54, 63, 66, 76, 78] },
@@ -497,7 +528,313 @@
       return '<td class="' + (className || "text-end") + negativeClass + '">' + text + '</td>';
     }
 
+    function consimsMetricKey(value) {
+      return String(value ?? "").toLowerCase().replace(/[^a-z0-9]+/g, "");
+    }
+
+    function consimsApplySignedText(element, value) {
+      if (!element) return;
+      const text = String(value ?? "");
+      element.textContent = text;
+      element.classList.toggle("consims-negative-value", text.trim().charAt(0) === "-");
+    }
+
+    function consimsParseNumberValue(value, compactSuffix) {
+      let numberText = String(value ?? "").replace(/[^\d.,]/g, "");
+      if (!numberText) return NaN;
+
+      if (compactSuffix) return Number(numberText.replace(",", "."));
+
+      const dotCount = (numberText.match(/\./g) || []).length;
+      const commaCount = (numberText.match(/,/g) || []).length;
+
+      if (dotCount > 1 && commaCount === 0) return Number(numberText.replace(/\./g, ""));
+      if (commaCount > 1 && dotCount === 0) return Number(numberText.replace(/,/g, ""));
+
+      if (dotCount && commaCount) {
+        const decimalSeparator = numberText.lastIndexOf(".") > numberText.lastIndexOf(",") ? "." : ",";
+        const thousandsSeparator = decimalSeparator === "." ? "," : ".";
+        numberText = numberText.replace(new RegExp("\\" + thousandsSeparator, "g"), "");
+        return Number(numberText.replace(decimalSeparator, "."));
+      }
+
+      if (dotCount === 1) {
+        const parts = numberText.split(".");
+        return Number(parts[1].length === 3 ? numberText.replace(".", "") : numberText);
+      }
+
+      if (commaCount === 1) {
+        const parts = numberText.split(",");
+        return Number(parts[1].length === 3 ? numberText.replace(",", "") : numberText.replace(",", "."));
+      }
+
+      return Number(numberText);
+    }
+
+    function consimsTrimCompactNumber(value) {
+      return value.toFixed(value >= 10 ? 1 : 2).replace(/\.?0+$/, "");
+    }
+
+    function consimsGetContractCurrencyUnit() {
+      return contractCurrencyUnitSelect && contractCurrencyUnitSelect.value === "Million" ? "Million" : "Billion";
+    }
+
+    function consimsGetContractCurrencySuffix() {
+      return consimsGetContractCurrencyUnit() === "Million" ? "M" : "B";
+    }
+
+    function consimsFormatContractKpiAmount(value) {
+      const text = String(value ?? "").trim();
+      if (!text || text.includes("%")) return text;
+
+      const upperText = text.toUpperCase();
+      const suffixMatch = upperText.match(/([MB])\b/);
+      const parsedNumber = consimsParseNumberValue(text, Boolean(suffixMatch));
+      if (!Number.isFinite(parsedNumber)) return text.replace(/\$/g, "").trim();
+
+      const sign = parsedNumber < 0 || text.trim().charAt(0) === "-" ? "-" : "";
+      const absoluteValue = Math.abs(parsedNumber);
+
+      if (suffixMatch) return sign + consimsTrimCompactNumber(absoluteValue) + suffixMatch[1] + " VNĐ";
+      return sign + absoluteValue.toLocaleString("vi-VN") + " VNĐ";
+    }
+
+    function consimsApplySignedRatio(element, value) {
+      if (!element) return;
+      const text = String(value ?? "");
+      element.textContent = text;
+      element.classList.remove("positive", "negative");
+      element.classList.add(text.trim().charAt(0) === "-" ? "negative" : "positive");
+    }
+
+    function consimsRenderContractKpiFromFinanceRows(rows) {
+      const financeByLabel = {};
+      rows.forEach(function (row) {
+        financeByLabel[consimsMetricKey(row.label)] = row;
+      });
+
+      root.querySelectorAll("[data-consims-contract-kpi]").forEach(function (kpi) {
+        const financeRow = financeByLabel[consimsMetricKey(kpi.dataset.consimsContractKpi)];
+        if (!financeRow) return;
+        consimsApplySignedText(kpi.querySelector("[data-consims-kpi-amount]"), consimsFormatContractKpiAmount(financeRow.amount));
+        consimsApplySignedRatio(kpi.querySelector("[data-consims-kpi-rcv]"), financeRow.rcv);
+      });
+    }
+
+    function consimsRenderContractFinanceRows(rows) {
+      fillTable('[data-dashboard-table="contract-finance"]', rows.map(function (row) {
+        return '<tr><td>' + row.label + '</td>' + valueCell(consimsFormatContractKpiAmount(row.amount)) + valueCell(row.rcv) + '</tr>';
+      }));
+      consimsRenderContractKpiFromFinanceRows(rows);
+    }
+
+    function consimsFormatApiPercent(value) {
+      if (value === null || value === undefined || value === "") return "";
+      const text = String(value).trim();
+      if (text.includes("%")) return text;
+
+      const parsed = Number(text);
+      if (!Number.isFinite(parsed)) return text;
+      return consimsTrimCompactNumber(parsed) + "%";
+    }
+
+    function consimsMapContractFinanceRows(rows) {
+      const references = {};
+      const mappedRows = rows.map(function (row) {
+        const label = row.Description || row.Label || row.Name || "";
+        const amountValue = row.OriginalContractValue ?? row.Amount ?? row.Value;
+        const amountNumber = typeof amountValue === "number" ? amountValue : consimsParseNumberValue(amountValue);
+
+        if (label && Number.isFinite(amountNumber)) {
+          references[consimsMetricKey(label)] = amountNumber;
+        }
+
+        return {
+          label: label,
+          amount: Number.isFinite(amountNumber) ? String(amountNumber) + consimsGetContractCurrencySuffix() : "0",
+          rcv: consimsFormatApiPercent(row.PercentVSRCV ?? row.PercentOfRCV ?? row.RCV)
+        };
+      }).filter(function (row) {
+        return row.label !== "";
+      });
+
+      contractFinanceReference = references;
+      return mappedRows;
+    }
+
+    function consimsReadFinanceReference(label) {
+      const value = contractFinanceReference[consimsMetricKey(label)];
+      return Number.isFinite(value) ? value : null;
+    }
+
+    function consimsEscapeHtml(value) {
+      return String(value ?? "").replace(/[&<>"']/g, function (char) {
+        return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[char];
+      });
+    }
+
+    function consimsApiSuccess(payload) {
+      return payload && (payload.Success === true || payload.Success === "true");
+    }
+
+    function consimsReadList(payload, key) {
+      if (!payload) return [];
+      if (payload.Headings && Array.isArray(payload.Headings[key])) return payload.Headings[key];
+      if (payload.Data && Array.isArray(payload.Data[key])) return payload.Data[key];
+      if (Array.isArray(payload[key])) return payload[key];
+      if (Array.isArray(payload.Data)) return payload.Data;
+      return [];
+    }
+
+    function consimsRefreshSelect(select) {
+      if (select && typeof select.consimsRefreshOptions === "function") select.consimsRefreshOptions();
+    }
+
+    function consimsReadContractId(item) {
+      return item.ContractId ?? item.ProjectId ?? item.Id ?? item.Value ?? item.value ?? "";
+    }
+
+    function consimsReadContractName(item) {
+      return item.Description || item.ContractName || item.ProjectName || item.Name || item.Text || item.text || consimsReadContractId(item);
+    }
+
+    function consimsSetContractOptions(items, preferredContractId) {
+      if (!contractProjectSelect || !Array.isArray(items) || !items.length) return;
+
+      const options = items.map(function (item) {
+        return {
+          id: consimsReadContractId(item),
+          name: consimsReadContractName(item)
+        };
+      }).filter(function (item) {
+        return item.id !== "" && item.name !== "";
+      });
+
+      if (!options.length) return;
+
+      contractProjectSelect.innerHTML = '<option value="">Project/Contract</option>';
+      options.forEach(function (item) {
+        const option = document.createElement("option");
+        option.value = String(item.id);
+        option.textContent = item.name;
+        contractProjectSelect.appendChild(option);
+      });
+
+      const preferredId = preferredContractId || consimsDefaultContractId;
+      const defaultOption = options.find(function (item) { return String(item.id) === String(preferredId); });
+      contractProjectSelect.value = defaultOption ? String(defaultOption.id) : "";
+      consimsRefreshSelect(contractProjectSelect);
+    }
+
+    function consimsRenderContractInformation(info) {
+      if (!info) return;
+
+      const rows = [
+        ["Contract Id", "ContractId"],
+        ["Description", "Description"],
+        ["Company Name", "CompanyName"],
+        ["Start Date", "StartDate"],
+        ["End Date", "EndDate"],
+        ["Contract Date", "ContractDate"],
+        ["Contract Code", "ContractCode"],
+        ["Actual Start", "ActualStart"],
+        ["Contract Type", "ContractType"],
+        ["Contract Format", "ContractFormat"]
+      ];
+
+      fillTable('[data-dashboard-table="contract-information"]', rows.map(function (row) {
+        const value = info[row[1]] ?? "";
+        return '<tr><td>' + consimsEscapeHtml(row[0]) + '</td><td class="text-end consims-contract-info-value">' + consimsEscapeHtml(value) + '</td></tr>';
+      }));
+    }
+
+    async function consimsFetchJson(url) {
+      const response = await fetch(url, { headers: { "Accept": "application/json" } });
+      if (!response.ok) throw new Error("Request failed: " + response.status);
+      return response.json();
+    }
+
+    async function consimsLoadContractDashboardData(contractId) {
+      const selectedContractId = contractId || consimsDefaultContractId;
+      const requestId = ++contractDataRequestId;
+
+      try {
+        const unit = consimsGetContractCurrencyUnit();
+        const payload = await consimsFetchJson("/consims-dashboard/contract-data?contractId=" + encodeURIComponent(selectedContractId) + "&unit=" + encodeURIComponent(unit));
+        if (requestId !== contractDataRequestId) return;
+        if (!consimsApiSuccess(payload)) {
+          console.warn("Contract dashboard API returned false", payload);
+          return;
+        }
+
+        const projectList = consimsReadList(payload, "ProjectList");
+        if (projectList.length && contractProjectSelect && contractProjectSelect.options.length <= 1) {
+          consimsSetContractOptions(projectList, selectedContractId);
+        }
+
+        const contractInfo = consimsReadList(payload, "ContractInfo")[0];
+        if (contractInfo) consimsRenderContractInformation(contractInfo);
+
+        const financeRows = consimsReadList(payload, "FinancePerformance");
+        if (financeRows.length) {
+          consimsRenderContractFinanceRows(consimsMapContractFinanceRows(financeRows));
+        }
+
+        const progressRows = consimsReadList(payload, "ProgressPerformance");
+        if (progressRows.length) {
+          consimsRenderContractFinanceRows(consimsMapContractFinanceRows(progressRows));
+        }
+
+        const revenueCostRows = consimsReadList(payload, "RevenueVSCost");
+        if (revenueCostRows.length) {
+          contractRevenueCostRows = revenueCostRows;
+          renderContractRevenueCostChart();
+        } else {
+          contractRevenueCostRows = [];
+          renderContractRevenueCostChart();
+        }
+      } catch (error) {
+        contractRevenueCostRows = [];
+        renderContractRevenueCostChart();
+        console.warn("Could not load contract dashboard data", error);
+      }
+    }
+
+    async function consimsLoadContractProjectList() {
+      if (!contractProjectSelect) return;
+
+      try {
+        const payload = await consimsFetchJson("/consims-dashboard/project-list?displayMode=contract_to_dashboard");
+        if (!consimsApiSuccess(payload)) {
+          console.warn("Contract project list API returned false", payload);
+          return;
+        }
+
+        const projectList = consimsReadList(payload, "ProjectList");
+        consimsSetContractOptions(projectList);
+      } catch (error) {
+        console.warn("Could not load contract project list", error);
+      }
+    }
+
+    async function consimsInitContractApiMapping() {
+      await consimsLoadContractProjectList();
+      await consimsLoadContractDashboardData(contractProjectSelect && contractProjectSelect.value ? contractProjectSelect.value : consimsDefaultContractId);
+    }
+
     function seedTables() {
+      const contractInformationRows = [
+        ["Contract Id", "17244"],
+        ["Description", "Hợp đồng CĐT Demo"],
+        ["Company Name", "Công Ty CP Vinhomes"],
+        ["Start Date", "2025-09-21"],
+        ["End Date", "2027-07-12"],
+        ["Contract Date", "2025-09-18"],
+        ["Contract Code", "CC1000225.09/001"],
+        ["Actual Start", "2025-09-18"],
+        ["Contract Type", "Main Contract"],
+        ["Contract Format", "Fix-Unit-Price"]
+      ];
       const financeRows = [
         { label: "Original Contract Value", amount: "$52.600.000", rcv: "100%" },
         { label: "Approved Variations", amount: "$3.150.000", rcv: "6%" },
@@ -511,20 +848,21 @@
         { label: "Forecasted Profit Margin", amount: "12.1%", rcv: "-1.2%" }
       ];
       const progressRows = [
-        { label: "Planned Progress (Baseline)", value: "78%" },
-        { label: "Actual Progress (To Date)", value: "61%" },
-        { label: "SPI (Schedule Performance Index)", value: "0.92" },
-        { label: "Behind Schedule", value: "-17%" },
-        { label: "Delay (Days)", value: "18 Days" },
-        { label: "Completion Date (Planned)", value: "30/09/2026" },
-        { label: "Completion Date (Forecast)", value: "15/10/2026" },
-        { label: "Milestones Due", value: "12" },
-        { label: "Milestones Overdue", value: "-3" }
-      ];
+      { "Description": "Planned Progress (Baseline)", "Amount": null, "Value": null},
+      { "Description": "Actual Progress (To Date)", "Amount": null, "Value": null },
+      { "Description": "SPI (Schedule Performance Index)", "Amount": null, "Value": null},
+      { "Description": "Behind Schedule", "Amount": null, "Value": 100 },
+      { "Description": "Delay (Days)", "Amount": 12490.553813112, "Value": null },
+      { "Description": "Completion Date (Planned)", "Amount": 2434.79224653636, "Value": null },
+      { "Description": "Completion Date (Forecast)", "Amount": null, "Value": null },
+      { "Description": "Milestones Due", "Amount": null, "Value": null },
+      { "Description": "Milestones Overdue", "Amount": null, "Value": null }
+    ];
       const personnelRows = [["9/2025", 100, 95, "2%"], ["10/2025", 150, 140, "5%"], ["11/2025", 200, 210, "12%"], ["12/2025", 250, 245, "20%"], ["1/2026", 270, 230, "25%"], ["2/2026", 280, 260, "32%"], ["3/2026", 300, 290, "45%"], ["4/2026", 320, 310, "55%"]];
       const materialRows = [["9/2025", 2.5, 2.4, "0.5%"], ["10/2025", 4.2, 3.9, "1.5%"], ["11/2025", 8.1, 7.8, "1.2%"], ["12/2025", 12.5, 11.8, "3.5%"], ["1/2026", 9.0, 8.5, "2.8%"], ["2/2026", 7.5, 7.0, "3.2%"], ["3/2026", 15.2, 14.5, "4.5%"], ["4/2026", 10.4, 13.0, "2.5%"]];
 
-      fillTable('[data-dashboard-table="contract-finance"]', financeRows.map(function (row) { return '<tr><td>' + row.label + '</td>' + valueCell(row.amount) + valueCell(row.rcv) + '</tr>'; }));
+      fillTable('[data-dashboard-table="contract-information"]', contractInformationRows.map(function (row) { return '<tr><td>' + row[0] + '</td><td class="text-end consims-contract-info-value">' + row[1] + '</td></tr>'; }));
+      consimsRenderContractFinanceRows(financeRows);
       fillTable('[data-dashboard-table="contract-progress"]', progressRows.map(function (row) { return '<tr><td>' + row.label + '</td>' + valueCell(row.value) + '</tr>'; }));
 
       ["contract", "project"].forEach(function (prefix) {
@@ -546,6 +884,14 @@
       chartInstances[name] = instance;
     }
 
+    function setChartOption(name, option) {
+      if (!window.echarts) return;
+      const el = root.querySelector('[data-dashboard-chart="' + name + '"]');
+      if (!el || !el.offsetParent) return;
+      if (!chartInstances[name]) chartInstances[name] = echarts.init(el);
+      chartInstances[name].setOption(option, true);
+    }
+
     function resizeCharts() {
       Object.keys(chartInstances).forEach(function (key) { chartInstances[key].resize(); });
     }
@@ -560,6 +906,190 @@
         yAxis: { type: "value", min: 0, max: 100, splitLine: { lineStyle: { color: palette.grid, type: "dashed" } } },
         series: series.map(function (item) { return { name: item.name, type: "line", smooth: true, symbolSize: 8, lineStyle: { width: 2 }, data: item.data }; })
       };
+    }
+
+    function consimsPadDatePart(value) {
+      return String(value).padStart(2, "0");
+    }
+
+    function consimsParseApiDate(value) {
+      const match = String(value ?? "").match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+      if (match) return new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+
+      const date = new Date(value);
+      return Number.isNaN(date.getTime()) ? null : date;
+    }
+
+    function consimsDateKey(date) {
+      return [
+        date.getFullYear(),
+        consimsPadDatePart(date.getMonth() + 1),
+        consimsPadDatePart(date.getDate())
+      ].join("-");
+    }
+
+    function consimsFormatShortDate(date, includeYear) {
+      const text = consimsPadDatePart(date.getDate()) + "/" + consimsPadDatePart(date.getMonth() + 1);
+      return includeYear ? text + "/" + date.getFullYear() : text;
+    }
+
+    function consimsWeekStart(date) {
+      const weekStart = new Date(date);
+      const day = weekStart.getDay() || 7;
+      weekStart.setDate(weekStart.getDate() - day + 1);
+      weekStart.setHours(0, 0, 0, 0);
+      return weekStart;
+    }
+
+    function consimsRevenueCostBucket(date, grain) {
+      if (grain === "day") {
+        return {
+          key: consimsDateKey(date),
+          label: consimsFormatShortDate(date, true),
+          date: date
+        };
+      }
+
+      if (grain === "week") {
+        const start = consimsWeekStart(date);
+        const end = new Date(start);
+        end.setDate(start.getDate() + 6);
+        return {
+          key: consimsDateKey(start),
+          label: consimsFormatShortDate(start, false) + " - " + consimsFormatShortDate(end, true),
+          date: start
+        };
+      }
+
+      return {
+        key: date.getFullYear() + "-" + consimsPadDatePart(date.getMonth() + 1),
+        label: (date.getMonth() + 1) + "/" + date.getFullYear(),
+        date: new Date(date.getFullYear(), date.getMonth(), 1)
+      };
+    }
+
+    function consimsReadRevenueCostMetric(row, keys) {
+      for (let index = 0; index < keys.length; index += 1) {
+        const value = row[keys[index]];
+        if (value !== undefined && value !== null && value !== "") {
+          const parsed = typeof value === "number" ? value : consimsParseNumberValue(value);
+          return Number.isFinite(parsed) ? parsed : null;
+        }
+      }
+      return null;
+    }
+
+    function consimsGroupRevenueCostRows(rows, grain) {
+      const bucketMap = new Map();
+      const normalizedRows = rows.map(function (row) {
+        return {
+          date: consimsParseApiDate(row.DateIs || row.Date || row.date),
+          revenue: consimsReadRevenueCostMetric(row, ["CumRevenueAmount", "RevenueAmount", "Revenue"]),
+          cost: consimsReadRevenueCostMetric(row, ["CumCostAmount", "CostAmount", "Cost"])
+        };
+      }).filter(function (row) {
+        return row.date && row.revenue !== null && row.cost !== null;
+      }).sort(function (a, b) {
+        return a.date - b.date;
+      });
+
+      normalizedRows.forEach(function (row) {
+        const bucket = consimsRevenueCostBucket(row.date, grain);
+        bucketMap.set(bucket.key, {
+          label: bucket.label,
+          date: bucket.date,
+          revenue: row.revenue,
+          cost: row.cost
+        });
+      });
+
+      return Array.from(bucketMap.values()).sort(function (a, b) {
+        return a.date - b.date;
+      });
+    }
+
+    function consimsFormatRevenueCostChartNumber(value, withCurrency) {
+      const numeric = Number(value);
+      if (!Number.isFinite(numeric)) return value;
+      const sign = numeric < 0 ? "-" : "";
+      const absoluteValue = Math.abs(numeric);
+      const suffix = consimsGetContractCurrencySuffix() + (withCurrency ? " VN\u0110" : "");
+      return sign + consimsTrimCompactNumber(absoluteValue) + suffix;
+    }
+
+    function contractRevenueCostOption(points, grain) {
+      const categories = points.map(function (point) { return point.label; });
+      const isDay = grain === "day";
+      const shouldZoom = isDay && categories.length > 45;
+      const visibleCount = 90;
+      const visiblePercent = categories.length > visibleCount ? (visibleCount / categories.length) * 100 : 100;
+      const zoomStart = shouldZoom ? Math.max(0, 100 - visiblePercent) : 0;
+
+      return {
+        color: [palette.blue, palette.green],
+        animationDurationUpdate: 350,
+        tooltip: {
+          trigger: "axis",
+          valueFormatter: function (value) { return consimsFormatRevenueCostChartNumber(value, true); }
+        },
+        legend: {
+          bottom: shouldZoom ? 30 : 4,
+          itemWidth: 10,
+          itemHeight: 10,
+          textStyle: { color: palette.text, fontSize: 11 }
+        },
+        grid: { left: 50, right: 18, top: 28, bottom: shouldZoom ? 82 : 56 },
+        dataZoom: shouldZoom ? [
+          { type: "inside", start: zoomStart, end: 100 },
+          { type: "slider", start: zoomStart, end: 100, bottom: 8, height: 16, showDetail: false, brushSelect: false }
+        ] : [],
+        xAxis: {
+          type: "category",
+          data: categories,
+          axisTick: { show: false },
+          axisLine: { lineStyle: { color: "#aeb6c8" } },
+          axisLabel: {
+            color: "#8e98b2",
+            hideOverlap: true,
+            interval: "auto",
+            margin: 12
+          }
+        },
+        yAxis: {
+          type: "value",
+          min: 0,
+          splitLine: { lineStyle: { color: palette.grid, type: "dashed" } },
+          axisLabel: { formatter: function (value) { return consimsFormatRevenueCostChartNumber(value, false); } }
+        },
+        series: [
+          {
+            name: "Revenue",
+            type: "line",
+            smooth: true,
+            showSymbol: !shouldZoom,
+            symbolSize: shouldZoom ? 0 : 7,
+            lineStyle: { width: 2 },
+            data: points.map(function (point) { return point.revenue; })
+          },
+          {
+            name: "Cost",
+            type: "line",
+            smooth: true,
+            showSymbol: !shouldZoom,
+            symbolSize: shouldZoom ? 0 : 7,
+            lineStyle: { width: 2 },
+            data: points.map(function (point) { return point.cost; })
+          }
+        ]
+      };
+    }
+
+    function renderContractRevenueCostChart() {
+      const grain = contractRevenueCostGrainSelect ? contractRevenueCostGrainSelect.value : "month";
+      const apiPoints = contractRevenueCostRows.length ? consimsGroupRevenueCostRows(contractRevenueCostRows, grain) : [];
+      const points = apiPoints.length ? apiPoints : [];
+
+      setChartOption("contract-revenue-cost", contractRevenueCostOption(points, grain));
     }
 
     function contractScurveOption() {
@@ -808,7 +1338,7 @@
     }
 
     function initContractCharts() {
-      chart("contract-revenue-cost", lineOption([{ name: "Revenue", data: [10, 10, 14, 34, 19, 14] }, { name: "Cost", data: [25, 39, 41, 54, 62, 43] }, { name: "Forecast EAC", data: [44, 62, 69, 83, 84, 75] }]));
+      renderContractRevenueCostChart();
       renderContractScurveChart();
       chart("contract-milestone", donutOption([{ value: 46, name: "Completed" }, { value: 82, name: "On track" }, { value: 10, name: "Overdue" }], [palette.green, "#1296ed", palette.orange]));
       chart("contract-variation-aging", horizontalBarOption(["0-30 days", "31-60 days", "61-90 days", "> 90 days"], [0.40, 0.71, 0.63, 0.51]));
@@ -942,27 +1472,32 @@
           });
         }
 
-        Array.from(select.options).forEach(function (option) {
-          const item = document.createElement("button");
-          item.type = "button";
-          item.className = "dropdown-item consims-select-option";
-          item.dataset.value = option.value;
-          item.textContent = option.textContent;
-          item.addEventListener("click", function () {
-            select.value = option.value;
-            select.dispatchEvent(new Event("change", { bubbles: true }));
-            updateSelectedOption();
-            if (window.bootstrap && window.bootstrap.Dropdown) {
-              window.bootstrap.Dropdown.getOrCreateInstance(button).hide();
-            }
+        function buildMenuOptions() {
+          menu.innerHTML = "";
+          Array.from(select.options).forEach(function (option) {
+            const item = document.createElement("button");
+            item.type = "button";
+            item.className = "dropdown-item consims-select-option";
+            item.dataset.value = option.value;
+            item.textContent = option.textContent;
+            item.addEventListener("click", function () {
+              select.value = option.value;
+              select.dispatchEvent(new Event("change", { bubbles: true }));
+              updateSelectedOption();
+              if (window.bootstrap && window.bootstrap.Dropdown) {
+                window.bootstrap.Dropdown.getOrCreateInstance(button).hide();
+              }
+            });
+            menu.appendChild(item);
           });
-          menu.appendChild(item);
-        });
+          updateSelectedOption();
+        }
 
         wrapper.insertBefore(button, select);
         wrapper.appendChild(menu);
+        select.consimsRefreshOptions = buildMenuOptions;
         select.addEventListener("change", updateSelectedOption);
-        updateSelectedOption();
+        buildMenuOptions();
       });
     }
 
@@ -1281,7 +1816,19 @@
     enhanceConsimsSelects();
     initConsimsDatepickers();
     if (contractScurveSelect) contractScurveSelect.addEventListener("change", renderContractScurveChart);
+    if (contractRevenueCostGrainSelect) contractRevenueCostGrainSelect.addEventListener("change", renderContractRevenueCostChart);
+    if (contractCurrencyUnitSelect) {
+      contractCurrencyUnitSelect.addEventListener("change", function () {
+        consimsLoadContractDashboardData(contractProjectSelect && contractProjectSelect.value ? contractProjectSelect.value : consimsDefaultContractId);
+      });
+    }
     seedTables();
+    if (contractProjectSelect) {
+      contractProjectSelect.addEventListener("change", function () {
+        if (contractProjectSelect.value) consimsLoadContractDashboardData(contractProjectSelect.value);
+      });
+    }
+    consimsInitContractApiMapping();
     tabButtons.forEach(function (button) {
       button.addEventListener("click", function () { activateTab(button.dataset.dashboardTab); });
     });
