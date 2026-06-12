@@ -1,0 +1,14 @@
+node_modules
+
+# ECharts 5.5.1 is served from dist/. Do not upload its source TypeScript tree
+# because Vercel/TypeScript build steps can accidentally type-check vendor code.
+public/vendors/echarts-5.5.1/.github
+public/vendors/echarts-5.5.1/asset
+public/vendors/echarts-5.5.1/build
+public/vendors/echarts-5.5.1/extension-src
+public/vendors/echarts-5.5.1/src
+public/vendors/echarts-5.5.1/ssr
+public/vendors/echarts-5.5.1/test
+public/vendors/echarts-5.5.1/theme
+public/vendors/echarts-5.5.1/tsconfig.json
+public/vendors/echarts-5.5.1/package-lock.json
