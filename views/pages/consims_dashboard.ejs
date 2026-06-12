@@ -788,10 +788,24 @@
       return item.ContractCode || item.Code || item.ProjectCode || "";
     }
 
+    function consimsNormalizeContractType(value) {
+      return String(value || "").trim().toLowerCase().replace(/[\s-]+/g, "_");
+    }
+
+    function consimsIsMainContractOption(item) {
+      const contractType = consimsNormalizeContractType(item.ContractType || item.contractType || item.Type || item.type);
+      const subconOf = item.SubconOf ?? item.subconOf ?? item.SubContractOf ?? item.ParentContractId ?? item.parentContractId;
+
+      if (contractType === "main_contract" || contractType === "main") return true;
+      if (contractType.includes("sub")) return false;
+
+      return subconOf === null || subconOf === undefined || String(subconOf).trim() === "" || String(subconOf).trim() === "0";
+    }
+
     function consimsSetContractOptions(items, preferredContractId) {
       if (!contractProjectSelect || !Array.isArray(items) || !items.length) return;
 
-      const options = items.map(function (item) {
+      const options = items.filter(consimsIsMainContractOption).map(function (item) {
         return {
           id: consimsReadContractId(item),
           name: consimsReadContractName(item),
@@ -899,6 +913,7 @@
       try {
         const payload = await consimsFetchJson("/consims-dashboard/project-list?displayMode=contract_to_dashboard");
         if (!consimsApiSuccess(payload)) {
+          console.log("Project list API returned false", payload);
           console.warn("Contract project list API returned false", payload);
           return;
         }
@@ -1563,43 +1578,98 @@
         if (select.dataset.consimsEnhanced === "true") return;
         select.dataset.consimsEnhanced = "true";
         select.classList.add("consims-select-native");
+        const isSearchableSelect = select.hasAttribute("data-consims-contract-select");
 
         const wrapper = document.createElement("div");
         wrapper.className = "dropdown consims-select";
         if (select.dataset.consimsSelectSize) wrapper.classList.add("consims-select-" + select.dataset.consimsSelectSize);
-        if (select.hasAttribute("data-consims-contract-select")) wrapper.classList.add("consims-contract-select-wrapper");
+        if (isSearchableSelect) wrapper.classList.add("consims-contract-select-wrapper");
         wrapper.setAttribute("data-consims-select", "");
         select.parentNode.insertBefore(wrapper, select);
         wrapper.appendChild(select);
 
-        const button = document.createElement("button");
-        button.type = "button";
-        button.className = "consims-select-control";
+        const button = document.createElement(isSearchableSelect ? "input" : "button");
+        if (isSearchableSelect) {
+          button.type = "text";
+          button.autocomplete = "off";
+          button.spellcheck = false;
+          button.placeholder = select.options[0] ? select.options[0].textContent : (select.getAttribute("aria-label") || "Select");
+          button.setAttribute("role", "combobox");
+        } else {
+          button.type = "button";
+        }
+        button.className = isSearchableSelect ? "consims-select-control consims-select-search-input" : "consims-select-control";
         button.setAttribute("data-bs-toggle", "dropdown");
         button.setAttribute("data-bs-offset", "0,4");
         button.setAttribute("aria-expanded", "false");
         button.setAttribute("aria-label", select.getAttribute("aria-label") || "Select");
 
-        const label = document.createElement("span");
-        label.className = "consims-select-label";
-        button.appendChild(label);
+        const label = isSearchableSelect ? null : document.createElement("span");
+        if (label) {
+          label.className = "consims-select-label";
+          button.appendChild(label);
+        }
+
+        const clearButton = isSearchableSelect ? document.createElement("button") : null;
+        if (clearButton) {
+          clearButton.type = "button";
+          clearButton.className = "consims-select-clear";
+          clearButton.setAttribute("aria-label", "Clear contract");
+          clearButton.hidden = true;
+        }
 
         const menu = document.createElement("div");
         menu.className = "dropdown-menu consims-select-menu";
 
+        function showDropdown() {
+          if (window.bootstrap && window.bootstrap.Dropdown) {
+            window.bootstrap.Dropdown.getOrCreateInstance(button).show();
+          } else {
+            menu.classList.add("show");
+          }
+        }
+
+        function hideDropdown() {
+          if (window.bootstrap && window.bootstrap.Dropdown) {
+            window.bootstrap.Dropdown.getOrCreateInstance(button).hide();
+          } else {
+            menu.classList.remove("show");
+          }
+        }
+
+        function normalizeText(value) {
+          return String(value || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        }
+
+        function filterMenuOptions(query) {
+          if (!isSearchableSelect) return;
+          const searchText = normalizeText(query);
+          menu.querySelectorAll(".consims-select-option").forEach(function (item) {
+            const isMatch = !searchText || normalizeText(item.textContent).includes(searchText);
+            item.hidden = !isMatch;
+          });
+        }
+
         function updateSelectedOption() {
           const currentOption = select.options[select.selectedIndex] || select.options[0];
-          label.textContent = currentOption ? currentOption.textContent : (select.getAttribute("aria-label") || "Select");
+          if (isSearchableSelect) {
+            button.value = select.value && currentOption ? currentOption.textContent : "";
+            filterMenuOptions("");
+          } else {
+            label.textContent = currentOption ? currentOption.textContent : (select.getAttribute("aria-label") || "Select");
+          }
           button.title = currentOption ? currentOption.textContent : "";
           wrapper.classList.toggle("consims-select-has-value", Boolean(select.value));
           menu.querySelectorAll(".consims-select-option").forEach(function (item) {
             item.classList.toggle("active", item.dataset.value === select.value);
           });
+          if (clearButton) clearButton.hidden = !button.value;
         }
 
         function buildMenuOptions() {
           menu.innerHTML = "";
           Array.from(select.options).forEach(function (option) {
+            if (isSearchableSelect && option.value === "" && select.options.length > 1) return;
             const item = document.createElement("button");
             item.type = "button";
             item.className = "dropdown-item consims-select-option";
@@ -1608,11 +1678,10 @@
             item.title = option.title || option.textContent;
             item.addEventListener("click", function () {
               select.value = option.value;
+              if (isSearchableSelect) button.value = option.textContent;
               select.dispatchEvent(new Event("change", { bubbles: true }));
               updateSelectedOption();
-              if (window.bootstrap && window.bootstrap.Dropdown) {
-                window.bootstrap.Dropdown.getOrCreateInstance(button).hide();
-              }
+              hideDropdown();
             });
             menu.appendChild(item);
           });
@@ -1620,9 +1689,46 @@
         }
 
         wrapper.insertBefore(button, select);
+        if (clearButton) wrapper.insertBefore(clearButton, select);
         wrapper.appendChild(menu);
         select.consimsRefreshOptions = buildMenuOptions;
         select.addEventListener("change", updateSelectedOption);
+        if (isSearchableSelect) {
+          button.addEventListener("input", function () {
+            const selectedText = select.value && select.options[select.selectedIndex] ? select.options[select.selectedIndex].textContent : "";
+            if (button.value !== selectedText) select.value = "";
+            wrapper.classList.toggle("consims-select-has-value", Boolean(select.value));
+            filterMenuOptions(button.value);
+            if (clearButton) clearButton.hidden = !button.value;
+            showDropdown();
+          });
+          button.addEventListener("focus", function () {
+            filterMenuOptions(button.value);
+            showDropdown();
+          });
+          button.addEventListener("keydown", function (event) {
+            if (event.key === "Enter") {
+              const firstVisibleOption = Array.from(menu.querySelectorAll(".consims-select-option")).find(function (item) {
+                return !item.hidden;
+              });
+              if (firstVisibleOption) {
+                event.preventDefault();
+                firstVisibleOption.click();
+              }
+            }
+          });
+          clearButton.addEventListener("click", function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+            button.value = "";
+            select.value = "";
+            select.dispatchEvent(new Event("change", { bubbles: true }));
+            filterMenuOptions("");
+            updateSelectedOption();
+            hideDropdown();
+            button.focus();
+          });
+        }
         buildMenuOptions();
       });
     }

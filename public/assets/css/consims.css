@@ -527,6 +527,66 @@ body {
   color: #333333;
 }
 
+.consims-select-search-input {
+  color: #333333;
+  cursor: text;
+}
+
+.consims-contract-select-wrapper .consims-select-search-input {
+  padding-right: 64px;
+}
+
+.consims-select-search-input::placeholder {
+  color: #999a9f;
+  opacity: 1;
+}
+
+.consims-select-clear {
+  position: absolute;
+  right: 38px;
+  top: 50%;
+  z-index: 3;
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: #e3e5e9;
+  color: #fff;
+  cursor: pointer;
+  transform: translateY(-50%);
+  transition: background-color 160ms ease;
+}
+
+.consims-select-clear::before,
+.consims-select-clear::after {
+  content: "";
+  position: absolute;
+  width: 9px;
+  height: 2px;
+  border-radius: 999px;
+  background: currentColor;
+}
+
+.consims-select-clear::before {
+  transform: rotate(45deg);
+}
+
+.consims-select-clear::after {
+  transform: rotate(-45deg);
+}
+
+.consims-select-clear:hover {
+  background: #d5d9df;
+}
+
+.consims-select-clear[hidden] {
+  display: none;
+}
+
 .consims-select-label {
   min-width: 0;
   display: block;

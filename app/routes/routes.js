@@ -97,7 +97,7 @@ module.exports = function (route) {
                     "LogIn": params.LogIn,
                     "SessionId": params.SessionId,
                     "Keyword": req.query.keyword || "",
-                    "ContractType": "All",
+                    "ContractType": "main_contract",
                     "DisplayMode": "brief_contracts_by_user",
                     "PageNum": Number(req.query.page) || 1,
                     "PageSize": Number(req.query.pageSize) || 1000
