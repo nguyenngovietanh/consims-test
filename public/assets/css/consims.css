@@ -1586,6 +1586,11 @@ body {
   flex: 1 1 230px;
 }
 
+.consims-revenue-cost-chart {
+  min-height: 280px;
+  flex-basis: 280px;
+}
+
 .dashboard-chart.small {
   min-height: 190px;
   flex-basis: 190px;

@@ -882,6 +882,7 @@
       const instance = echarts.init(el);
       instance.setOption(option);
       chartInstances[name] = instance;
+      consimsScheduleChartResize(name);
     }
 
     function setChartOption(name, option) {
@@ -890,10 +891,36 @@
       if (!el || !el.offsetParent) return;
       if (!chartInstances[name]) chartInstances[name] = echarts.init(el);
       chartInstances[name].setOption(option, true);
+      consimsScheduleChartResize(name);
     }
 
     function resizeCharts() {
       Object.keys(chartInstances).forEach(function (key) { chartInstances[key].resize(); });
+    }
+
+    function consimsInitChartResizeObserver() {
+      if (!window.ResizeObserver) return;
+
+      const chartResizeObserver = new ResizeObserver(function () {
+        window.requestAnimationFrame(resizeCharts);
+      });
+
+      root.querySelectorAll("[data-dashboard-chart]").forEach(function (chartEl) {
+        chartResizeObserver.observe(chartEl);
+      });
+    }
+
+    function consimsScheduleChartResize(name) {
+      const resizeOne = function () {
+        if (chartInstances[name]) chartInstances[name].resize();
+      };
+
+      window.requestAnimationFrame(function () {
+        resizeOne();
+        window.requestAnimationFrame(resizeOne);
+      });
+      window.setTimeout(resizeOne, 120);
+      window.setTimeout(resizeOne, 320);
     }
 
     function lineOption(series, categories) {
@@ -1020,10 +1047,21 @@
     function contractRevenueCostOption(points, grain) {
       const categories = points.map(function (point) { return point.label; });
       const isDay = grain === "day";
-      const shouldZoom = isDay && categories.length > 45;
-      const visibleCount = 90;
+      const isWeek = grain === "week";
+      const isMonth = grain === "month";
+      const shouldZoom = (isDay && categories.length > 45) || (isWeek && categories.length > 24) || (isMonth && categories.length > 18);
+      const visibleCount = isDay ? 90 : isWeek ? 24 : 18;
       const visiblePercent = categories.length > visibleCount ? (visibleCount / categories.length) * 100 : 100;
       const zoomStart = shouldZoom ? Math.max(0, 100 - visiblePercent) : 0;
+      const formatXAxisLabel = function (value) {
+        if (isWeek && typeof value === "string") {
+          return value
+            .replace(/\s+/g, "")
+            .replace(/\/20(\d{2})/g, "/$1");
+        }
+
+        return value;
+      };
 
       return {
         color: [palette.blue, palette.green],
@@ -1033,15 +1071,15 @@
           valueFormatter: function (value) { return consimsFormatRevenueCostChartNumber(value, true); }
         },
         legend: {
-          bottom: shouldZoom ? 30 : 4,
+          bottom: shouldZoom ? 34 : 6,
           itemWidth: 10,
           itemHeight: 10,
           textStyle: { color: palette.text, fontSize: 11 }
         },
-        grid: { left: 50, right: 18, top: 28, bottom: shouldZoom ? 82 : 56 },
+        grid: { left: 44, right: 8, top: 30, bottom: shouldZoom ? 86 : 60, containLabel: true },
         dataZoom: shouldZoom ? [
           { type: "inside", start: zoomStart, end: 100 },
-          { type: "slider", start: zoomStart, end: 100, bottom: 8, height: 16, showDetail: false, brushSelect: false }
+          { type: "slider", start: zoomStart, end: 100, left: 44, right: 8, bottom: 12, height: 14, showDetail: false, brushSelect: false }
         ] : [],
         xAxis: {
           type: "category",
@@ -1052,7 +1090,8 @@
             color: "#8e98b2",
             hideOverlap: true,
             interval: "auto",
-            margin: 12
+            margin: 12,
+            formatter: formatXAxisLabel
           }
         },
         yAxis: {
@@ -1833,6 +1872,8 @@
       button.addEventListener("click", function () { activateTab(button.dataset.dashboardTab); });
     });
     activateTab("contract");
+    consimsInitChartResizeObserver();
     window.addEventListener("resize", resizeCharts);
+    window.addEventListener("load", resizeCharts);
   })();
 </script>
